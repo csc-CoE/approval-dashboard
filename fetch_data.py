@@ -17,9 +17,21 @@ WAREHOUSE_ID = os.environ["DATABRICKS_WAREHOUSE_ID"]
 
 # ── Altere a query conforme sua tabela no Databricks ──────────────────────────
 SQL_QUERY = """
-select prioridade,ptr_usuario_nome,ptr_esboco,ptr_numero,ptr_segmento,ptr_data_lancamento,ptr_data_esboco,ptr_valor_total,ptr_observacoes,ptr_item_codigo,ptr_item_descricao,data_atualizacao_tabela
-from `gold`.`sap`.`fato_atendimento_pedido_transf_estoque` 
-where ptr_data_esboco >= '2026-01-01'
+SELECT 
+    prioridade                         AS `Prioridade`,
+    ptr_usuario_nome                   AS `Usuário`,
+    ptr_esboco                         AS `Esboço`,
+    ptr_numero                         AS `Número do Pedido`,
+    ptr_segmento                       AS `Segmento`,
+    ptr_data_lancamento                AS `Data de Lançamento`,
+    ptr_data_esboco                    AS `Data do Esboço`,
+    ptr_valor_total                    AS `Valor Total`,
+    ptr_observacoes                    AS `Observações`,
+    ptr_item_codigo                    AS `Código do Item`,
+    ptr_item_descricao                 AS `Descrição do Item`,
+    data_atualizacao_tabela            AS `Data de Atualização`
+FROM `gold`.`sap`.`fato_atendimento_pedido_transf_estoque`
+WHERE ptr_data_esboco >= '2026-01-01'
 """
 # ─────────────────────────────────────────────────────────────────────────────
 
