@@ -20,7 +20,6 @@ SELECT
     prioridade AS `Prioridade`,
     ptr_usuario_nome AS `Responsavel Esboço`,
     ptr_esboco AS `Numero Esboço`,
-    ptr_numero AS `Número do PTR`,
     ptr_segmento AS `Segmento`,
     ptr_data_esboco AS `Data do Esboço`,
     ptr_valor_total AS `Valor Total`,
