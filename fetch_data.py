@@ -17,20 +17,9 @@ WAREHOUSE_ID = os.environ["DATABRICKS_WAREHOUSE_ID"]
 
 # ── Altere a query conforme sua tabela no Databricks ──────────────────────────
 SQL_QUERY = """
-SELECT
-    n_aprovacao,
-    n_doesboco,
-    DATE_FORMAT(datadacriacao, 'dd/MM/yyyy') AS data,
-    solicitante,
-    aprovadoratual                            AS aprovador,
-    filial,
-    dscription,
-    SUM(line_total)                           AS line_total,
-    status_cabecalho_ow                       AS status
-FROM sua_tabela_de_aprovacoes
-GROUP BY 1,2,3,4,5,6,7,9
-ORDER BY datadacriacao DESC
-LIMIT 1000
+select prioridade,ptr_usuario_nome,ptr_esboco,ptr_numero,ptr_segmento,ptr_data_lancamento,ptr_data_esboco,ptr_valor_total,ptr_observacoes,ptr_item_codigo,ptr_item_descricao,data_atualizacao_tabela
+from `gold`.`sap`.`fato_atendimento_pedido_transf_estoque` 
+where ptr_data_esboco >= '2026-01-01'
 """
 # ─────────────────────────────────────────────────────────────────────────────
 
