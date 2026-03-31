@@ -1,147 +1,221 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8" />
-<title>Login - Painel Alloha Fibra</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login - Painel de Aprovações</title>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --card: #141b34;
+      --border: #26304f;
+      --accent: #5b8cff;
+      --accent2: #7c4dff;
+      --text: #f3f6ff;
+      --muted: #a9b4d0;
+      --danger: #ff6b6b;
+    }
 
-<style>
-body {
-  margin:0;
-  font-family: "Segoe UI", Arial, sans-serif;
-  background: linear-gradient(135deg, #00124f, #0031a0, #00124f);
-  height:100vh;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  animation: bgMove 12s infinite alternate ease-in-out;
-  background-size: 400% 400%;
-}
-@keyframes bgMove {
-  from { background-position: 0% 0%; }
-  to   { background-position: 100% 100%; }
-}
-#card {
-  background:white;
-  width:350px;
-  padding:35px 30px;
-  border-radius:15px;
-  box-shadow:0 10px 35px rgba(0,0,0,0.25);
-  text-align:center;
-  animation: fadeIn 0.8s ease-out;
-}
-@keyframes fadeIn {
-  from { opacity:0; transform: translateY(20px); }
-  to   { opacity:1; transform: translateY(0); }
-}
-#card img {
-  width:160px;
-  margin-bottom:10px;
-}
-h2 {
-  margin:10px 0 20px 0;
-  font-size:22px;
-  color:#00124f;
-}
-input {
-  width:100%;
-  padding:12px;
-  border-radius:8px;
-  border:1px solid #ccc;
-  margin-top:10px;
-  font-size:15px;
-  transition:0.2s;
-}
-input:focus {
-  border-color:#0031a0;
-  box-shadow:0 0 4px #0031a0;
-  outline:none;
-}
-button {
-  width:100%;
-  padding:12px;
-  margin-top:20px;
-  background:#00124f;
-  color:white;
-  font-size:16px;
-  border:none;
-  border-radius:8px;
-  cursor:pointer;
-  transition:0.2s;
-  font-weight:bold;
-}
-button:hover {
-  background:#0031a0;
-  transform:scale(1.02);
-}
-#error {
-  color:#cc0000;
-  margin-top:10px;
-  font-size:14px;
-  font-weight:bold;
-  display:none;
-  animation: fadeIn 0.4s;
-}
-@keyframes shake {
-  0% { transform: translateX(0); }
-  25% { transform: translateX(-5px); }
-  50% { transform: translateX(5px); }
-  75% { transform: translateX(-5px); }
-  100% { transform: translateX(0); }
-}
-</style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Segoe UI", Arial, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(91,140,255,0.25), transparent 30%),
+        radial-gradient(circle at bottom right, rgba(124,77,255,0.20), transparent 28%),
+        linear-gradient(135deg, #08101f, #0d1730 55%, #0a1224);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 420px;
+      background: rgba(20, 27, 52, 0.96);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 32px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .logo-icon {
+      width: 46px;
+      height: 46px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+    }
+
+    h1 {
+      margin: 0 0 6px;
+      font-size: 28px;
+    }
+
+    .sub {
+      color: var(--muted);
+      font-size: 14px;
+      margin-bottom: 26px;
+      line-height: 1.5;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+
+    input {
+      width: 100%;
+      padding: 14px 16px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: #0f1630;
+      color: var(--text);
+      font-size: 15px;
+      outline: none;
+      transition: 0.2s;
+    }
+
+    input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px rgba(91,140,255,0.15);
+    }
+
+    button {
+      width: 100%;
+      margin-top: 18px;
+      padding: 14px 16px;
+      border: none;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: white;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      opacity: 0.96;
+    }
+
+    .hint {
+      margin-top: 16px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    .error {
+      display: none;
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: 10px;
+      background: rgba(255,107,107,0.12);
+      border: 1px solid rgba(255,107,107,0.35);
+      color: #ffd0d0;
+      font-size: 13px;
+      font-weight: 600;
+    }
+  </style>
 </head>
-
 <body>
+  <div class="card">
+    <div class="logo">
+      <div class="logo-icon">📋</div>
+      <div>
+        <h1>Painel de Aprovações</h1>
+        <div style="color:#a9b4d0;font-size:13px;">Controle de acesso</div>
+      </div>
+    </div>
 
-<div id="card">
-  <img src="logo_alloha_positivo.png" alt="Alloha Fibra">
+    <div class="sub">
+      Entre com seu e-mail corporativo para acessar o painel.
+    </div>
 
-  <h2>Acesso Restrito</h2>
-  <p style="color:#444; font-size:14px; margin-bottom:20px;">
-    Entre com seu e-mail autorizado
-  </p>
+    <label for="email">E-mail</label>
+    <input id="email" type="email" placeholder="seuemail@alloha.com" autocomplete="off" />
 
-  <input id="email" type="email" placeholder="seuemail@alloha.com" autocomplete="off">
-  <button onclick="login()">Entrar</button>
+    <button onclick="login()">Entrar</button>
 
-  <div id="error">Usuário não autorizado.</div>
-</div>
+    <div class="error" id="errorBox">Usuário não autorizado.</div>
 
-<script>
-const usuarios = {
-  time: [
-    "wender.souza@alloha.com",
-    "luiza.carvalho@alloha.com",
-    "raphael.ramos@alloha.com"
-  ],
-  solicitante: [
-  "rafael.liao@alloha.com"
-  ]
-};
+    <div class="hint">
+      Time Interno acessa a visão completa. Solicitante acessa apenas os próprios registros.
+    </div>
+  </div>
 
-function login() {
-  const email = document.getElementById("email").value.trim().toLowerCase();
-  const errorBox = document.getElementById("error");
+  <script>
+    const usuarios = {
+      time: [
+        "wender.souza@alloha.com",
+        "matheus.sdoliveira@alloha.com",
+        "eliane.vieira@alloha.com",
+        "jakelline.assuncao@alloha.com",
+        "kaua.santos@alloha.com",
+        "patricia.lamon@alloha.com",
+        "reges.santos@alloha.com",
+        "gilcimar.jesus@alloha.com"
+      ],
+      solicitante: [
+        "talita.nascimento@alloha.com",
+        "john.santana@alloha.com"
+      ]
+    };
 
-  let perfil = null;
+    function login() {
+      const email = document.getElementById("email").value.trim().toLowerCase();
+      const errorBox = document.getElementById("errorBox");
 
-  if (usuarios.time.includes(email)) {
-    perfil = "time";
-  } else if (usuarios.solicitante.includes(email)) {
-    perfil = "solicitante";
-  }
+      if (!email) {
+        errorBox.style.display = "block";
+        errorBox.textContent = "Informe seu e-mail.";
+        return;
+      }
 
-  if (perfil) {
-    localStorage.setItem("usuario", email);
-    localStorage.setItem("perfil", perfil);
-    window.location.href = "index.html";
-  } else {
-    errorBox.style.display = "block";
-    errorBox.innerText = "Usuário não autorizado.";
-    errorBox.style.animation = "shake 0.3s";
-  }
-}
-</script>
+      let perfil = null;
 
+      if (usuarios.time.includes(email)) {
+        perfil = "time";
+      } else if (usuarios.solicitante.includes(email)) {
+        perfil = "solicitante";
+      }
+
+      if (!perfil) {
+        errorBox.style.display = "block";
+        errorBox.textContent = "Usuário não autorizado.";
+        return;
+      }
+
+      localStorage.setItem("usuario", email);
+      localStorage.setItem("perfil", perfil);
+      window.location.href = "index.html";
+    }
+
+    const usuarioLogado = localStorage.getItem("usuario");
+    const perfilLogado = localStorage.getItem("perfil");
+
+    if (usuarioLogado && perfilLogado) {
+      window.location.href = "index.html";
+    }
+  </script>
 </body>
 </html>
