@@ -21,6 +21,7 @@
     }
 
     * { box-sizing: border-box; }
+
     body {
       margin: 0;
       font-family: "Segoe UI", Arial, sans-serif;
@@ -84,6 +85,7 @@
 
     .chip { color: var(--muted); }
     .toggle-btn, .btn { cursor: pointer; }
+
     .toggle-btn.active {
       background: rgba(91,140,255,0.16);
       border-color: rgba(91,140,255,0.5);
@@ -192,7 +194,7 @@
     table {
       width: 100%;
       border-collapse: collapse;
-      min-width: 1300px;
+      min-width: 1250px;
     }
 
     th {
@@ -214,8 +216,13 @@
       vertical-align: top;
     }
 
-    tr.group-row { cursor: pointer; }
-    tr.group-row:hover td { background: rgba(255,255,255,0.02); }
+    tr.group-row {
+      cursor: pointer;
+    }
+
+    tr.group-row:hover td {
+      background: rgba(255,255,255,0.02);
+    }
 
     .status {
       padding: 6px 10px;
@@ -478,7 +485,7 @@
               <th>Segmento</th>
               <th>Data do Esboço</th>
               <th>Dias em Aberto</th>
-              <th>Status Painel</th>
+              <th>Status</th>
               <th>Situação do Tratamento</th>
               <th>Status SLA</th>
               <th>Qtde Itens</th>
@@ -526,8 +533,6 @@
               <option value="Em tratativa com Suprimentos">Em tratativa com Suprimentos</option>
               <option value="Em tratativa com Planejamento">Em tratativa com Planejamento</option>
               <option value="Aguardando retorno da área">Aguardando retorno da área</option>
-              <option value="Fechado sem PTR">Fechado sem PTR</option>
-              <option value="Encerrado">Encerrado</option>
             </select>
           </div>
           <div style="flex:0 0 auto;">
@@ -545,7 +550,6 @@
               <th>Descrição do Item</th>
               <th>Valor Total</th>
               <th>Observações</th>
-              <th>Status SAP</th>
               <th>Data de Atualização</th>
             </tr>
           </thead>
@@ -596,11 +600,7 @@
       const btnTime = document.getElementById("btnViewTime");
       const btnSolicitante = document.getElementById("btnViewSolicitante");
 
-      if (currentViewMode === "solicitante") {
-        banner.style.display = "block";
-      } else {
-        banner.style.display = "none";
-      }
+      banner.style.display = currentViewMode === "solicitante" ? "block" : "none";
 
       if (btnTime && btnSolicitante) {
         btnTime.classList.toggle("active", currentViewMode === "time");
@@ -675,7 +675,7 @@
             "Segmento": item["Segmento"] || "",
             "Data do Esboço": item["Data do Esboço"] || "",
             "Status": item["Status"] || "Esboço Pendente",
-            "Situação do Tratamento": item["Situação do Tratamento"] || "Em análise pelo time",
+            "Situação do Tratamento": item["Situação do Tratamento"] || "",
             "Valor Total": 0,
             "Qtde Itens": 0,
             "Data de Atualização": item["Data de Atualização"] || "",
@@ -693,7 +693,7 @@
         }
 
         group["Status"] = resolveGroupStatus(group["Status"], item["Status"]);
-        group["Situação do Tratamento"] = group["Situação do Tratamento"] || item["Situação do Tratamento"] || "Em análise pelo time";
+        group["Situação do Tratamento"] = resolveSituacaoTratamento(group["Situação do Tratamento"], item["Situação do Tratamento"], group["Status"]);
         group["Data de Atualização"] = getLatestDateText(group["Data de Atualização"], item["Data de Atualização"]);
       }
 
@@ -701,11 +701,17 @@
     }
 
     function resolveGroupStatus(currentStatus, nextStatus) {
-      const a = normalizeStatus(currentStatus);
-      const b = normalizeStatus(nextStatus);
+      const a = String(currentStatus || "").trim();
+      const b = String(nextStatus || "").trim();
 
-      if (a === "esboco pendente" || b === "esboco pendente") return "Esboço Pendente";
-      return "Esboço Fechado";
+      if (a === "Esboço Pendente" || b === "Esboço Pendente") return "Esboço Pendente";
+      if (a === "Esboço Fechado" || b === "Esboço Fechado") return "Esboço Fechado";
+      return a || b || "Esboço Pendente";
+    }
+
+    function resolveSituacaoTratamento(currentValue, nextValue, status) {
+      if (status !== "Esboço Pendente") return "";
+      return currentValue || nextValue || "Em análise pelo time";
     }
 
     function comparePrioridade(a, b) {
@@ -746,14 +752,6 @@
       option.value = value;
       option.textContent = value;
       select.appendChild(option);
-    }
-
-    function normalizeStatus(value) {
-      return String(value || "")
-        .trim()
-        .toLowerCase()
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "");
     }
 
     function parseAnyDate(value) {
@@ -802,7 +800,7 @@
     }
 
     function getStatusSla(prioridade, dataEsboco, status) {
-      if (normalizeStatus(status) === "esboco fechado") return "Fechado";
+      if (String(status || "").trim() === "Esboço Fechado") return "Fechado";
 
       const dias = getDiasEmAberto(dataEsboco);
       const peso = getPrioridadePeso(prioridade);
@@ -819,8 +817,7 @@
     }
 
     function getStatusClass(status) {
-      const s = normalizeStatus(status);
-      if (s === "esboco fechado") return "status-fechado";
+      if (String(status || "").trim() === "Esboço Fechado") return "status-fechado";
       return "status-pendente";
     }
 
@@ -870,16 +867,9 @@
       });
 
       filteredData.sort((a, b) => {
-        const statusA = normalizeStatus(a["Status"]);
-        const statusB = normalizeStatus(b["Status"]);
-
-        if (statusA !== statusB) {
-          if (statusA === "esboco pendente") return -1;
-          if (statusB === "esboco pendente") return 1;
-        }
-
         const pesoA = getPrioridadePeso(a["Prioridade"]);
         const pesoB = getPrioridadePeso(b["Prioridade"]);
+
         if (pesoA !== pesoB) return pesoA - pesoB;
 
         return getDiasEmAberto(b["Data do Esboço"]) - getDiasEmAberto(a["Data do Esboço"]);
@@ -902,9 +892,18 @@
 
     function updateStats() {
       const total = filteredData.length;
-      const pendentes = filteredData.filter(r => normalizeStatus(r["Status"]) === "esboco pendente").length;
-      const fechados = filteredData.filter(r => normalizeStatus(r["Status"]) === "esboco fechado").length;
-      const valorTotal = filteredData.reduce((acc, r) => acc + Number(r["Valor Total"] || 0), 0);
+
+      const pendentes = filteredData.filter(r =>
+        String(r["Status"] || "").trim() === "Esboço Pendente"
+      ).length;
+
+      const fechados = filteredData.filter(r =>
+        String(r["Status"] || "").trim() === "Esboço Fechado"
+      ).length;
+
+      const valorTotal = filteredData.reduce((acc, r) =>
+        acc + Number(r["Valor Total"] || 0), 0
+      );
 
       document.getElementById("statTotal").textContent = total;
       document.getElementById("statPendentes").textContent = pendentes;
@@ -928,6 +927,7 @@
       tableBody.innerHTML = filteredData.map((r, idx) => {
         const status = r["Status"] || "-";
         const statusSla = getStatusSla(r["Prioridade"], r["Data do Esboço"], status);
+        const situacao = status === "Esboço Pendente" ? (r["Situação do Tratamento"] || "-") : "-";
 
         return `
           <tr class="group-row" onclick="openModal(${idx})">
@@ -938,7 +938,7 @@
             <td>${formatDate(r["Data do Esboço"])}</td>
             <td>${getDiasEmAberto(r["Data do Esboço"])}</td>
             <td><span class="status ${getStatusClass(status)}">${escapeHtml(status)}</span></td>
-            <td><span class="status status-tratamento">${escapeHtml(r["Situação do Tratamento"] || "-")}</span></td>
+            <td>${status === "Esboço Pendente" ? `<span class="status status-tratamento">${escapeHtml(situacao)}</span>` : "-"}</td>
             <td><span class="status ${getSlaClass(statusSla)}">${escapeHtml(statusSla)}</span></td>
             <td>${r["Qtde Itens"] || 0}</td>
             <td>${formatCurrency(r["Valor Total"] || 0)}</td>
@@ -967,7 +967,7 @@
           <div class="value">${getDiasEmAberto(activeGroup["Data do Esboço"])}</div>
         </div>
         <div class="mini-card">
-          <div class="label">Status Painel</div>
+          <div class="label">Status</div>
           <div class="value">${escapeHtml(activeGroup["Status"] || "-")}</div>
         </div>
         <div class="mini-card">
@@ -977,7 +977,11 @@
       `;
 
       const editorBox = document.getElementById("editorBox");
-      if (currentViewMode === "time" || currentRole === "dev") {
+      const podeEditarTratativa =
+        (currentViewMode === "time" || currentRole === "dev") &&
+        activeGroup["Status"] === "Esboço Pendente";
+
+      if (podeEditarTratativa) {
         editorBox.style.display = "block";
         document.getElementById("tratamentoSelect").value =
           activeGroup["Situação do Tratamento"] || "Em análise pelo time";
@@ -991,7 +995,6 @@
           <td>${escapeHtml(item["Descrição do Item"] || "-")}</td>
           <td>${formatCurrency(item["Valor Total"] || 0)}</td>
           <td>${escapeHtml(item["Observações"] || "-")}</td>
-          <td>${escapeHtml(item["Status Esboço"] || "-")}</td>
           <td>${escapeHtml(item["Data de Atualização"] || "-")}</td>
         </tr>
       `).join("");
@@ -1006,6 +1009,7 @@
 
     function saveTratamento() {
       if (!activeGroup) return;
+      if (activeGroup["Status"] !== "Esboço Pendente") return;
 
       const novoValor = document.getElementById("tratamentoSelect").value;
       activeGroup["Situação do Tratamento"] = novoValor;
@@ -1024,7 +1028,12 @@
 
       saveOverride(activeGroup["Numero Esboço"], novoValor);
       applyFilters();
-      openModal(filteredData.findIndex(x => String(x["Numero Esboço"]) === String(activeGroup["Numero Esboço"])));
+
+      const newIndex = filteredData.findIndex(
+        x => String(x["Numero Esboço"]) === String(activeGroup["Numero Esboço"])
+      );
+
+      if (newIndex >= 0) openModal(newIndex);
     }
 
     function formatCurrency(value) {
