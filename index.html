@@ -21,7 +21,6 @@
     }
 
     * { box-sizing: border-box; }
-
     body {
       margin: 0;
       font-family: "Segoe UI", Arial, sans-serif;
@@ -44,6 +43,7 @@
       align-items: center;
       gap: 16px;
       padding: 18px 28px;
+      flex-wrap: wrap;
     }
 
     .title-wrap {
@@ -63,15 +63,8 @@
       font-size: 20px;
     }
 
-    .title {
-      font-size: 18px;
-      font-weight: 700;
-    }
-
-    .subtitle {
-      color: var(--muted);
-      font-size: 13px;
-    }
+    .title { font-size: 18px; font-weight: 700; }
+    .subtitle { color: var(--muted); font-size: 13px; }
 
     .header-right {
       display: flex;
@@ -80,34 +73,20 @@
       flex-wrap: wrap;
     }
 
-    .chip {
+    .chip, .toggle-btn, .btn {
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 12px;
       padding: 10px 14px;
       font-size: 13px;
-      color: var(--muted);
-    }
-
-    .role-badge {
-      background: rgba(91,140,255,0.12);
-      color: #cfe0ff;
-      border: 1px solid rgba(91,140,255,0.35);
-    }
-
-    .btn {
-      padding: 10px 14px;
-      border-radius: 12px;
-      border: 1px solid var(--border);
-      background: var(--surface);
       color: var(--text);
-      cursor: pointer;
-      font-size: 13px;
-      transition: 0.2s;
     }
 
-    .btn:hover {
-      border-color: var(--accent);
+    .chip { color: var(--muted); }
+    .toggle-btn, .btn { cursor: pointer; }
+    .toggle-btn.active {
+      background: rgba(91,140,255,0.16);
+      border-color: rgba(91,140,255,0.5);
     }
 
     .container {
@@ -139,7 +118,6 @@
       border: 1px solid var(--border);
       border-radius: 18px;
       padding: 22px;
-      min-height: 118px;
     }
 
     .card .label {
@@ -182,19 +160,8 @@
       outline: none;
     }
 
-    input {
-      min-width: 240px;
-      flex: 1;
-    }
-
-    select {
-      min-width: 180px;
-    }
-
-    .date-input {
-      min-width: 180px;
-      flex: 0 0 auto;
-    }
+    input { min-width: 240px; flex: 1; }
+    select { min-width: 180px; }
 
     .table-box {
       background: var(--surface);
@@ -225,7 +192,7 @@
     table {
       width: 100%;
       border-collapse: collapse;
-      min-width: 1600px;
+      min-width: 1300px;
     }
 
     th {
@@ -247,9 +214,8 @@
       vertical-align: top;
     }
 
-    tr:hover td {
-      background: rgba(255,255,255,0.02);
-    }
+    tr.group-row { cursor: pointer; }
+    tr.group-row:hover td { background: rgba(255,255,255,0.02); }
 
     .status {
       padding: 6px 10px;
@@ -270,6 +236,11 @@
       color: var(--success);
     }
 
+    .status-tratamento {
+      background: rgba(110,193,255,0.14);
+      color: var(--info);
+    }
+
     .status-sla-noprazo {
       background: rgba(48,209,140,0.15);
       color: var(--success);
@@ -285,46 +256,130 @@
       color: var(--danger);
     }
 
-    .status-tratamento {
-      background: rgba(110,193,255,0.14);
-      color: var(--info);
+    .text-muted { color: var(--muted); }
+    .empty { padding: 28px 20px; color: var(--muted); font-size: 14px; }
+
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.55);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
     }
 
-    .text-muted {
+    .modal-overlay.open { display: flex; }
+
+    .modal {
+      width: min(1200px, 96vw);
+      max-height: 90vh;
+      overflow: auto;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 22px;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: start;
+      margin-bottom: 18px;
+    }
+
+    .modal-title {
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    .modal-sub {
       color: var(--muted);
+      font-size: 13px;
+      margin-top: 6px;
     }
 
-    .wrap {
-      max-width: 340px;
-      white-space: normal;
-      word-break: break-word;
+    .modal-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .mini-card {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+    }
+
+    .mini-card .label {
+      color: var(--muted);
+      font-size: 11px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .mini-card .value {
+      font-size: 16px;
+      font-weight: 700;
       line-height: 1.4;
     }
 
-    .empty {
-      padding: 28px 20px;
+    .editor-box {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 18px;
+    }
+
+    .editor-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: end;
+    }
+
+    .editor-row > div {
+      flex: 1;
+      min-width: 240px;
+    }
+
+    .editor-row label {
+      display: block;
+      font-size: 12px;
       color: var(--muted);
-      font-size: 14px;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+    }
+
+    .items-title {
+      font-size: 16px;
+      font-weight: 700;
+      margin: 10px 0 12px;
+    }
+
+    .small-btn {
+      padding: 10px 14px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      cursor: pointer;
     }
 
     @media (max-width: 1100px) {
-      .cards {
-        grid-template-columns: repeat(2, 1fr);
-      }
+      .cards { grid-template-columns: repeat(2, 1fr); }
+      .modal-grid { grid-template-columns: repeat(2, 1fr); }
     }
 
     @media (max-width: 700px) {
-      .cards {
-        grid-template-columns: 1fr;
-      }
-
-      .container {
-        padding: 16px;
-      }
-
-      .header {
-        padding: 14px 16px;
-      }
+      .cards, .modal-grid { grid-template-columns: 1fr; }
+      .container { padding: 16px; }
+      .header { padding: 14px 16px; }
     }
   </style>
 </head>
@@ -339,15 +394,19 @@
     </div>
 
     <div class="header-right">
+      <div id="viewToggle" style="display:none; gap:10px;">
+        <button class="toggle-btn active" id="btnViewTime" onclick="setViewMode('time')">Visão Time</button>
+        <button class="toggle-btn" id="btnViewSolicitante" onclick="setViewMode('solicitante')">Visão Solicitante</button>
+      </div>
       <div class="chip" id="userChip">Usuário: -</div>
-      <div class="chip role-badge" id="roleChip">Perfil: -</div>
+      <div class="chip" id="roleChip">Perfil: -</div>
       <button class="btn" onclick="logout()">Sair</button>
     </div>
   </div>
 
   <div class="container">
     <div class="banner" id="solicitanteBanner">
-      Você está na visão de solicitante. Apenas seus próprios registros serão exibidos.
+      Você está na visão de solicitante. Acompanhe o andamento dos seus esboços.
     </div>
 
     <div class="cards">
@@ -397,15 +456,15 @@
         <option value="">Todos os responsáveis</option>
       </select>
 
-      <input id="dataInicioFilter" class="date-input" type="date" onchange="applyFilters()" />
-      <input id="dataFimFilter" class="date-input" type="date" onchange="applyFilters()" />
+      <input id="dataInicioFilter" type="date" onchange="applyFilters()" />
+      <input id="dataFimFilter" type="date" onchange="applyFilters()" />
 
       <button class="btn" onclick="clearFilters()">Limpar filtros</button>
     </div>
 
     <div class="table-box">
       <div class="table-head">
-        <div>Fila de Esboços</div>
+        <div>Fila de Esboços Agrupada</div>
         <div class="table-count" id="tableCount">0 registros</div>
       </div>
 
@@ -418,17 +477,13 @@
               <th>Nº Esboço</th>
               <th>Segmento</th>
               <th>Data do Esboço</th>
-              <th>SLA (dias)</th>
               <th>Dias em Aberto</th>
-              <th>Status SLA</th>
-              <th>Status</th>
+              <th>Status Painel</th>
               <th>Situação do Tratamento</th>
-              <th>Status Esboço</th>
-              <th>Descrição do Item</th>
-              <th>Código do Item</th>
+              <th>Status SLA</th>
+              <th>Qtde Itens</th>
               <th>Valor Total</th>
-              <th>Observações</th>
-              <th>Data de Atualização</th>
+              <th>Última Atualização</th>
             </tr>
           </thead>
           <tbody id="tableBody"></tbody>
@@ -441,13 +496,75 @@
     </div>
   </div>
 
+  <div class="modal-overlay" id="detailModal">
+    <div class="modal">
+      <div class="modal-header">
+        <div>
+          <div class="modal-title" id="modalTitle">Esboço</div>
+          <div class="modal-sub" id="modalSub">Detalhes</div>
+        </div>
+        <button class="small-btn" onclick="closeModal()">Fechar</button>
+      </div>
+
+      <div class="modal-grid" id="modalCards"></div>
+
+      <div class="editor-box" id="editorBox" style="display:none;">
+        <div class="editor-row">
+          <div>
+            <label for="tratamentoSelect">Situação do Tratamento</label>
+            <select id="tratamentoSelect">
+              <option value="Em análise pelo time">Em análise pelo time</option>
+              <option value="Aguardando validação">Aguardando validação</option>
+              <option value="Aguardando ajuste de informações">Aguardando ajuste de informações</option>
+              <option value="Aguardando correção do pedido">Aguardando correção do pedido</option>
+              <option value="Sem saldo em estoque">Sem saldo em estoque</option>
+              <option value="Material indisponível">Material indisponível</option>
+              <option value="Erro cadastral">Erro cadastral</option>
+              <option value="Erro no SAP">Erro no SAP</option>
+              <option value="Divergência de dados">Divergência de dados</option>
+              <option value="Em tratativa com Estoque">Em tratativa com Estoque</option>
+              <option value="Em tratativa com Suprimentos">Em tratativa com Suprimentos</option>
+              <option value="Em tratativa com Planejamento">Em tratativa com Planejamento</option>
+              <option value="Aguardando retorno da área">Aguardando retorno da área</option>
+              <option value="Fechado sem PTR">Fechado sem PTR</option>
+              <option value="Encerrado">Encerrado</option>
+            </select>
+          </div>
+          <div style="flex:0 0 auto;">
+            <button class="small-btn" onclick="saveTratamento()">Salvar tratativa</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="items-title">Itens do Esboço</div>
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>Código do Item</th>
+              <th>Descrição do Item</th>
+              <th>Valor Total</th>
+              <th>Observações</th>
+              <th>Status SAP</th>
+              <th>Data de Atualização</th>
+            </tr>
+          </thead>
+          <tbody id="itemsBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
   <script>
     const LOGIN_PAGE = "login.html";
 
     let rawData = [];
+    let groupedData = [];
     let filteredData = [];
     let currentUser = null;
     let currentRole = null;
+    let currentViewMode = "time";
+    let activeGroup = null;
 
     function checkAuth() {
       const usuario = localStorage.getItem("usuario");
@@ -460,16 +577,42 @@
 
       currentUser = usuario.trim().toLowerCase();
       currentRole = perfil;
+      currentViewMode = perfil === "solicitante" ? "solicitante" : "time";
 
       document.getElementById("userChip").textContent = "Usuário: " + currentUser;
       document.getElementById("roleChip").textContent =
-        "Perfil: " + (currentRole === "time" ? "Time Interno" : "Solicitante");
+        "Perfil: " + (currentRole === "dev" ? "Desenvolvedor" : currentRole === "time" ? "Time Interno" : "Solicitante");
 
-      if (currentRole === "solicitante") {
-        document.getElementById("solicitanteBanner").style.display = "block";
+      if (currentRole === "dev") {
+        document.getElementById("viewToggle").style.display = "flex";
       }
 
+      renderViewMode();
       return true;
+    }
+
+    function renderViewMode() {
+      const banner = document.getElementById("solicitanteBanner");
+      const btnTime = document.getElementById("btnViewTime");
+      const btnSolicitante = document.getElementById("btnViewSolicitante");
+
+      if (currentViewMode === "solicitante") {
+        banner.style.display = "block";
+      } else {
+        banner.style.display = "none";
+      }
+
+      if (btnTime && btnSolicitante) {
+        btnTime.classList.toggle("active", currentViewMode === "time");
+        btnSolicitante.classList.toggle("active", currentViewMode === "solicitante");
+      }
+    }
+
+    function setViewMode(mode) {
+      if (currentRole !== "dev") return;
+      currentViewMode = mode;
+      renderViewMode();
+      applyFilters();
     }
 
     function logout() {
@@ -484,14 +627,100 @@
         const json = await response.json();
 
         rawData = Array.isArray(json.records) ? json.records : [];
-        document.getElementById("updatedAt").textContent = "Atualizado: " + (json.updated_at || "-");
+        applyOverridesFromLocal();
+        groupedData = groupByEsboco(rawData);
 
+        document.getElementById("updatedAt").textContent = "Atualizado: " + (json.updated_at || "-");
         populateFilters();
         applyFilters();
       } catch (error) {
         document.getElementById("updatedAt").textContent = "Erro ao carregar dados";
         console.error(error);
       }
+    }
+
+    function applyOverridesFromLocal() {
+      const saved = JSON.parse(localStorage.getItem("tratativas_esboco") || "{}");
+
+      rawData = rawData.map(item => {
+        const key = String(item["Numero Esboço"] || "");
+        const override = saved[key];
+        if (!override) return item;
+
+        return {
+          ...item,
+          "Situação do Tratamento": override
+        };
+      });
+    }
+
+    function saveOverride(numeroEsboco, tratamento) {
+      const saved = JSON.parse(localStorage.getItem("tratativas_esboco") || "{}");
+      saved[String(numeroEsboco)] = tratamento;
+      localStorage.setItem("tratativas_esboco", JSON.stringify(saved));
+    }
+
+    function groupByEsboco(data) {
+      const map = new Map();
+
+      for (const item of data) {
+        const key = String(item["Numero Esboço"] || "").trim();
+        if (!key) continue;
+
+        if (!map.has(key)) {
+          map.set(key, {
+            "Numero Esboço": key,
+            "Prioridade": item["Prioridade"] || "",
+            "Responsavel Esboço": item["Responsavel Esboço"] || "",
+            "Segmento": item["Segmento"] || "",
+            "Data do Esboço": item["Data do Esboço"] || "",
+            "Status": item["Status"] || "Esboço Pendente",
+            "Situação do Tratamento": item["Situação do Tratamento"] || "Em análise pelo time",
+            "Valor Total": 0,
+            "Qtde Itens": 0,
+            "Data de Atualização": item["Data de Atualização"] || "",
+            "Itens": []
+          });
+        }
+
+        const group = map.get(key);
+        group["Itens"].push(item);
+        group["Qtde Itens"] += 1;
+        group["Valor Total"] += Number(item["Valor Total"] || 0);
+
+        if (comparePrioridade(item["Prioridade"], group["Prioridade"]) < 0) {
+          group["Prioridade"] = item["Prioridade"] || group["Prioridade"];
+        }
+
+        group["Status"] = resolveGroupStatus(group["Status"], item["Status"]);
+        group["Situação do Tratamento"] = group["Situação do Tratamento"] || item["Situação do Tratamento"] || "Em análise pelo time";
+        group["Data de Atualização"] = getLatestDateText(group["Data de Atualização"], item["Data de Atualização"]);
+      }
+
+      return Array.from(map.values());
+    }
+
+    function resolveGroupStatus(currentStatus, nextStatus) {
+      const a = normalizeStatus(currentStatus);
+      const b = normalizeStatus(nextStatus);
+
+      if (a === "esboco pendente" || b === "esboco pendente") return "Esboço Pendente";
+      return "Esboço Fechado";
+    }
+
+    function comparePrioridade(a, b) {
+      return getPrioridadePeso(a) - getPrioridadePeso(b);
+    }
+
+    function getLatestDateText(a, b) {
+      const da = parseAnyDate(a);
+      const db = parseAnyDate(b);
+
+      if (!da && !db) return a || b || "";
+      if (!da) return b || "";
+      if (!db) return a || "";
+
+      return db > da ? b : a;
     }
 
     function populateFilters() {
@@ -503,61 +732,52 @@
       segmentoFilter.innerHTML = '<option value="">Todos os segmentos</option>';
       responsavelFilter.innerHTML = '<option value="">Todos os responsáveis</option>';
 
-      const prioridades = [...new Set(rawData.map(r => r["Prioridade"]).filter(Boolean))].sort();
-      const segmentos = [...new Set(rawData.map(r => r["Segmento"]).filter(Boolean))].sort();
-      const responsaveis = [...new Set(rawData.map(r => r["Responsavel Esboço"]).filter(Boolean))].sort();
+      const prioridades = [...new Set(groupedData.map(r => r["Prioridade"]).filter(Boolean))].sort();
+      const segmentos = [...new Set(groupedData.map(r => r["Segmento"]).filter(Boolean))].sort();
+      const responsaveis = [...new Set(groupedData.map(r => r["Responsavel Esboço"]).filter(Boolean))].sort();
 
-      prioridades.forEach(item => {
-        const option = document.createElement("option");
-        option.value = item;
-        option.textContent = item;
-        prioridadeFilter.appendChild(option);
-      });
-
-      segmentos.forEach(item => {
-        const option = document.createElement("option");
-        option.value = item;
-        option.textContent = item;
-        segmentoFilter.appendChild(option);
-      });
-
-      responsaveis.forEach(item => {
-        const option = document.createElement("option");
-        option.value = item;
-        option.textContent = item;
-        responsavelFilter.appendChild(option);
-      });
+      prioridades.forEach(item => appendOption(prioridadeFilter, item));
+      segmentos.forEach(item => appendOption(segmentoFilter, item));
+      responsaveis.forEach(item => appendOption(responsavelFilter, item));
     }
 
-    function normalizeDate(value) {
+    function appendOption(select, value) {
+      const option = document.createElement("option");
+      option.value = value;
+      option.textContent = value;
+      select.appendChild(option);
+    }
+
+    function normalizeStatus(value) {
+      return String(value || "")
+        .trim()
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "");
+    }
+
+    function parseAnyDate(value) {
       if (!value) return null;
 
-      const d = new Date(value);
-      if (!isNaN(d.getTime())) {
-        d.setHours(0, 0, 0, 0);
-        return d;
-      }
+      const iso = new Date(value);
+      if (!isNaN(iso.getTime())) return iso;
 
-      const br = String(value).match(/^(\d{2})\/(\d{2})\/(\d{4})/);
-      if (br) {
-        const parsed = new Date(`${br[3]}-${br[2]}-${br[1]}T00:00:00`);
-        if (!isNaN(parsed.getTime())) {
-          parsed.setHours(0, 0, 0, 0);
-          return parsed;
-        }
+      const brDateTime = String(value).match(/^(\d{2})\/(\d{2})\/(\d{4})(?:\s+(\d{2}):(\d{2}))?/);
+      if (brDateTime) {
+        const hh = brDateTime[4] || "00";
+        const mm = brDateTime[5] || "00";
+        const dt = new Date(`${brDateTime[3]}-${brDateTime[2]}-${brDateTime[1]}T${hh}:${mm}:00`);
+        if (!isNaN(dt.getTime())) return dt;
       }
 
       return null;
     }
 
-    function getSlaDias(prioridade) {
-      const p = String(prioridade || "").toLowerCase();
-
-      if (p === "alta") return 2;
-      if (p === "média" || p === "media") return 5;
-      if (p === "baixa") return 10;
-
-      return 0;
+    function normalizeDate(value) {
+      const d = parseAnyDate(value);
+      if (!d) return null;
+      d.setHours(0, 0, 0, 0);
+      return d;
     }
 
     function getDiasEmAberto(dataTexto) {
@@ -571,36 +791,6 @@
       return Math.max(0, Math.floor(diffMs / (1000 * 60 * 60 * 24)));
     }
 
-    function getStatusSla(prioridade, dataEsboco, status) {
-      if (status === "Esboço Fechado") return "Fechado";
-
-      const sla = getSlaDias(prioridade);
-      const dias = getDiasEmAberto(dataEsboco);
-
-      if (dias > sla) return "Vencido";
-      if (dias === sla) return "Vence hoje";
-      return "No prazo";
-    }
-
-    function getStatusClass(status) {
-      const s = String(status || "").toLowerCase();
-
-      if (s === "esboço pendente" || s === "esboco pendente") return "status-pendente";
-      if (s === "esboço fechado" || s === "esboco fechado") return "status-fechado";
-
-      return "status-pendente";
-    }
-
-    function getSlaClass(statusSla) {
-      const s = String(statusSla || "").toLowerCase();
-
-      if (s === "no prazo") return "status-sla-noprazo";
-      if (s === "vence hoje") return "status-sla-vencehoje";
-      if (s === "vencido") return "status-sla-vencido";
-
-      return "status-sla-noprazo";
-    }
-
     function getPrioridadePeso(prioridade) {
       const p = String(prioridade || "").toLowerCase();
 
@@ -609,6 +799,36 @@
       if (p === "baixa") return 3;
 
       return 99;
+    }
+
+    function getStatusSla(prioridade, dataEsboco, status) {
+      if (normalizeStatus(status) === "esboco fechado") return "Fechado";
+
+      const dias = getDiasEmAberto(dataEsboco);
+      const peso = getPrioridadePeso(prioridade);
+
+      if (peso === 1 && dias > 2) return "Vencido";
+      if (peso === 2 && dias > 5) return "Vencido";
+      if (peso === 3 && dias > 10) return "Vencido";
+
+      if (peso === 1 && dias === 2) return "Vence hoje";
+      if (peso === 2 && dias === 5) return "Vence hoje";
+      if (peso === 3 && dias === 10) return "Vence hoje";
+
+      return "No prazo";
+    }
+
+    function getStatusClass(status) {
+      const s = normalizeStatus(status);
+      if (s === "esboco fechado") return "status-fechado";
+      return "status-pendente";
+    }
+
+    function getSlaClass(statusSla) {
+      const s = String(statusSla || "").toLowerCase();
+      if (s === "vencido") return "status-sla-vencido";
+      if (s === "vence hoje") return "status-sla-vencehoje";
+      return "status-sla-noprazo";
     }
 
     function applyFilters() {
@@ -623,24 +843,24 @@
       const dtInicio = dataInicio ? new Date(dataInicio + "T00:00:00") : null;
       const dtFim = dataFim ? new Date(dataFim + "T00:00:00") : null;
 
-      filteredData = rawData.filter(r => {
+      filteredData = groupedData.filter(r => {
+        if (currentViewMode === "solicitante") {
+          return false;
+        }
+
         const texto = `
           ${r["Prioridade"] || ""}
           ${r["Responsavel Esboço"] || ""}
           ${r["Numero Esboço"] || ""}
           ${r["Segmento"] || ""}
-          ${r["Descrição do Item"] || ""}
-          ${r["Observações"] || ""}
-          ${r["Status"] || ""}
           ${r["Situação do Tratamento"] || ""}
-          ${r["Status Esboço"] || ""}
         `.toLowerCase();
 
         if (search && !texto.includes(search)) return false;
-        if (status && (r["Status"] || "") !== status) return false;
-        if (prioridade && (r["Prioridade"] || "") !== prioridade) return false;
-        if (segmento && (r["Segmento"] || "") !== segmento) return false;
-        if (responsavel && (r["Responsavel Esboço"] || "") !== responsavel) return false;
+        if (status && String(r["Status"] || "").trim() !== status) return false;
+        if (prioridade && String(r["Prioridade"] || "").trim() !== prioridade) return false;
+        if (segmento && String(r["Segmento"] || "").trim() !== segmento) return false;
+        if (responsavel && String(r["Responsavel Esboço"] || "").trim() !== responsavel) return false;
 
         const dataRegistro = normalizeDate(r["Data do Esboço"]);
         if (dtInicio && (!dataRegistro || dataRegistro < dtInicio)) return false;
@@ -650,12 +870,12 @@
       });
 
       filteredData.sort((a, b) => {
-        const statusA = String(a["Status"] || "");
-        const statusB = String(b["Status"] || "");
+        const statusA = normalizeStatus(a["Status"]);
+        const statusB = normalizeStatus(b["Status"]);
 
         if (statusA !== statusB) {
-          if (statusA === "Esboço Pendente") return -1;
-          if (statusB === "Esboço Pendente") return 1;
+          if (statusA === "esboco pendente") return -1;
+          if (statusB === "esboco pendente") return 1;
         }
 
         const pesoA = getPrioridadePeso(a["Prioridade"]);
@@ -682,8 +902,8 @@
 
     function updateStats() {
       const total = filteredData.length;
-      const pendentes = filteredData.filter(r => (r["Status"] || "") === "Esboço Pendente").length;
-      const fechados = filteredData.filter(r => (r["Status"] || "") === "Esboço Fechado").length;
+      const pendentes = filteredData.filter(r => normalizeStatus(r["Status"]) === "esboco pendente").length;
+      const fechados = filteredData.filter(r => normalizeStatus(r["Status"]) === "esboco fechado").length;
       const valorTotal = filteredData.reduce((acc, r) => acc + Number(r["Valor Total"] || 0), 0);
 
       document.getElementById("statTotal").textContent = total;
@@ -705,31 +925,106 @@
 
       emptyState.style.display = "none";
 
-      tableBody.innerHTML = filteredData.map(r => {
+      tableBody.innerHTML = filteredData.map((r, idx) => {
         const status = r["Status"] || "-";
         const statusSla = getStatusSla(r["Prioridade"], r["Data do Esboço"], status);
 
         return `
-          <tr>
+          <tr class="group-row" onclick="openModal(${idx})">
             <td>${escapeHtml(r["Prioridade"] || "-")}</td>
             <td>${escapeHtml(r["Responsavel Esboço"] || "-")}</td>
             <td>${escapeHtml(r["Numero Esboço"] || "-")}</td>
             <td>${escapeHtml(r["Segmento"] || "-")}</td>
             <td>${formatDate(r["Data do Esboço"])}</td>
-            <td>${getSlaDias(r["Prioridade"])}</td>
             <td>${getDiasEmAberto(r["Data do Esboço"])}</td>
-            <td><span class="status ${getSlaClass(statusSla)}">${escapeHtml(statusSla)}</span></td>
             <td><span class="status ${getStatusClass(status)}">${escapeHtml(status)}</span></td>
             <td><span class="status status-tratamento">${escapeHtml(r["Situação do Tratamento"] || "-")}</span></td>
-            <td>${escapeHtml(r["Status Esboço"] || "-")}</td>
-            <td><div class="wrap">${escapeHtml(r["Descrição do Item"] || "-")}</div></td>
-            <td>${escapeHtml(r["Código do Item"] || "-")}</td>
+            <td><span class="status ${getSlaClass(statusSla)}">${escapeHtml(statusSla)}</span></td>
+            <td>${r["Qtde Itens"] || 0}</td>
             <td>${formatCurrency(r["Valor Total"] || 0)}</td>
-            <td><div class="wrap text-muted">${escapeHtml(r["Observações"] || "-")}</div></td>
             <td>${escapeHtml(r["Data de Atualização"] || "-")}</td>
           </tr>
         `;
       }).join("");
+    }
+
+    function openModal(index) {
+      activeGroup = filteredData[index];
+      if (!activeGroup) return;
+
+      document.getElementById("modalTitle").textContent = `Esboço ${activeGroup["Numero Esboço"] || "-"}`;
+      document.getElementById("modalSub").textContent = `${activeGroup["Responsavel Esboço"] || "-"} • ${activeGroup["Segmento"] || "-"}`;
+
+      const statusSla = getStatusSla(activeGroup["Prioridade"], activeGroup["Data do Esboço"], activeGroup["Status"]);
+
+      document.getElementById("modalCards").innerHTML = `
+        <div class="mini-card">
+          <div class="label">Prioridade</div>
+          <div class="value">${escapeHtml(activeGroup["Prioridade"] || "-")}</div>
+        </div>
+        <div class="mini-card">
+          <div class="label">Dias em Aberto</div>
+          <div class="value">${getDiasEmAberto(activeGroup["Data do Esboço"])}</div>
+        </div>
+        <div class="mini-card">
+          <div class="label">Status Painel</div>
+          <div class="value">${escapeHtml(activeGroup["Status"] || "-")}</div>
+        </div>
+        <div class="mini-card">
+          <div class="label">Status SLA</div>
+          <div class="value">${escapeHtml(statusSla)}</div>
+        </div>
+      `;
+
+      const editorBox = document.getElementById("editorBox");
+      if (currentViewMode === "time" || currentRole === "dev") {
+        editorBox.style.display = "block";
+        document.getElementById("tratamentoSelect").value =
+          activeGroup["Situação do Tratamento"] || "Em análise pelo time";
+      } else {
+        editorBox.style.display = "none";
+      }
+
+      document.getElementById("itemsBody").innerHTML = activeGroup["Itens"].map(item => `
+        <tr>
+          <td>${escapeHtml(item["Código do Item"] || "-")}</td>
+          <td>${escapeHtml(item["Descrição do Item"] || "-")}</td>
+          <td>${formatCurrency(item["Valor Total"] || 0)}</td>
+          <td>${escapeHtml(item["Observações"] || "-")}</td>
+          <td>${escapeHtml(item["Status Esboço"] || "-")}</td>
+          <td>${escapeHtml(item["Data de Atualização"] || "-")}</td>
+        </tr>
+      `).join("");
+
+      document.getElementById("detailModal").classList.add("open");
+    }
+
+    function closeModal() {
+      document.getElementById("detailModal").classList.remove("open");
+      activeGroup = null;
+    }
+
+    function saveTratamento() {
+      if (!activeGroup) return;
+
+      const novoValor = document.getElementById("tratamentoSelect").value;
+      activeGroup["Situação do Tratamento"] = novoValor;
+
+      groupedData = groupedData.map(group =>
+        String(group["Numero Esboço"]) === String(activeGroup["Numero Esboço"])
+          ? { ...group, "Situação do Tratamento": novoValor }
+          : group
+      );
+
+      rawData = rawData.map(item =>
+        String(item["Numero Esboço"]) === String(activeGroup["Numero Esboço"])
+          ? { ...item, "Situação do Tratamento": novoValor }
+          : item
+      );
+
+      saveOverride(activeGroup["Numero Esboço"], novoValor);
+      applyFilters();
+      openModal(filteredData.findIndex(x => String(x["Numero Esboço"]) === String(activeGroup["Numero Esboço"])));
     }
 
     function formatCurrency(value) {
@@ -741,15 +1036,8 @@
 
     function formatDate(value) {
       if (!value) return "-";
-
-      const d = new Date(value);
-      if (!isNaN(d.getTime())) {
-        return d.toLocaleDateString("pt-BR");
-      }
-
-      const br = String(value).match(/^(\d{2})\/(\d{2})\/(\d{4})/);
-      if (br) return `${br[1]}/${br[2]}/${br[3]}`;
-
+      const d = parseAnyDate(value);
+      if (d) return d.toLocaleDateString("pt-BR");
       return escapeHtml(String(value));
     }
 
