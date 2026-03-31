@@ -2,8 +2,11 @@ name: Atualizar data.json via Databricks
 
 on:
   schedule:
-    - cron: "0 */3 * * *"  # roda a cada 3 horas
-  workflow_dispatch:       # permite rodar manualmente
+    - cron: "0 */3 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   update-data:
@@ -11,10 +14,10 @@ jobs:
 
     steps:
       - name: Baixar repositório
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Instalar Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: "3.11"
 
@@ -30,8 +33,8 @@ jobs:
 
       - name: Commit e push do data.json
         run: |
-          git config user.name "github-actions"
-          git config user.email "actions@github.com"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add data.json
           git diff --cached --quiet || git commit -m "🔄 Atualiza data.json automaticamente"
           git push
