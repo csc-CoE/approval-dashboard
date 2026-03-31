@@ -146,29 +146,29 @@ def parse_results(payload):
     for row in rows:
         r = dict(zip(columns, row))
 
-        status_esboco = to_str(r.get("Status Esboço"))
-        numero_ptr = to_str(r.get("Número do PTR"))
+        status_oficial = to_str(r.get("Status Esboço")).strip()
+        if not status_oficial:
+            status_oficial = "Esboço Pendente"
+
+        situacao_tratamento = "Em análise pelo time" if status_oficial == "Esboço Pendente" else ""
 
         records.append({
             "Prioridade": to_str(r.get("Prioridade")),
             "Responsavel Esboço": to_str(r.get("Responsavel Esboço")),
             "Numero Esboço": to_str(r.get("Numero Esboço")),
-            "Número do PTR": numero_ptr,
             "Segmento": to_str(r.get("Segmento")),
             "Data do Esboço": to_str(r.get("Data do Esboço")),
             "Valor Total": to_float(r.get("Valor Total")),
             "Observações": to_str(r.get("Observações")),
             "Código do Item": to_str(r.get("Código do Item")),
             "Descrição do Item": to_str(r.get("Descrição do Item")),
-            "Status Esboço": status_esboco,
+            "Status": status_oficial,
             "Data de Atualização": to_str(r.get("Data de Atualização")),
-            "Status": map_status(status_esboco, numero_ptr),
-            "Situação do Tratamento": map_situacao_tratamento(status_esboco),
+            "Situação do Tratamento": situacao_tratamento,
             "historico": [],
         })
 
     return records
-
 
 def main():
     print("Consultando Databricks...")
