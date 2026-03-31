@@ -791,30 +791,36 @@
       return Math.max(0, Math.floor(diffMs / (1000 * 60 * 60 * 24)));
     }
 
-    function getPrioridadePeso(prioridade) {
-      const p = String(prioridade || "").toLowerCase();
-      if (p === "alta") return 1;
-      if (p === "média" || p === "media") return 2;
-      if (p === "baixa") return 3;
-      return 99;
+  function getPrioridadePeso(prioridade) {
+  const p = String(prioridade || "")
+    .trim()
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
+
+  if (p === "alto") return 1;
+  if (p === "medio") return 2;
+  if (p === "baixo") return 3;
+
+  return 99;
     }
 
     function getStatusSla(prioridade, dataEsboco, status) {
-      if (String(status || "").trim() === "Esboço Fechado") return "Fechado";
+  if (String(status || "").trim() === "Esboço Fechado") return "Fechado";
 
-      const dias = getDiasEmAberto(dataEsboco);
-      const peso = getPrioridadePeso(prioridade);
+  const dias = getDiasEmAberto(dataEsboco);
+  const peso = getPrioridadePeso(prioridade);
 
-      let limite = 0;
-      if (peso === 1) limite = 5;
-      else if (peso === 2) limite = 10;
-      else if (peso === 3) limite = 15;
-      else return "Sem regra";
+  let limite = 0;
+  if (peso === 1) limite = 5;       // Alto
+  else if (peso === 2) limite = 10; // Médio
+  else if (peso === 3) limite = 15; // Baixo
+  else return "Sem regra";
 
-      if (dias > limite) return "Vencido";
-      if (dias === limite) return "Vence hoje";
-      return "No prazo";
-    }
+  if (dias > limite) return "Vencido";
+  if (dias === limite) return "Vence hoje";
+  return "No prazo";
+}
 
     function getStatusClass(status) {
       if (String(status || "").trim() === "Esboço Fechado") return "status-fechado";
@@ -863,16 +869,14 @@
         return true;
       });
 
-      filteredData.sort((a, b) => {
-        const pesoA = getPrioridadePeso(a["Prioridade"]);
-        const pesoB = getPrioridadePeso(b["Prioridade"]);
+     filteredData.sort((a, b) => {
+  const pesoA = getPrioridadePeso(a["Prioridade"]);
+  const pesoB = getPrioridadePeso(b["Prioridade"]);
 
-        if (pesoA !== pesoB) return pesoA - pesoB;
-        return getDiasEmAberto(b["Data do Esboço"]) - getDiasEmAberto(a["Data do Esboço"]);
-      });
+  if (pesoA !== pesoB) return pesoA - pesoB;
 
-      updateStats();
-      renderTable();
+  return getDiasEmAberto(b["Data do Esboço"]) - getDiasEmAberto(a["Data do Esboço"]);
+});
     }
 
     function clearFilters() {
