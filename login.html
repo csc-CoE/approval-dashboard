@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<title>Login - Painel Alloha Fibra</title>
+
+<style>
+body {
+  margin:0;
+  font-family: "Segoe UI", Arial, sans-serif;
+  background: linear-gradient(135deg, #00124f, #0031a0, #00124f);
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  animation: bgMove 12s infinite alternate ease-in-out;
+  background-size: 400% 400%;
+}
+@keyframes bgMove {
+  from { background-position: 0% 0%; }
+  to   { background-position: 100% 100%; }
+}
+#card {
+  background:white;
+  width:350px;
+  padding:35px 30px;
+  border-radius:15px;
+  box-shadow:0 10px 35px rgba(0,0,0,0.25);
+  text-align:center;
+  animation: fadeIn 0.8s ease-out;
+}
+@keyframes fadeIn {
+  from { opacity:0; transform: translateY(20px); }
+  to   { opacity:1; transform: translateY(0); }
+}
+#card img {
+  width:160px;
+  margin-bottom:10px;
+}
+h2 {
+  margin:10px 0 20px 0;
+  font-size:22px;
+  color:#00124f;
+}
+input {
+  width:100%;
+  padding:12px;
+  border-radius:8px;
+  border:1px solid #ccc;
+  margin-top:10px;
+  font-size:15px;
+  transition:0.2s;
+}
+input:focus {
+  border-color:#0031a0;
+  box-shadow:0 0 4px #0031a0;
+  outline:none;
+}
+button {
+  width:100%;
+  padding:12px;
+  margin-top:20px;
+  background:#00124f;
+  color:white;
+  font-size:16px;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+  transition:0.2s;
+  font-weight:bold;
+}
+button:hover {
+  background:#0031a0;
+  transform:scale(1.02);
+}
+#error {
+  color:#cc0000;
+  margin-top:10px;
+  font-size:14px;
+  font-weight:bold;
+  display:none;
+  animation: fadeIn 0.4s;
+}
+@keyframes shake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  50% { transform: translateX(5px); }
+  75% { transform: translateX(-5px); }
+  100% { transform: translateX(0); }
+}
+</style>
+</head>
+
+<body>
+
+<div id="card">
+  <img src="logo_alloha_positivo.png" alt="Alloha Fibra">
+
+  <h2>Acesso Restrito</h2>
+  <p style="color:#444; font-size:14px; margin-bottom:20px;">
+    Entre com seu e-mail autorizado
+  </p>
+
+  <input id="email" type="email" placeholder="seuemail@alloha.com" autocomplete="off">
+  <button onclick="login()">Entrar</button>
+
+  <div id="error">Usuário não autorizado.</div>
+</div>
+
+<script>
+const usuarios = {
+  time: [
+    "wender.souza@alloha.com",
+    "luiza.carvalho@alloha.com",
+    "raphael.ramos@alloha.com"
+  ],
+  solicitante: [
+  "rafael.liao@alloha.com"
+  ]
+};
+
+function login() {
+  const email = document.getElementById("email").value.trim().toLowerCase();
+  const errorBox = document.getElementById("error");
+
+  let perfil = null;
+
+  if (usuarios.time.includes(email)) {
+    perfil = "time";
+  } else if (usuarios.solicitante.includes(email)) {
+    perfil = "solicitante";
+  }
+
+  if (perfil) {
+    localStorage.setItem("usuario", email);
+    localStorage.setItem("perfil", perfil);
+    window.location.href = "index.html";
+  } else {
+    errorBox.style.display = "block";
+    errorBox.innerText = "Usuário não autorizado.";
+    errorBox.style.animation = "shake 0.3s";
+  }
+}
+</script>
+
+</body>
+</html>
