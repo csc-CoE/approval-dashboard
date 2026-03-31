@@ -136,7 +136,7 @@ def map_situacao_tratamento(status_esboco):
     return "Em análise pelo time"
 
 
-def def parse_results(payload):
+def parse_results(payload):
     manifest = payload.get("manifest", {})
     columns = [c["name"] for c in manifest.get("schema", {}).get("columns", [])]
     rows = payload.get("result", {}).get("data_array", [])
@@ -146,24 +146,25 @@ def def parse_results(payload):
     for row in rows:
         r = dict(zip(columns, row))
 
-        status_oficial = to_str(r.get("Status")).strip()
+        status_oficial = to_str(r.get("Status Esboço")).strip()
         if not status_oficial:
             status_oficial = "Esboço Pendente"
 
         situacao_tratamento = "Em análise pelo time" if status_oficial == "Esboço Pendente" else ""
 
         records.append({
-            "Prioridade": to_str(r.get("Prioridade")),
-            "Responsavel Esboço": to_str(r.get("Responsavel Esboço")),
-            "Numero Esboço": to_str(r.get("Numero Esboço")),
-            "Segmento": to_str(r.get("Segmento")),
-            "Data do Esboço": to_str(r.get("Data do Esboço")),
+            "Prioridade": to_str(r.get("Prioridade")).strip(),
+            "Responsavel Esboço": to_str(r.get("Responsavel Esboço")).strip(),
+            "Numero Esboço": to_str(r.get("Numero Esboço")).strip(),
+            "Segmento": to_str(r.get("Segmento")).strip(),
+            "Data do Esboço": to_str(r.get("Data do Esboço")).strip(),
             "Valor Total": to_float(r.get("Valor Total")),
-            "Observações": to_str(r.get("Observações")),
-            "Código do Item": to_str(r.get("Código do Item")),
-            "Descrição do Item": to_str(r.get("Descrição do Item")),
+            "Observações": to_str(r.get("Observações")).strip(),
+            "Código do Item": to_str(r.get("Código do Item")).strip(),
+            "Descrição do Item": to_str(r.get("Descrição do Item")).strip(),
+            "Status Esboço": status_oficial,
+            "Data de Atualização": to_str(r.get("Data de Atualização")).strip(),
             "Status": status_oficial,
-            "Data de Atualização": to_str(r.get("Data de Atualização")),
             "Situação do Tratamento": situacao_tratamento,
             "historico": [],
         })
