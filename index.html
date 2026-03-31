@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Painel de Aprovações</title>
+  <title>Painel de Esboços</title>
   <style>
     :root {
       --bg: #0b1020;
@@ -17,6 +17,7 @@
       --success: #30d18c;
       --warning: #ffd166;
       --danger: #ff6b6b;
+      --info: #6ec1ff;
     }
 
     * { box-sizing: border-box; }
@@ -110,7 +111,7 @@
     }
 
     .container {
-      max-width: 1450px;
+      max-width: 1500px;
       margin: 0 auto;
       padding: 28px;
     }
@@ -182,12 +183,17 @@
     }
 
     input {
-      min-width: 260px;
+      min-width: 240px;
       flex: 1;
     }
 
     select {
-      min-width: 190px;
+      min-width: 180px;
+    }
+
+    .date-input {
+      min-width: 180px;
+      flex: 0 0 auto;
     }
 
     .table-box {
@@ -219,7 +225,7 @@
     table {
       width: 100%;
       border-collapse: collapse;
-      min-width: 1100px;
+      min-width: 1600px;
     }
 
     th {
@@ -231,6 +237,7 @@
       text-transform: uppercase;
       letter-spacing: 0.7px;
       border-bottom: 1px solid var(--border);
+      white-space: nowrap;
     }
 
     td {
@@ -250,22 +257,48 @@
       font-size: 12px;
       font-weight: 700;
       display: inline-block;
+      white-space: nowrap;
     }
 
-    .status-aprovado {
-      background: rgba(48,209,140,0.15);
-      color: var(--success);
-    }
-
-    .status-pendente,
-    .status-em-análise {
+    .status-pendente {
       background: rgba(255,209,102,0.14);
       color: var(--warning);
     }
 
-    .status-reprovado {
+    .status-fechado {
+      background: rgba(48,209,140,0.15);
+      color: var(--success);
+    }
+
+    .status-sla-noprazo {
+      background: rgba(48,209,140,0.15);
+      color: var(--success);
+    }
+
+    .status-sla-vencehoje {
+      background: rgba(255,209,102,0.14);
+      color: var(--warning);
+    }
+
+    .status-sla-vencido {
       background: rgba(255,107,107,0.14);
       color: var(--danger);
+    }
+
+    .status-tratamento {
+      background: rgba(110,193,255,0.14);
+      color: var(--info);
+    }
+
+    .text-muted {
+      color: var(--muted);
+    }
+
+    .wrap {
+      max-width: 340px;
+      white-space: normal;
+      word-break: break-word;
+      line-height: 1.4;
     }
 
     .empty {
@@ -300,7 +333,7 @@
     <div class="title-wrap">
       <div class="title-icon">📋</div>
       <div>
-        <div class="title">Painel de Aprovações</div>
+        <div class="title">Painel de Esboços</div>
         <div class="subtitle" id="updatedAt">Atualizado: carregando...</div>
       </div>
     </div>
@@ -319,16 +352,16 @@
 
     <div class="cards">
       <div class="card">
-        <div class="label">Total Docs</div>
+        <div class="label">Total Esboços</div>
         <div class="value" id="statTotal">0</div>
       </div>
       <div class="card">
-        <div class="label">Aprovados</div>
-        <div class="value" id="statAprovados">0</div>
+        <div class="label">Esboço Pendente</div>
+        <div class="value" id="statPendentes">0</div>
       </div>
       <div class="card">
-        <div class="label">Pendentes</div>
-        <div class="value" id="statPendentes">0</div>
+        <div class="label">Esboço Fechado</div>
+        <div class="value" id="statFechados">0</div>
       </div>
       <div class="card">
         <div class="label">Valor Total</div>
@@ -338,26 +371,41 @@
 
     <div class="filters">
       <span>Filtros:</span>
-      <input id="searchInput" type="text" placeholder="Buscar pedido, esboço, usuário, item..." oninput="applyFilters()" />
+
+      <input
+        id="searchInput"
+        type="text"
+        placeholder="Buscar responsável, esboço, item, observação..."
+        oninput="applyFilters()"
+      />
+
       <select id="statusFilter" onchange="applyFilters()">
         <option value="">Todos os status</option>
-        <option value="Aprovado">Aprovado</option>
-        <option value="Pendente">Pendente</option>
-        <option value="Em Análise">Em Análise</option>
-        <option value="Reprovado">Reprovado</option>
+        <option value="Esboço Pendente">Esboço Pendente</option>
+        <option value="Esboço Fechado">Esboço Fechado</option>
       </select>
+
+      <select id="prioridadeFilter" onchange="applyFilters()">
+        <option value="">Todas as prioridades</option>
+      </select>
+
       <select id="segmentoFilter" onchange="applyFilters()">
         <option value="">Todos os segmentos</option>
       </select>
-      <select id="usuarioFilter" onchange="applyFilters()">
-        <option value="">Todos os usuários</option>
+
+      <select id="responsavelFilter" onchange="applyFilters()">
+        <option value="">Todos os responsáveis</option>
       </select>
+
+      <input id="dataInicioFilter" class="date-input" type="date" onchange="applyFilters()" />
+      <input id="dataFimFilter" class="date-input" type="date" onchange="applyFilters()" />
+
       <button class="btn" onclick="clearFilters()">Limpar filtros</button>
     </div>
 
     <div class="table-box">
       <div class="table-head">
-        <div>Solicitações</div>
+        <div>Fila de Esboços</div>
         <div class="table-count" id="tableCount">0 registros</div>
       </div>
 
@@ -366,16 +414,21 @@
           <thead>
             <tr>
               <th>Prioridade</th>
-              <th>Usuário</th>
-              <th>Email</th>
-              <th>Esboço</th>
-              <th>Nº Pedido</th>
+              <th>Responsável Esboço</th>
+              <th>Nº Esboço</th>
               <th>Segmento</th>
-              <th>Data Lançamento</th>
-              <th>Data Esboço</th>
-              <th>Descrição do Item</th>
-              <th>Valor Total</th>
+              <th>Data do Esboço</th>
+              <th>SLA (dias)</th>
+              <th>Dias em Aberto</th>
+              <th>Status SLA</th>
               <th>Status</th>
+              <th>Situação do Tratamento</th>
+              <th>Status Esboço</th>
+              <th>Descrição do Item</th>
+              <th>Código do Item</th>
+              <th>Valor Total</th>
+              <th>Observações</th>
+              <th>Data de Atualização</th>
             </tr>
           </thead>
           <tbody id="tableBody"></tbody>
@@ -414,7 +467,6 @@
 
       if (currentRole === "solicitante") {
         document.getElementById("solicitanteBanner").style.display = "block";
-        document.getElementById("usuarioFilter").style.display = "none";
       }
 
       return true;
@@ -443,14 +495,24 @@
     }
 
     function populateFilters() {
+      const prioridadeFilter = document.getElementById("prioridadeFilter");
       const segmentoFilter = document.getElementById("segmentoFilter");
-      const usuarioFilter = document.getElementById("usuarioFilter");
+      const responsavelFilter = document.getElementById("responsavelFilter");
 
+      prioridadeFilter.innerHTML = '<option value="">Todas as prioridades</option>';
       segmentoFilter.innerHTML = '<option value="">Todos os segmentos</option>';
-      usuarioFilter.innerHTML = '<option value="">Todos os usuários</option>';
+      responsavelFilter.innerHTML = '<option value="">Todos os responsáveis</option>';
 
+      const prioridades = [...new Set(rawData.map(r => r["Prioridade"]).filter(Boolean))].sort();
       const segmentos = [...new Set(rawData.map(r => r["Segmento"]).filter(Boolean))].sort();
-      const usuarios = [...new Set(rawData.map(r => r["Usuário"]).filter(Boolean))].sort();
+      const responsaveis = [...new Set(rawData.map(r => r["Responsavel Esboço"]).filter(Boolean))].sort();
+
+      prioridades.forEach(item => {
+        const option = document.createElement("option");
+        option.value = item;
+        option.textContent = item;
+        prioridadeFilter.appendChild(option);
+      });
 
       segmentos.forEach(item => {
         const option = document.createElement("option");
@@ -459,43 +521,148 @@
         segmentoFilter.appendChild(option);
       });
 
-      usuarios.forEach(item => {
+      responsaveis.forEach(item => {
         const option = document.createElement("option");
         option.value = item;
         option.textContent = item;
-        usuarioFilter.appendChild(option);
+        responsavelFilter.appendChild(option);
       });
+    }
+
+    function normalizeDate(value) {
+      if (!value) return null;
+
+      const d = new Date(value);
+      if (!isNaN(d.getTime())) {
+        d.setHours(0, 0, 0, 0);
+        return d;
+      }
+
+      const br = String(value).match(/^(\d{2})\/(\d{2})\/(\d{4})/);
+      if (br) {
+        const parsed = new Date(`${br[3]}-${br[2]}-${br[1]}T00:00:00`);
+        if (!isNaN(parsed.getTime())) {
+          parsed.setHours(0, 0, 0, 0);
+          return parsed;
+        }
+      }
+
+      return null;
+    }
+
+    function getSlaDias(prioridade) {
+      const p = String(prioridade || "").toLowerCase();
+
+      if (p === "alta") return 2;
+      if (p === "média" || p === "media") return 5;
+      if (p === "baixa") return 10;
+
+      return 0;
+    }
+
+    function getDiasEmAberto(dataTexto) {
+      const data = normalizeDate(dataTexto);
+      if (!data) return 0;
+
+      const hoje = new Date();
+      hoje.setHours(0, 0, 0, 0);
+
+      const diffMs = hoje - data;
+      return Math.max(0, Math.floor(diffMs / (1000 * 60 * 60 * 24)));
+    }
+
+    function getStatusSla(prioridade, dataEsboco, status) {
+      if (status === "Esboço Fechado") return "Fechado";
+
+      const sla = getSlaDias(prioridade);
+      const dias = getDiasEmAberto(dataEsboco);
+
+      if (dias > sla) return "Vencido";
+      if (dias === sla) return "Vence hoje";
+      return "No prazo";
+    }
+
+    function getStatusClass(status) {
+      const s = String(status || "").toLowerCase();
+
+      if (s === "esboço pendente" || s === "esboco pendente") return "status-pendente";
+      if (s === "esboço fechado" || s === "esboco fechado") return "status-fechado";
+
+      return "status-pendente";
+    }
+
+    function getSlaClass(statusSla) {
+      const s = String(statusSla || "").toLowerCase();
+
+      if (s === "no prazo") return "status-sla-noprazo";
+      if (s === "vence hoje") return "status-sla-vencehoje";
+      if (s === "vencido") return "status-sla-vencido";
+
+      return "status-sla-noprazo";
+    }
+
+    function getPrioridadePeso(prioridade) {
+      const p = String(prioridade || "").toLowerCase();
+
+      if (p === "alta") return 1;
+      if (p === "média" || p === "media") return 2;
+      if (p === "baixa") return 3;
+
+      return 99;
     }
 
     function applyFilters() {
       const search = document.getElementById("searchInput").value.trim().toLowerCase();
       const status = document.getElementById("statusFilter").value;
+      const prioridade = document.getElementById("prioridadeFilter").value;
       const segmento = document.getElementById("segmentoFilter").value;
-      const usuario = document.getElementById("usuarioFilter").value;
+      const responsavel = document.getElementById("responsavelFilter").value;
+      const dataInicio = document.getElementById("dataInicioFilter").value;
+      const dataFim = document.getElementById("dataFimFilter").value;
+
+      const dtInicio = dataInicio ? new Date(dataInicio + "T00:00:00") : null;
+      const dtFim = dataFim ? new Date(dataFim + "T00:00:00") : null;
 
       filteredData = rawData.filter(r => {
-        if (currentRole === "solicitante") {
-          const emailRegistro = String(r["Email do Usuário"] || "").trim().toLowerCase();
-          if (emailRegistro !== currentUser) return false;
-        }
-
         const texto = `
           ${r["Prioridade"] || ""}
-          ${r["Usuário"] || ""}
-          ${r["Email do Usuário"] || ""}
-          ${r["Esboço"] || ""}
-          ${r["Número do Pedido"] || ""}
+          ${r["Responsavel Esboço"] || ""}
+          ${r["Numero Esboço"] || ""}
           ${r["Segmento"] || ""}
           ${r["Descrição do Item"] || ""}
           ${r["Observações"] || ""}
+          ${r["Status"] || ""}
+          ${r["Situação do Tratamento"] || ""}
+          ${r["Status Esboço"] || ""}
         `.toLowerCase();
 
         if (search && !texto.includes(search)) return false;
         if (status && (r["Status"] || "") !== status) return false;
+        if (prioridade && (r["Prioridade"] || "") !== prioridade) return false;
         if (segmento && (r["Segmento"] || "") !== segmento) return false;
-        if (usuario && (r["Usuário"] || "") !== usuario) return false;
+        if (responsavel && (r["Responsavel Esboço"] || "") !== responsavel) return false;
+
+        const dataRegistro = normalizeDate(r["Data do Esboço"]);
+        if (dtInicio && (!dataRegistro || dataRegistro < dtInicio)) return false;
+        if (dtFim && (!dataRegistro || dataRegistro > dtFim)) return false;
 
         return true;
+      });
+
+      filteredData.sort((a, b) => {
+        const statusA = String(a["Status"] || "");
+        const statusB = String(b["Status"] || "");
+
+        if (statusA !== statusB) {
+          if (statusA === "Esboço Pendente") return -1;
+          if (statusB === "Esboço Pendente") return 1;
+        }
+
+        const pesoA = getPrioridadePeso(a["Prioridade"]);
+        const pesoB = getPrioridadePeso(b["Prioridade"]);
+        if (pesoA !== pesoB) return pesoA - pesoB;
+
+        return getDiasEmAberto(b["Data do Esboço"]) - getDiasEmAberto(a["Data do Esboço"]);
       });
 
       updateStats();
@@ -505,20 +672,23 @@
     function clearFilters() {
       document.getElementById("searchInput").value = "";
       document.getElementById("statusFilter").value = "";
+      document.getElementById("prioridadeFilter").value = "";
       document.getElementById("segmentoFilter").value = "";
-      document.getElementById("usuarioFilter").value = "";
+      document.getElementById("responsavelFilter").value = "";
+      document.getElementById("dataInicioFilter").value = "";
+      document.getElementById("dataFimFilter").value = "";
       applyFilters();
     }
 
     function updateStats() {
       const total = filteredData.length;
-      const aprovados = filteredData.filter(r => (r["Status"] || "") === "Aprovado").length;
-      const pendentes = filteredData.filter(r => ["Pendente", "Em Análise"].includes(r["Status"] || "")).length;
+      const pendentes = filteredData.filter(r => (r["Status"] || "") === "Esboço Pendente").length;
+      const fechados = filteredData.filter(r => (r["Status"] || "") === "Esboço Fechado").length;
       const valorTotal = filteredData.reduce((acc, r) => acc + Number(r["Valor Total"] || 0), 0);
 
       document.getElementById("statTotal").textContent = total;
-      document.getElementById("statAprovados").textContent = aprovados;
       document.getElementById("statPendentes").textContent = pendentes;
+      document.getElementById("statFechados").textContent = fechados;
       document.getElementById("statValor").textContent = formatCurrency(valorTotal);
       document.getElementById("tableCount").textContent = total + " registros";
     }
@@ -535,29 +705,31 @@
 
       emptyState.style.display = "none";
 
-      tableBody.innerHTML = filteredData.map(r => `
-        <tr>
-          <td>${escapeHtml(r["Prioridade"] || "-")}</td>
-          <td>${escapeHtml(r["Usuário"] || "-")}</td>
-          <td>${escapeHtml(r["Email do Usuário"] || "-")}</td>
-          <td>${escapeHtml(r["Esboço"] || "-")}</td>
-          <td>${escapeHtml(r["Número do Pedido"] || "-")}</td>
-          <td>${escapeHtml(r["Segmento"] || "-")}</td>
-          <td>${formatDate(r["Data de Lançamento"])}</td>
-          <td>${formatDate(r["Data do Esboço"])}</td>
-          <td>${escapeHtml(r["Descrição do Item"] || "-")}</td>
-          <td>${formatCurrency(r["Valor Total"] || 0)}</td>
-          <td><span class="status ${getStatusClass(r["Status"] || "")}">${escapeHtml(r["Status"] || "-")}</span></td>
-        </tr>
-      `).join("");
-    }
+      tableBody.innerHTML = filteredData.map(r => {
+        const status = r["Status"] || "-";
+        const statusSla = getStatusSla(r["Prioridade"], r["Data do Esboço"], status);
 
-    function getStatusClass(status) {
-      const s = String(status || "").toLowerCase();
-      if (s === "aprovado") return "status-aprovado";
-      if (s === "reprovado") return "status-reprovado";
-      if (s === "em análise" || s === "pendente") return "status-pendente";
-      return "";
+        return `
+          <tr>
+            <td>${escapeHtml(r["Prioridade"] || "-")}</td>
+            <td>${escapeHtml(r["Responsavel Esboço"] || "-")}</td>
+            <td>${escapeHtml(r["Numero Esboço"] || "-")}</td>
+            <td>${escapeHtml(r["Segmento"] || "-")}</td>
+            <td>${formatDate(r["Data do Esboço"])}</td>
+            <td>${getSlaDias(r["Prioridade"])}</td>
+            <td>${getDiasEmAberto(r["Data do Esboço"])}</td>
+            <td><span class="status ${getSlaClass(statusSla)}">${escapeHtml(statusSla)}</span></td>
+            <td><span class="status ${getStatusClass(status)}">${escapeHtml(status)}</span></td>
+            <td><span class="status status-tratamento">${escapeHtml(r["Situação do Tratamento"] || "-")}</span></td>
+            <td>${escapeHtml(r["Status Esboço"] || "-")}</td>
+            <td><div class="wrap">${escapeHtml(r["Descrição do Item"] || "-")}</div></td>
+            <td>${escapeHtml(r["Código do Item"] || "-")}</td>
+            <td>${formatCurrency(r["Valor Total"] || 0)}</td>
+            <td><div class="wrap text-muted">${escapeHtml(r["Observações"] || "-")}</div></td>
+            <td>${escapeHtml(r["Data de Atualização"] || "-")}</td>
+          </tr>
+        `;
+      }).join("");
     }
 
     function formatCurrency(value) {
@@ -569,10 +741,15 @@
 
     function formatDate(value) {
       if (!value) return "-";
+
       const d = new Date(value);
       if (!isNaN(d.getTime())) {
         return d.toLocaleDateString("pt-BR");
       }
+
+      const br = String(value).match(/^(\d{2})\/(\d{2})\/(\d{4})/);
+      if (br) return `${br[1]}/${br[2]}/${br[3]}`;
+
       return escapeHtml(String(value));
     }
 
