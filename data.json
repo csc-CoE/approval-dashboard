@@ -1,0 +1,70 @@
+{
+  "updated_at": "2024-03-20 00:00:00",
+  "records": [
+    {
+      "n_aprovacao": 124234,
+      "n_doesboco": 330892,
+      "data": "04/03/2024",
+      "solicitante": "JEAN DAVI DE SOUSA",
+      "aprovador": "Jamaycon",
+      "filial": "DB3 SERVIÇOS-MATRIZ - FORTALEZA/CE",
+      "dscription": "ENERGIA ELETRICA",
+      "line_total": 6529.34,
+      "status": "Aprovado",
+      "motivo": "",
+      "historico": []
+    },
+    {
+      "n_aprovacao": 124237,
+      "n_doesboco": 330897,
+      "data": "04/03/2024",
+      "solicitante": "JEAN DAVI DE SOUSA",
+      "aprovador": "Jamaycon",
+      "filial": "DB3 SERVIÇOS-MATRIZ - FORTALEZA/CE",
+      "dscription": "ENERGIA ELETRICA",
+      "line_total": 782.83,
+      "status": "Aprovado",
+      "motivo": "",
+      "historico": []
+    },
+    {
+      "n_aprovacao": 124144,
+      "n_doesboco": 330724,
+      "data": "04/03/2024",
+      "solicitante": "ISABELE PEREIRA DE SENA",
+      "aprovador": "Jamaycon",
+      "filial": "DB3 SERVIÇOS-MATRIZ - FORTALEZA/CE",
+      "dscription": "AGUA E ESGOTO",
+      "line_total": 47.81,
+      "status": "Aprovado",
+      "motivo": "",
+      "historico": []
+    },
+    {
+      "n_aprovacao": 124719,
+      "n_doesboco": 331772,
+      "data": "06/03/2024",
+      "solicitante": "JEAN DAVI DE SOUSA",
+      "aprovador": "Jamaycon",
+      "filial": "DB3 SERVIÇOS-MATRIZ - FORTALEZA/CE",
+      "dscription": "ENERGIA ELETRICA",
+      "line_total": 312.07,
+      "status": "Pendente",
+      "motivo": "",
+      "historico": []
+    },
+    {
+      "n_aprovacao": 124721,
+      "n_doesboco": 331774,
+      "data": "07/03/2024",
+      "solicitante": "ISABELE PEREIRA DE SENA",
+      "aprovador": "Jamaycon",
+      "filial": "DB3 SERVIÇOS-MATRIZ - FORTALEZA/CE",
+      "dscription": "AGUA E ESGOTO",
+      "line_total": 95.50,
+      "status": "Em Análise",
+      "motivo": "",
+      "historico": []
+    }
+  ]
+}
