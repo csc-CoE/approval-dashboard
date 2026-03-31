@@ -1,503 +1,593 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Painel de Aprovações</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --bg: #0f1117;
-    --surface: #181c27;
-    --surface2: #1f2435;
-    --border: #2a3045;
-    --accent: #4f8ef7;
-    --accent2: #38d9a9;
-    --warn: #ffd166;
-    --danger: #ff6b6b;
-    --text: #e8eaf0;
-    --muted: #6b7494;
-    --status-aprovado: #38d9a9;
-    --status-pendente: #ffd166;
-    --status-reprovado: #ff6b6b;
-    --status-em-analise: #4f8ef7;
-    --radius: 10px;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Painel de Aprovações</title>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --surface: #141b34;
+      --surface-2: #1a2342;
+      --border: #26304f;
+      --accent: #5b8cff;
+      --accent-2: #7c4dff;
+      --text: #f3f6ff;
+      --muted: #a9b4d0;
+      --success: #30d18c;
+      --warning: #ffd166;
+      --danger: #ff6b6b;
+    }
 
-  .header {
-    background: var(--surface); border-bottom: 1px solid var(--border);
-    padding: 0 32px; display: flex; align-items: center; justify-content: space-between;
-    height: 64px; position: sticky; top: 0; z-index: 100;
-  }
-  .logo { display: flex; align-items: center; gap: 10px; }
-  .logo-icon { width: 32px; height: 32px; background: var(--accent); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
-  .logo-text { font-size: 16px; font-weight: 600; }
-  .logo-sub { color: var(--muted); font-size: 12px; }
-  .last-update { font-size: 12px; color: var(--muted); }
+    * { box-sizing: border-box; }
 
-  .header-right { display: flex; align-items: center; gap: 12px; }
-  .role-toggle { display: flex; background: var(--surface2); border-radius: 8px; border: 1px solid var(--border); overflow: hidden; }
-  .role-btn { padding: 6px 16px; font-size: 13px; font-weight: 500; cursor: pointer; border: none; background: transparent; color: var(--muted); transition: all 0.2s; font-family: inherit; }
-  .role-btn.active { background: var(--accent); color: #fff; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Arial, sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(91,140,255,0.12), transparent 30%),
+        linear-gradient(180deg, #08101f 0%, #0b1020 100%);
+      color: var(--text);
+      min-height: 100vh;
+    }
 
-  .main { padding: 32px; max-width: 1400px; margin: 0 auto; }
+    .header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(11, 16, 32, 0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      padding: 18px 28px;
+    }
 
-  .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 28px; }
-  .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px 24px; display: flex; align-items: center; gap: 16px; transition: border-color 0.2s; }
-  .stat-card:hover { border-color: var(--accent); }
-  .stat-icon { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
-  .stat-label { font-size: 12px; color: var(--muted); margin-bottom: 4px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; }
-  .stat-value { font-size: 26px; font-weight: 600; font-family: 'DM Mono', monospace; }
+    .title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
 
-  .filters { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 20px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-bottom: 20px; }
-  .filter-label { font-size: 12px; color: var(--muted); font-weight: 500; }
-  .filter-select, .filter-input { background: var(--surface2); border: 1px solid var(--border); color: var(--text); border-radius: 7px; padding: 7px 12px; font-size: 13px; font-family: inherit; outline: none; transition: border-color 0.2s; }
-  .filter-select:focus, .filter-input:focus { border-color: var(--accent); }
-  .filter-input { width: 220px; }
-  .btn-clear { margin-left: auto; padding: 7px 16px; background: transparent; border: 1px solid var(--border); color: var(--muted); border-radius: 7px; cursor: pointer; font-size: 13px; font-family: inherit; transition: all 0.2s; }
-  .btn-clear:hover { border-color: var(--accent); color: var(--accent); }
+    .title-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 20px;
+    }
 
-  .table-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
-  .table-header { padding: 16px 24px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
-  .table-title { font-size: 15px; font-weight: 600; }
-  .table-count { font-size: 13px; color: var(--muted); font-family: 'DM Mono', monospace; }
+    .title {
+      font-size: 18px;
+      font-weight: 700;
+    }
 
-  table { width: 100%; border-collapse: collapse; }
-  thead th { padding: 12px 16px; text-align: left; font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.6px; background: var(--surface2); border-bottom: 1px solid var(--border); }
-  tbody tr { border-bottom: 1px solid var(--border); transition: background 0.15s; cursor: pointer; }
-  tbody tr:last-child { border-bottom: none; }
-  tbody tr:hover { background: var(--surface2); }
-  tbody td { padding: 13px 16px; font-size: 13px; }
+    .subtitle {
+      color: var(--muted);
+      font-size: 13px;
+    }
 
-  .badge { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 500; }
-  .badge::before { content: ''; width: 6px; height: 6px; border-radius: 50%; }
-  .badge-aprovado { background: rgba(56,217,169,0.12); color: var(--status-aprovado); }
-  .badge-aprovado::before { background: var(--status-aprovado); }
-  .badge-pendente { background: rgba(255,209,102,0.12); color: var(--status-pendente); }
-  .badge-pendente::before { background: var(--status-pendente); }
-  .badge-reprovado { background: rgba(255,107,107,0.12); color: var(--status-reprovado); }
-  .badge-reprovado::before { background: var(--status-reprovado); }
-  .badge-em-analise { background: rgba(79,142,247,0.12); color: var(--status-em-analise); }
-  .badge-em-analise::before { background: var(--status-em-analise); }
+    .header-right {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
 
-  .mono { font-family: 'DM Mono', monospace; font-size: 12px; }
-  .text-muted { color: var(--muted); }
+    .chip {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 14px;
+      font-size: 13px;
+      color: var(--muted);
+    }
 
-  .btn-edit { padding: 5px 12px; background: var(--surface2); border: 1px solid var(--border); color: var(--text); border-radius: 6px; font-size: 12px; cursor: pointer; font-family: inherit; transition: all 0.2s; }
-  .btn-edit:hover { border-color: var(--accent); color: var(--accent); }
+    .role-badge {
+      background: rgba(91,140,255,0.12);
+      color: #cfe0ff;
+      border: 1px solid rgba(91,140,255,0.35);
+    }
 
-  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); z-index: 200; align-items: center; justify-content: center; }
-  .modal-overlay.open { display: flex; }
-  .modal { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 32px; width: 540px; max-width: 95vw; box-shadow: 0 24px 80px rgba(0,0,0,0.5); animation: slideUp 0.25s ease; }
-  @keyframes slideUp { from { transform: translateY(16px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-  .modal-title { font-size: 17px; font-weight: 600; margin-bottom: 6px; }
-  .modal-sub { font-size: 13px; color: var(--muted); margin-bottom: 24px; }
-  .modal-info { background: var(--surface2); border-radius: 8px; padding: 14px 16px; margin-bottom: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .info-item label { font-size: 11px; color: var(--muted); display: block; margin-bottom: 3px; font-weight: 500; text-transform: uppercase; }
-  .info-item span { font-size: 13px; font-weight: 500; }
-  .form-group { margin-bottom: 16px; }
-  .form-label { display: block; font-size: 12px; font-weight: 500; color: var(--muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.4px; }
-  .form-select, .form-textarea { width: 100%; background: var(--surface2); border: 1px solid var(--border); color: var(--text); border-radius: 8px; padding: 10px 14px; font-size: 14px; font-family: inherit; outline: none; transition: border-color 0.2s; }
-  .form-select:focus, .form-textarea:focus { border-color: var(--accent); }
-  .form-textarea { resize: vertical; min-height: 90px; }
-  .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 8px; }
-  .btn-cancel { padding: 9px 20px; background: transparent; border: 1px solid var(--border); color: var(--muted); border-radius: 8px; cursor: pointer; font-size: 14px; font-family: inherit; transition: all 0.2s; }
-  .btn-cancel:hover { border-color: var(--muted); color: var(--text); }
-  .btn-save { padding: 9px 24px; background: var(--accent); border: none; color: #fff; border-radius: 8px; cursor: pointer; font-size: 14px; font-family: inherit; font-weight: 600; transition: opacity 0.2s; }
-  .btn-save:hover { opacity: 0.85; }
+    .btn {
+      padding: 10px 14px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      cursor: pointer;
+      font-size: 13px;
+      transition: 0.2s;
+    }
 
-  .toast { position: fixed; bottom: 24px; right: 24px; z-index: 999; background: var(--accent2); color: #0f1117; padding: 12px 20px; border-radius: 10px; font-size: 14px; font-weight: 600; transform: translateY(80px); opacity: 0; transition: all 0.3s; box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
-  .toast.show { transform: translateY(0); opacity: 1; }
+    .btn:hover {
+      border-color: var(--accent);
+    }
 
-  .detail-panel { display: none; position: fixed; right: 0; top: 64px; bottom: 0; width: 400px; background: var(--surface); border-left: 1px solid var(--border); z-index: 90; overflow-y: auto; padding: 24px; animation: slideIn 0.25s ease; }
-  .detail-panel.open { display: block; }
-  @keyframes slideIn { from { transform: translateX(30px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-  .detail-close { float: right; background: none; border: none; color: var(--muted); cursor: pointer; font-size: 20px; margin-top: -4px; }
-  .detail-title { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
-  .detail-doc { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--muted); margin-bottom: 20px; }
-  .detail-section { margin-bottom: 20px; }
-  .detail-section-title { font-size: 11px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; border-bottom: 1px solid var(--border); padding-bottom: 6px; }
-  .detail-row { display: flex; justify-content: space-between; padding: 6px 0; font-size: 13px; border-bottom: 1px solid rgba(42,48,69,0.5); }
-  .detail-row:last-child { border-bottom: none; }
-  .detail-row span:first-child { color: var(--muted); }
-  .detail-row span:last-child { font-weight: 500; text-align: right; max-width: 55%; }
-  .total-value { font-size: 22px; font-weight: 600; font-family: 'DM Mono', monospace; color: var(--accent2); margin: 8px 0; }
-  .history-item { background: var(--surface2); border-radius: 8px; padding: 12px; margin-bottom: 8px; border-left: 3px solid var(--accent); }
-  .history-item.reprovado { border-left-color: var(--danger); }
-  .history-item.aprovado { border-left-color: var(--accent2); }
-  .history-date { font-size: 11px; color: var(--muted); font-family: 'DM Mono', monospace; }
-  .history-action { font-size: 13px; font-weight: 500; margin: 2px 0; }
-  .history-motivo { font-size: 12px; color: var(--muted); font-style: italic; }
+    .container {
+      max-width: 1450px;
+      margin: 0 auto;
+      padding: 28px;
+    }
 
-  .loading { text-align: center; padding: 80px 20px; color: var(--muted); }
-  .loading-spinner { width: 32px; height: 32px; border: 3px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 16px; }
-  @keyframes spin { to { transform: rotate(360deg); } }
+    .banner {
+      display: none;
+      margin-bottom: 20px;
+      background: rgba(91,140,255,0.12);
+      border: 1px solid rgba(91,140,255,0.30);
+      color: #dbe7ff;
+      border-radius: 14px;
+      padding: 14px 16px;
+      font-size: 14px;
+    }
 
-  .empty { text-align: center; padding: 60px 20px; color: var(--muted); }
-  .empty-icon { font-size: 40px; margin-bottom: 12px; }
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+      margin-bottom: 22px;
+    }
 
-  .solicitante-banner { background: linear-gradient(135deg, rgba(79,142,247,0.15), rgba(56,217,169,0.08)); border: 1px solid rgba(79,142,247,0.25); border-radius: var(--radius); padding: 16px 20px; margin-bottom: 20px; display: flex; align-items: center; gap: 12px; }
-  .sb-icon { font-size: 24px; }
-  .sb-text strong { display: block; font-size: 14px; margin-bottom: 2px; }
-  .sb-text span { font-size: 12px; color: var(--muted); }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 22px;
+      min-height: 118px;
+    }
 
-  .pagination { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; border-top: 1px solid var(--border); }
-  .page-info { font-size: 13px; color: var(--muted); }
-  .page-btns { display: flex; gap: 6px; }
-  .page-btn { width: 32px; height: 32px; border-radius: 6px; border: 1px solid var(--border); background: var(--surface2); color: var(--text); cursor: pointer; font-size: 13px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
-  .page-btn.active { background: var(--accent); border-color: var(--accent); }
-  .page-btn:hover:not(.active):not(:disabled) { border-color: var(--accent); color: var(--accent); }
-  .page-btn:disabled { opacity: 0.3; cursor: default; }
+    .card .label {
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 10px;
+    }
 
-  @media (max-width: 900px) {
-    .stats-row { grid-template-columns: 1fr 1fr; }
-    .detail-panel { width: 100%; top: 0; }
-    .header { padding: 0 16px; }
-    .main { padding: 16px; }
-  }
-</style>
+    .card .value {
+      font-size: 30px;
+      font-weight: 800;
+    }
+
+    .filters {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 18px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-bottom: 22px;
+    }
+
+    .filters span {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    input, select {
+      background: var(--surface-2);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 14px;
+      font-size: 14px;
+      outline: none;
+    }
+
+    input {
+      min-width: 260px;
+      flex: 1;
+    }
+
+    select {
+      min-width: 190px;
+    }
+
+    .table-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      overflow: hidden;
+    }
+
+    .table-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 20px;
+      border-bottom: 1px solid var(--border);
+      font-weight: 700;
+    }
+
+    .table-count {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .table-scroll {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 1100px;
+    }
+
+    th {
+      text-align: left;
+      padding: 14px 16px;
+      background: var(--surface-2);
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.7px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    td {
+      padding: 14px 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      font-size: 14px;
+      vertical-align: top;
+    }
+
+    tr:hover td {
+      background: rgba(255,255,255,0.02);
+    }
+
+    .status {
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      display: inline-block;
+    }
+
+    .status-aprovado {
+      background: rgba(48,209,140,0.15);
+      color: var(--success);
+    }
+
+    .status-pendente,
+    .status-em-análise {
+      background: rgba(255,209,102,0.14);
+      color: var(--warning);
+    }
+
+    .status-reprovado {
+      background: rgba(255,107,107,0.14);
+      color: var(--danger);
+    }
+
+    .empty {
+      padding: 28px 20px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    @media (max-width: 1100px) {
+      .cards {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 700px) {
+      .cards {
+        grid-template-columns: 1fr;
+      }
+
+      .container {
+        padding: 16px;
+      }
+
+      .header {
+        padding: 14px 16px;
+      }
+    }
+  </style>
 </head>
 <body>
-
-<div class="header">
-  <div class="logo">
-    <div class="logo-icon">📋</div>
-    <div>
-      <div class="logo-text">Painel de Aprovações</div>
-      <div class="logo-sub last-update" id="last-update">Carregando...</div>
+  <div class="header">
+    <div class="title-wrap">
+      <div class="title-icon">📋</div>
+      <div>
+        <div class="title">Painel de Aprovações</div>
+        <div class="subtitle" id="updatedAt">Atualizado: carregando...</div>
+      </div>
     </div>
-  </div>
-  <div class="header-right">
-    <div class="role-toggle">
-      <button class="role-btn active" onclick="setRole('time')" id="btn-time">👥 Time Interno</button>
-      <button class="role-btn" onclick="setRole('solicitante')" id="btn-solicitante">👤 Solicitante</button>
-    </div>
-  </div>
-</div>
 
-<div class="main">
-  <div class="solicitante-banner" id="solicitante-banner" style="display:none">
-    <div class="sb-icon">👤</div>
-    <div class="sb-text">
-      <strong>Visão do Solicitante</strong>
-      <span>Modo leitura — apenas consulta de status das suas solicitações.</span>
+    <div class="header-right">
+      <div class="chip" id="userChip">Usuário: -</div>
+      <div class="chip role-badge" id="roleChip">Perfil: -</div>
+      <button class="btn" onclick="logout()">Sair</button>
     </div>
   </div>
 
-  <div class="stats-row">
-    <div class="stat-card">
-      <div class="stat-icon" style="background:rgba(79,142,247,0.15)">📄</div>
-      <div><div class="stat-label">Total Docs</div><div class="stat-value" id="stat-total">—</div></div>
+  <div class="container">
+    <div class="banner" id="solicitanteBanner">
+      Você está na visão de solicitante. Apenas seus próprios registros serão exibidos.
     </div>
-    <div class="stat-card">
-      <div class="stat-icon" style="background:rgba(56,217,169,0.15)">✅</div>
-      <div><div class="stat-label">Aprovados</div><div class="stat-value" style="color:var(--status-aprovado)" id="stat-aprovado">—</div></div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-icon" style="background:rgba(255,209,102,0.15)">⏳</div>
-      <div><div class="stat-label">Pendentes</div><div class="stat-value" style="color:var(--status-pendente)" id="stat-pendente">—</div></div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-icon" style="background:rgba(56,217,169,0.15)">💰</div>
-      <div><div class="stat-label">Valor Total</div><div class="stat-value" style="color:var(--accent2);font-size:18px" id="stat-valor">—</div></div>
-    </div>
-  </div>
 
-  <div class="filters">
-    <span class="filter-label">Filtros:</span>
-    <input class="filter-input" type="text" placeholder="🔍 Buscar nº aprovação, solicitante..." id="search" oninput="applyFilters()">
-    <select class="filter-select" id="filter-status" onchange="applyFilters()">
-      <option value="">Todos os status</option>
-      <option value="Aprovado">Aprovado</option>
-      <option value="Pendente">Pendente</option>
-      <option value="Em Análise">Em Análise</option>
-      <option value="Reprovado">Reprovado</option>
-    </select>
-    <select class="filter-select" id="filter-solicitante" onchange="applyFilters()">
-      <option value="">Todos os solicitantes</option>
-    </select>
-    <select class="filter-select" id="filter-filial" onchange="applyFilters()">
-      <option value="">Todas as filiais</option>
-    </select>
-    <button class="btn-clear" onclick="clearFilters()">Limpar filtros</button>
-  </div>
+    <div class="cards">
+      <div class="card">
+        <div class="label">Total Docs</div>
+        <div class="value" id="statTotal">0</div>
+      </div>
+      <div class="card">
+        <div class="label">Aprovados</div>
+        <div class="value" id="statAprovados">0</div>
+      </div>
+      <div class="card">
+        <div class="label">Pendentes</div>
+        <div class="value" id="statPendentes">0</div>
+      </div>
+      <div class="card">
+        <div class="label">Valor Total</div>
+        <div class="value" id="statValor">R$ 0,00</div>
+      </div>
+    </div>
 
-  <div class="table-wrap">
-    <div class="table-header">
-      <span class="table-title">Solicitações</span>
-      <span class="table-count" id="table-count">0 registros</span>
-    </div>
-    <div id="loading-state" class="loading">
-      <div class="loading-spinner"></div>
-      <div>Carregando dados...</div>
-    </div>
-    <div style="overflow-x:auto;display:none" id="table-container">
-      <table>
-        <thead>
-          <tr>
-            <th>Nº Aprovação</th>
-            <th>Nº Esboço</th>
-            <th>Data</th>
-            <th>Solicitante</th>
-            <th>Aprovador</th>
-            <th>Descrição</th>
-            <th>Valor Total</th>
-            <th>Status</th>
-            <th id="th-acao" style="display:none">Ação</th>
-          </tr>
-        </thead>
-        <tbody id="tabela-body"></tbody>
-      </table>
-    </div>
-    <div id="empty-state" class="empty" style="display:none">
-      <div class="empty-icon">🔍</div>
-      <div>Nenhuma solicitação encontrada.</div>
-    </div>
-    <div class="pagination" id="pagination" style="display:none">
-      <span class="page-info" id="page-info">Página 1 de 1</span>
-      <div class="page-btns" id="page-btns"></div>
-    </div>
-  </div>
-</div>
-
-<!-- MODAL -->
-<div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
-  <div class="modal">
-    <div class="modal-title">Atualizar Status</div>
-    <div class="modal-sub" id="modal-sub">Aprovação #—</div>
-    <div class="modal-info" id="modal-info"></div>
-    <div class="form-group">
-      <label class="form-label">Novo Status</label>
-      <select class="form-select" id="modal-status">
-        <option value="Aprovado">✅ Aprovado</option>
-        <option value="Pendente">⏳ Pendente</option>
-        <option value="Em Análise">🔍 Em Análise</option>
-        <option value="Reprovado">❌ Reprovado</option>
+    <div class="filters">
+      <span>Filtros:</span>
+      <input id="searchInput" type="text" placeholder="Buscar pedido, esboço, usuário, item..." oninput="applyFilters()" />
+      <select id="statusFilter" onchange="applyFilters()">
+        <option value="">Todos os status</option>
+        <option value="Aprovado">Aprovado</option>
+        <option value="Pendente">Pendente</option>
+        <option value="Em Análise">Em Análise</option>
+        <option value="Reprovado">Reprovado</option>
       </select>
+      <select id="segmentoFilter" onchange="applyFilters()">
+        <option value="">Todos os segmentos</option>
+      </select>
+      <select id="usuarioFilter" onchange="applyFilters()">
+        <option value="">Todos os usuários</option>
+      </select>
+      <button class="btn" onclick="clearFilters()">Limpar filtros</button>
     </div>
-    <div class="form-group">
-      <label class="form-label">Motivo / Observação</label>
-      <textarea class="form-textarea" id="modal-motivo" placeholder="Descreva o motivo da alteração de status..."></textarea>
-    </div>
-    <div class="modal-actions">
-      <button class="btn-cancel" onclick="closeModal()">Cancelar</button>
-      <button class="btn-save" onclick="saveStatus()">Salvar alteração</button>
+
+    <div class="table-box">
+      <div class="table-head">
+        <div>Solicitações</div>
+        <div class="table-count" id="tableCount">0 registros</div>
+      </div>
+
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>Prioridade</th>
+              <th>Usuário</th>
+              <th>Email</th>
+              <th>Esboço</th>
+              <th>Nº Pedido</th>
+              <th>Segmento</th>
+              <th>Data Lançamento</th>
+              <th>Data Esboço</th>
+              <th>Descrição do Item</th>
+              <th>Valor Total</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+      </div>
+
+      <div class="empty" id="emptyState" style="display:none;">
+        Nenhum registro encontrado.
+      </div>
     </div>
   </div>
-</div>
 
-<!-- DETAIL PANEL -->
-<div class="detail-panel" id="detail-panel">
-  <button class="detail-close" onclick="closeDetail()">✕</button>
-  <div id="detail-content"></div>
-</div>
+  <script>
+    const LOGIN_PAGE = "login.html";
 
-<div class="toast" id="toast"></div>
+    let rawData = [];
+    let filteredData = [];
+    let currentUser = null;
+    let currentRole = null;
 
-<script>
-let rawData = [];
-let currentRole = 'time';
-let editingIndex = null;
-let currentPage = 1;
-const perPage = 15;
-let filtered = [];
+    function checkAuth() {
+      const usuario = localStorage.getItem("usuario");
+      const perfil = localStorage.getItem("perfil");
 
-// ── Carrega data.json gerado pelo GitHub Action ──
-async function loadData() {
-  try {
-    const res = await fetch('data.json?t=' + Date.now());
-    if (!res.ok) throw new Error('Arquivo não encontrado');
-    const json = await res.json();
-    rawData = json.records.map(r => ({ ...r, historico: r.historico || [] }));
-    document.getElementById('last-update').textContent =
-      'Atualizado: ' + (json.updated_at || 'desconhecido');
-    init();
-  } catch(e) {
-    document.getElementById('loading-state').innerHTML =
-      '<div class="empty-icon">⚠️</div><div style="color:var(--danger)">Erro ao carregar dados. Verifique se o data.json existe no repositório.</div>';
-  }
-}
+      if (!usuario || !perfil) {
+        window.location.href = LOGIN_PAGE;
+        return false;
+      }
 
-function init() {
-  document.getElementById('loading-state').style.display = 'none';
-  document.getElementById('table-container').style.display = 'block';
-  document.getElementById('pagination').style.display = 'flex';
-  populateFilters();
-  applyFilters();
-}
+      currentUser = usuario.trim().toLowerCase();
+      currentRole = perfil;
 
-function populateFilters() {
-  const solicitantes = [...new Set(rawData.map(r=>r.solicitante))].sort();
-  const filiais = [...new Set(rawData.map(r=>r.filial))].sort();
-  const selS = document.getElementById('filter-solicitante');
-  const selF = document.getElementById('filter-filial');
-  solicitantes.forEach(s => { const o = document.createElement('option'); o.value=s; o.text=s; selS.appendChild(o); });
-  filiais.forEach(f => { const o = document.createElement('option'); o.value=f; o.text=f.length>40?f.substring(0,40)+'…':f; selF.appendChild(o); });
-}
+      document.getElementById("userChip").textContent = "Usuário: " + currentUser;
+      document.getElementById("roleChip").textContent =
+        "Perfil: " + (currentRole === "time" ? "Time Interno" : "Solicitante");
 
-function setRole(role) {
-  currentRole = role;
-  document.getElementById('btn-time').className = 'role-btn'+(role==='time'?' active':'');
-  document.getElementById('btn-solicitante').className = 'role-btn'+(role==='solicitante'?' active':'');
-  document.getElementById('solicitante-banner').style.display = role==='solicitante'?'flex':'none';
-  document.getElementById('th-acao').style.display = role==='time'?'':'none';
-  closeDetail();
-  renderTable();
-}
+      if (currentRole === "solicitante") {
+        document.getElementById("solicitanteBanner").style.display = "block";
+        document.getElementById("usuarioFilter").style.display = "none";
+      }
 
-function applyFilters() {
-  const search = document.getElementById('search').value.toLowerCase();
-  const status = document.getElementById('filter-status').value;
-  const sol = document.getElementById('filter-solicitante').value;
-  const fil = document.getElementById('filter-filial').value;
-  filtered = rawData.filter(r => {
-    if (search && !`${r.n_aprovacao} ${r.solicitante} ${r.dscription}`.toLowerCase().includes(search)) return false;
-    if (status && r.status !== status) return false;
-    if (sol && r.solicitante !== sol) return false;
-    if (fil && r.filial !== fil) return false;
-    return true;
-  });
-  currentPage = 1;
-  updateStats();
-  renderTable();
-}
+      return true;
+    }
 
-function clearFilters() {
-  document.getElementById('search').value = '';
-  document.getElementById('filter-status').value = '';
-  document.getElementById('filter-solicitante').value = '';
-  document.getElementById('filter-filial').value = '';
-  applyFilters();
-}
+    function logout() {
+      localStorage.removeItem("usuario");
+      localStorage.removeItem("perfil");
+      window.location.href = LOGIN_PAGE;
+    }
 
-function updateStats() {
-  document.getElementById('stat-total').textContent = rawData.length;
-  document.getElementById('stat-aprovado').textContent = rawData.filter(r=>r.status==='Aprovado').length;
-  document.getElementById('stat-pendente').textContent = rawData.filter(r=>r.status==='Pendente'||r.status==='Em Análise').length;
-  const total = rawData.reduce((a,r)=>a+(r.line_total||0),0);
-  document.getElementById('stat-valor').textContent = 'R$ '+total.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
-}
+    async function loadData() {
+      try {
+        const response = await fetch("data.json?t=" + Date.now());
+        const json = await response.json();
 
-function renderTable() {
-  const tbody = document.getElementById('tabela-body');
-  const empty = document.getElementById('empty-state');
-  document.getElementById('table-count').textContent = `${filtered.length} registro${filtered.length!==1?'s':''}`;
-  if (!filtered.length) { tbody.innerHTML=''; empty.style.display='block'; renderPagination(); return; }
-  empty.style.display='none';
-  const start = (currentPage-1)*perPage;
-  const page = filtered.slice(start, start+perPage);
-  const badgeMap = {'Aprovado':'badge-aprovado','Pendente':'badge-pendente','Em Análise':'badge-em-analise','Reprovado':'badge-reprovado'};
-  tbody.innerHTML = page.map(r => {
-    const idx = rawData.indexOf(r);
-    const bc = badgeMap[r.status]||'badge-pendente';
-    const acaoCol = currentRole==='time'?`<td><button class="btn-edit" onclick="openModal(${idx},event)">✏️ Editar</button></td>`:'';
-    return `<tr onclick="openDetail(${idx})">
-      <td class="mono">#${r.n_aprovacao}</td>
-      <td class="mono text-muted">${r.n_doesboco}</td>
-      <td class="text-muted">${r.data||'—'}</td>
-      <td style="font-weight:500">${r.solicitante}</td>
-      <td class="text-muted">${r.aprovador||'—'}</td>
-      <td>${r.dscription||'—'}</td>
-      <td class="mono">R$ ${(r.line_total||0).toLocaleString('pt-BR',{minimumFractionDigits:2})}</td>
-      <td><span class="badge ${bc}">${r.status}</span>${r.motivo?`<div style="font-size:11px;color:var(--muted);margin-top:3px">${r.motivo.substring(0,40)}${r.motivo.length>40?'…':''}</div>`:''}</td>
-      ${acaoCol}
-    </tr>`;
-  }).join('');
-  renderPagination();
-}
+        rawData = Array.isArray(json.records) ? json.records : [];
+        document.getElementById("updatedAt").textContent = "Atualizado: " + (json.updated_at || "-");
 
-function renderPagination() {
-  const total = Math.max(1, Math.ceil(filtered.length/perPage));
-  document.getElementById('page-info').textContent = `Página ${currentPage} de ${total}`;
-  const btns = document.getElementById('page-btns');
-  let html = `<button class="page-btn" onclick="goPage(${currentPage-1})" ${currentPage<=1?'disabled':''}>‹</button>`;
-  for(let p=1;p<=total;p++){
-    if(total<=7||p===1||p===total||Math.abs(p-currentPage)<=1) html+=`<button class="page-btn ${p===currentPage?'active':''}" onclick="goPage(${p})">${p}</button>`;
-    else if(Math.abs(p-currentPage)===2) html+=`<span style="color:var(--muted);padding:0 4px">…</span>`;
-  }
-  html+=`<button class="page-btn" onclick="goPage(${currentPage+1})" ${currentPage>=total?'disabled':''}>›</button>`;
-  btns.innerHTML = html;
-}
+        populateFilters();
+        applyFilters();
+      } catch (error) {
+        document.getElementById("updatedAt").textContent = "Erro ao carregar dados";
+        console.error(error);
+      }
+    }
 
-function goPage(p) {
-  const total = Math.ceil(filtered.length/perPage);
-  if(p<1||p>total) return;
-  currentPage=p; renderTable();
-}
+    function populateFilters() {
+      const segmentoFilter = document.getElementById("segmentoFilter");
+      const usuarioFilter = document.getElementById("usuarioFilter");
 
-function openModal(idx, e) {
-  e.stopPropagation();
-  editingIndex = idx;
-  const r = rawData[idx];
-  document.getElementById('modal-sub').textContent = `Aprovação #${r.n_aprovacao} · ${r.solicitante}`;
-  document.getElementById('modal-info').innerHTML = `
-    <div class="info-item"><label>Descrição</label><span>${r.dscription||'—'}</span></div>
-    <div class="info-item"><label>Valor</label><span>R$ ${(r.line_total||0).toLocaleString('pt-BR',{minimumFractionDigits:2})}</span></div>
-    <div class="info-item"><label>Filial</label><span>${(r.filial||'').substring(0,35)}</span></div>
-    <div class="info-item"><label>Data</label><span>${r.data||'—'}</span></div>`;
-  document.getElementById('modal-status').value = r.status;
-  document.getElementById('modal-motivo').value = r.motivo||'';
-  document.getElementById('modal-overlay').classList.add('open');
-}
+      segmentoFilter.innerHTML = '<option value="">Todos os segmentos</option>';
+      usuarioFilter.innerHTML = '<option value="">Todos os usuários</option>';
 
-function closeModal() { document.getElementById('modal-overlay').classList.remove('open'); editingIndex=null; }
+      const segmentos = [...new Set(rawData.map(r => r["Segmento"]).filter(Boolean))].sort();
+      const usuarios = [...new Set(rawData.map(r => r["Usuário"]).filter(Boolean))].sort();
 
-function saveStatus() {
-  if(editingIndex===null) return;
-  const r = rawData[editingIndex];
-  const novoStatus = document.getElementById('modal-status').value;
-  const motivo = document.getElementById('modal-motivo').value.trim();
-  r.historico.push({ data: new Date().toLocaleString('pt-BR'), acao: novoStatus, usuario: 'Time Interno', motivo });
-  r.status = novoStatus;
-  r.motivo = motivo;
-  closeModal();
-  applyFilters();
-  showToast('✓ Status atualizado: ' + novoStatus);
-}
+      segmentos.forEach(item => {
+        const option = document.createElement("option");
+        option.value = item;
+        option.textContent = item;
+        segmentoFilter.appendChild(option);
+      });
 
-function openDetail(idx) {
-  const r = rawData[idx];
-  const badgeMap = {'Aprovado':'badge-aprovado','Pendente':'badge-pendente','Em Análise':'badge-em-analise','Reprovado':'badge-reprovado'};
-  const bc = badgeMap[r.status]||'badge-pendente';
-  const hist = r.historico.length ? r.historico.map(h=>`
-    <div class="history-item ${(h.acao||'').toLowerCase().replace(' ','-')}">
-      <div class="history-date">${h.data} · ${h.usuario}</div>
-      <div class="history-action">${h.acao}</div>
-      ${h.motivo?`<div class="history-motivo">"${h.motivo}"</div>`:''}
-    </div>`).join('') : '<div style="color:var(--muted);font-size:13px">Sem histórico de alterações.</div>';
-  document.getElementById('detail-content').innerHTML = `
-    <div class="detail-title">Aprovação #${r.n_aprovacao}</div>
-    <div class="detail-doc">Esboço: ${r.n_doesboco}</div>
-    <div style="margin-bottom:16px"><span class="badge ${bc}">${r.status}</span></div>
-    <div class="detail-section">
-      <div class="detail-section-title">Informações Gerais</div>
-      <div class="detail-row"><span>Data</span><span>${r.data||'—'}</span></div>
-      <div class="detail-row"><span>Solicitante</span><span>${r.solicitante}</span></div>
-      <div class="detail-row"><span>Aprovador</span><span>${r.aprovador||'—'}</span></div>
-      <div class="detail-row"><span>Filial</span><span>${r.filial||'—'}</span></div>
-    </div>
-    <div class="detail-section">
-      <div class="detail-section-title">Item</div>
-      <div class="detail-row"><span>Descrição</span><span>${r.dscription||'—'}</span></div>
-      <div class="total-value">R$ ${(r.line_total||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}</div>
-    </div>
-    ${r.motivo?`<div class="detail-section"><div class="detail-section-title">Observação</div><div style="background:var(--surface2);border-radius:8px;padding:12px;font-size:13px;font-style:italic;color:var(--muted)">"${r.motivo}"</div></div>`:''}
-    <div class="detail-section"><div class="detail-section-title">Histórico</div>${hist}</div>
-    ${currentRole==='time'?`<button class="btn-save" style="width:100%;margin-top:8px" onclick="openModal(${idx},event)">✏️ Editar Status</button>`:''}`;
-  document.getElementById('detail-panel').classList.add('open');
-}
+      usuarios.forEach(item => {
+        const option = document.createElement("option");
+        option.value = item;
+        option.textContent = item;
+        usuarioFilter.appendChild(option);
+      });
+    }
 
-function closeDetail() { document.getElementById('detail-panel').classList.remove('open'); }
+    function applyFilters() {
+      const search = document.getElementById("searchInput").value.trim().toLowerCase();
+      const status = document.getElementById("statusFilter").value;
+      const segmento = document.getElementById("segmentoFilter").value;
+      const usuario = document.getElementById("usuarioFilter").value;
 
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'), 3000);
-}
+      filteredData = rawData.filter(r => {
+        if (currentRole === "solicitante") {
+          const emailRegistro = String(r["Email do Usuário"] || "").trim().toLowerCase();
+          if (emailRegistro !== currentUser) return false;
+        }
 
-loadData();
-</script>
+        const texto = `
+          ${r["Prioridade"] || ""}
+          ${r["Usuário"] || ""}
+          ${r["Email do Usuário"] || ""}
+          ${r["Esboço"] || ""}
+          ${r["Número do Pedido"] || ""}
+          ${r["Segmento"] || ""}
+          ${r["Descrição do Item"] || ""}
+          ${r["Observações"] || ""}
+        `.toLowerCase();
+
+        if (search && !texto.includes(search)) return false;
+        if (status && (r["Status"] || "") !== status) return false;
+        if (segmento && (r["Segmento"] || "") !== segmento) return false;
+        if (usuario && (r["Usuário"] || "") !== usuario) return false;
+
+        return true;
+      });
+
+      updateStats();
+      renderTable();
+    }
+
+    function clearFilters() {
+      document.getElementById("searchInput").value = "";
+      document.getElementById("statusFilter").value = "";
+      document.getElementById("segmentoFilter").value = "";
+      document.getElementById("usuarioFilter").value = "";
+      applyFilters();
+    }
+
+    function updateStats() {
+      const total = filteredData.length;
+      const aprovados = filteredData.filter(r => (r["Status"] || "") === "Aprovado").length;
+      const pendentes = filteredData.filter(r => ["Pendente", "Em Análise"].includes(r["Status"] || "")).length;
+      const valorTotal = filteredData.reduce((acc, r) => acc + Number(r["Valor Total"] || 0), 0);
+
+      document.getElementById("statTotal").textContent = total;
+      document.getElementById("statAprovados").textContent = aprovados;
+      document.getElementById("statPendentes").textContent = pendentes;
+      document.getElementById("statValor").textContent = formatCurrency(valorTotal);
+      document.getElementById("tableCount").textContent = total + " registros";
+    }
+
+    function renderTable() {
+      const tableBody = document.getElementById("tableBody");
+      const emptyState = document.getElementById("emptyState");
+
+      if (!filteredData.length) {
+        tableBody.innerHTML = "";
+        emptyState.style.display = "block";
+        return;
+      }
+
+      emptyState.style.display = "none";
+
+      tableBody.innerHTML = filteredData.map(r => `
+        <tr>
+          <td>${escapeHtml(r["Prioridade"] || "-")}</td>
+          <td>${escapeHtml(r["Usuário"] || "-")}</td>
+          <td>${escapeHtml(r["Email do Usuário"] || "-")}</td>
+          <td>${escapeHtml(r["Esboço"] || "-")}</td>
+          <td>${escapeHtml(r["Número do Pedido"] || "-")}</td>
+          <td>${escapeHtml(r["Segmento"] || "-")}</td>
+          <td>${formatDate(r["Data de Lançamento"])}</td>
+          <td>${formatDate(r["Data do Esboço"])}</td>
+          <td>${escapeHtml(r["Descrição do Item"] || "-")}</td>
+          <td>${formatCurrency(r["Valor Total"] || 0)}</td>
+          <td><span class="status ${getStatusClass(r["Status"] || "")}">${escapeHtml(r["Status"] || "-")}</span></td>
+        </tr>
+      `).join("");
+    }
+
+    function getStatusClass(status) {
+      const s = String(status || "").toLowerCase();
+      if (s === "aprovado") return "status-aprovado";
+      if (s === "reprovado") return "status-reprovado";
+      if (s === "em análise" || s === "pendente") return "status-pendente";
+      return "";
+    }
+
+    function formatCurrency(value) {
+      return Number(value || 0).toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL"
+      });
+    }
+
+    function formatDate(value) {
+      if (!value) return "-";
+      const d = new Date(value);
+      if (!isNaN(d.getTime())) {
+        return d.toLocaleDateString("pt-BR");
+      }
+      return escapeHtml(String(value));
+    }
+
+    function escapeHtml(text) {
+      return String(text)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    if (checkAuth()) {
+      loadData();
+    }
+  </script>
 </body>
 </html>
