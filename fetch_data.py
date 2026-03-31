@@ -35,12 +35,13 @@ SELECT
 FROM `gold`.`sap`.`fato_atendimento_pedido_transf_estoque` a
 LEFT JOIN (
     SELECT
-        nome,
-        email_corporativo
+        TRIM(UPPER(nome)) AS nome_ajustado,
+        MAX(email_corporativo) AS email_corporativo
     FROM `gold`.`rh`.`fato_funcionario`
     WHERE situacao = 'A - Ativo'
+    GROUP BY TRIM(UPPER(nome))
 ) b
-    ON TRIM(UPPER(a.ptr_usuario_nome)) = TRIM(UPPER(b.nome))
+    ON TRIM(UPPER(a.ptr_usuario_nome)) = b.nome_ajustado
 WHERE a.ptr_data_esboco >= '2026-01-01'
 """
 
@@ -91,7 +92,6 @@ def run_query():
 
 
 def to_float(value):
-    """Converte valor numérico com segurança."""
     if value is None or value == "":
         return 0.0
 
@@ -102,7 +102,6 @@ def to_float(value):
 
 
 def to_str(value):
-    """Converte para string sem retornar None."""
     if value is None:
         return ""
     return str(value)
@@ -122,6 +121,7 @@ def parse_results(payload):
         records.append({
             "Prioridade": to_str(r.get("Prioridade")),
             "Usuário": to_str(r.get("Usuário")),
+            "Email do Usuário": to_str(r.get("Email do Usuário")).strip().lower(),
             "Esboço": to_str(r.get("Esboço")),
             "Número do Pedido": to_str(r.get("Número do Pedido")),
             "Segmento": to_str(r.get("Segmento")),
