@@ -193,6 +193,8 @@
 
       let perfil = null;
 
+      if (usuarios.dev.includes(email)) {
+        perfil = "dev";
       if (usuarios.time.includes(email)) {
         perfil = "time";
       } else if (usuarios.solicitante.includes(email)) {
