@@ -216,13 +216,8 @@
       vertical-align: top;
     }
 
-    tr.group-row {
-      cursor: pointer;
-    }
-
-    tr.group-row:hover td {
-      background: rgba(255,255,255,0.02);
-    }
+    tr.group-row { cursor: pointer; }
+    tr.group-row:hover td { background: rgba(255,255,255,0.02); }
 
     .status {
       padding: 6px 10px;
@@ -263,8 +258,11 @@
       color: var(--danger);
     }
 
-    .text-muted { color: var(--muted); }
-    .empty { padding: 28px 20px; color: var(--muted); font-size: 14px; }
+    .empty {
+      padding: 28px 20px;
+      color: var(--muted);
+      font-size: 14px;
+    }
 
     .modal-overlay {
       display: none;
@@ -413,7 +411,7 @@
 
   <div class="container">
     <div class="banner" id="solicitanteBanner">
-      Você está na visão de solicitante. Acompanhe o andamento dos seus esboços.
+      Você está na visão de solicitante.
     </div>
 
     <div class="cards">
@@ -438,12 +436,7 @@
     <div class="filters">
       <span>Filtros:</span>
 
-      <input
-        id="searchInput"
-        type="text"
-        placeholder="Buscar responsável, esboço, item, observação..."
-        oninput="applyFilters()"
-      />
+      <input id="searchInput" type="text" placeholder="Buscar responsável, esboço, item, observação..." oninput="applyFilters()" />
 
       <select id="statusFilter" onchange="applyFilters()">
         <option value="">Todos os status</option>
@@ -581,7 +574,14 @@
 
       currentUser = usuario.trim().toLowerCase();
       currentRole = perfil;
-      currentViewMode = perfil === "solicitante" ? "solicitante" : "time";
+
+      if (perfil === "dev") {
+        currentViewMode = "time";
+      } else if (perfil === "solicitante") {
+        currentViewMode = "solicitante";
+      } else {
+        currentViewMode = "time";
+      }
 
       document.getElementById("userChip").textContent = "Usuário: " + currentUser;
       document.getElementById("roleChip").textContent =
@@ -646,17 +646,13 @@
         const key = String(item["Numero Esboço"] || "");
         const override = saved[key];
         if (!override) return item;
-
-        return {
-          ...item,
-          "Situação do Tratamento": override
-        };
+        return { ...item, "Situação do Tratamento": override };
       });
     }
 
     function saveOverride(numeroEsboco, tratamento) {
       const saved = JSON.parse(localStorage.getItem("tratativas_esboco") || "{}");
-      saved[String(numeroEsboco)] = tratamento;
+      saved[String(numeroEsboço)] = tratamento;
       localStorage.setItem("tratativas_esboco", JSON.stringify(saved));
     }
 
@@ -675,7 +671,9 @@
             "Segmento": item["Segmento"] || "",
             "Data do Esboço": item["Data do Esboço"] || "",
             "Status": item["Status"] || "Esboço Pendente",
-            "Situação do Tratamento": item["Situação do Tratamento"] || "",
+            "Situação do Tratamento": item["Status"] === "Esboço Pendente"
+              ? (item["Situação do Tratamento"] || "Em análise pelo time")
+              : "",
             "Valor Total": 0,
             "Qtde Itens": 0,
             "Data de Atualização": item["Data de Atualização"] || "",
@@ -693,7 +691,15 @@
         }
 
         group["Status"] = resolveGroupStatus(group["Status"], item["Status"]);
-        group["Situação do Tratamento"] = resolveSituacaoTratamento(group["Situação do Tratamento"], item["Situação do Tratamento"], group["Status"]);
+
+        if (group["Status"] === "Esboço Pendente") {
+          if (!group["Situação do Tratamento"]) {
+            group["Situação do Tratamento"] = item["Situação do Tratamento"] || "Em análise pelo time";
+          }
+        } else {
+          group["Situação do Tratamento"] = "";
+        }
+
         group["Data de Atualização"] = getLatestDateText(group["Data de Atualização"], item["Data de Atualização"]);
       }
 
@@ -707,11 +713,6 @@
       if (a === "Esboço Pendente" || b === "Esboço Pendente") return "Esboço Pendente";
       if (a === "Esboço Fechado" || b === "Esboço Fechado") return "Esboço Fechado";
       return a || b || "Esboço Pendente";
-    }
-
-    function resolveSituacaoTratamento(currentValue, nextValue, status) {
-      if (status !== "Esboço Pendente") return "";
-      return currentValue || nextValue || "Em análise pelo time";
     }
 
     function comparePrioridade(a, b) {
@@ -738,13 +739,14 @@
       segmentoFilter.innerHTML = '<option value="">Todos os segmentos</option>';
       responsavelFilter.innerHTML = '<option value="">Todos os responsáveis</option>';
 
-      const prioridades = [...new Set(groupedData.map(r => r["Prioridade"]).filter(Boolean))].sort();
-      const segmentos = [...new Set(groupedData.map(r => r["Segmento"]).filter(Boolean))].sort();
-      const responsaveis = [...new Set(groupedData.map(r => r["Responsavel Esboço"]).filter(Boolean))].sort();
+      [...new Set(groupedData.map(r => r["Prioridade"]).filter(Boolean))].sort()
+        .forEach(item => appendOption(prioridadeFilter, item));
 
-      prioridades.forEach(item => appendOption(prioridadeFilter, item));
-      segmentos.forEach(item => appendOption(segmentoFilter, item));
-      responsaveis.forEach(item => appendOption(responsavelFilter, item));
+      [...new Set(groupedData.map(r => r["Segmento"]).filter(Boolean))].sort()
+        .forEach(item => appendOption(segmentoFilter, item));
+
+      [...new Set(groupedData.map(r => r["Responsavel Esboço"]).filter(Boolean))].sort()
+        .forEach(item => appendOption(responsavelFilter, item));
     }
 
     function appendOption(select, value) {
@@ -791,11 +793,9 @@
 
     function getPrioridadePeso(prioridade) {
       const p = String(prioridade || "").toLowerCase();
-
       if (p === "alta") return 1;
       if (p === "média" || p === "media") return 2;
       if (p === "baixa") return 3;
-
       return 99;
     }
 
@@ -805,14 +805,14 @@
       const dias = getDiasEmAberto(dataEsboco);
       const peso = getPrioridadePeso(prioridade);
 
-      if (peso === 1 && dias > 2) return "Vencido";
-      if (peso === 2 && dias > 5) return "Vencido";
-      if (peso === 3 && dias > 10) return "Vencido";
+      let limite = 0;
+      if (peso === 1) limite = 5;
+      else if (peso === 2) limite = 10;
+      else if (peso === 3) limite = 15;
+      else return "Sem regra";
 
-      if (peso === 1 && dias === 2) return "Vence hoje";
-      if (peso === 2 && dias === 5) return "Vence hoje";
-      if (peso === 3 && dias === 10) return "Vence hoje";
-
+      if (dias > limite) return "Vencido";
+      if (dias === limite) return "Vence hoje";
       return "No prazo";
     }
 
@@ -841,16 +841,13 @@
       const dtFim = dataFim ? new Date(dataFim + "T00:00:00") : null;
 
       filteredData = groupedData.filter(r => {
-        if (currentViewMode === "solicitante") {
-          return false;
-        }
-
         const texto = `
           ${r["Prioridade"] || ""}
           ${r["Responsavel Esboço"] || ""}
           ${r["Numero Esboço"] || ""}
           ${r["Segmento"] || ""}
           ${r["Situação do Tratamento"] || ""}
+          ${r["Status"] || ""}
         `.toLowerCase();
 
         if (search && !texto.includes(search)) return false;
@@ -871,7 +868,6 @@
         const pesoB = getPrioridadePeso(b["Prioridade"]);
 
         if (pesoA !== pesoB) return pesoA - pesoB;
-
         return getDiasEmAberto(b["Data do Esboço"]) - getDiasEmAberto(a["Data do Esboço"]);
       });
 
@@ -892,18 +888,9 @@
 
     function updateStats() {
       const total = filteredData.length;
-
-      const pendentes = filteredData.filter(r =>
-        String(r["Status"] || "").trim() === "Esboço Pendente"
-      ).length;
-
-      const fechados = filteredData.filter(r =>
-        String(r["Status"] || "").trim() === "Esboço Fechado"
-      ).length;
-
-      const valorTotal = filteredData.reduce((acc, r) =>
-        acc + Number(r["Valor Total"] || 0), 0
-      );
+      const pendentes = filteredData.filter(r => String(r["Status"] || "").trim() === "Esboço Pendente").length;
+      const fechados = filteredData.filter(r => String(r["Status"] || "").trim() === "Esboço Fechado").length;
+      const valorTotal = filteredData.reduce((acc, r) => acc + Number(r["Valor Total"] || 0), 0);
 
       document.getElementById("statTotal").textContent = total;
       document.getElementById("statPendentes").textContent = pendentes;
