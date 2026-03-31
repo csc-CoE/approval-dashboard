@@ -1,13 +1,15 @@
 """
 Busca dados do Databricks via SQL Statement API e salva em data.json
+
 Configurar no GitHub Secrets:
-  - DATABRICKS_HOST        ex: https://adb-xxxx.azuredatabricks.net
-  - DATABRICKS_TOKEN       Personal Access Token do Databricks
-  - DATABRICKS_WAREHOUSE_ID  ID do SQL Warehouse
+  - DATABRICKS_HOST
+  - DATABRICKS_TOKEN
+  - DATABRICKS_WAREHOUSE_ID
 """
 
 import os
 import json
+import time
 import requests
 from datetime import datetime
 
@@ -15,7 +17,6 @@ HOST = os.environ["DATABRICKS_HOST"].rstrip("/")
 TOKEN = os.environ["DATABRICKS_TOKEN"]
 WAREHOUSE_ID = os.environ["DATABRICKS_WAREHOUSE_ID"]
 
-# ── Altere a query conforme sua tabela no Databricks ──────────────────────────
 SQL_QUERY = """
 SELECT 
     prioridade                         AS `Prioridade`,
@@ -33,7 +34,6 @@ SELECT
 FROM `gold`.`sap`.`fato_atendimento_pedido_transf_estoque`
 WHERE ptr_data_esboco >= '2026-01-01'
 """
-# ─────────────────────────────────────────────────────────────────────────────
 
 HEADERS = {
     "Authorization": f"Bearer {TOKEN}",
@@ -43,7 +43,6 @@ HEADERS = {
 
 def run_query():
     """Executa a query e aguarda o resultado."""
-    # 1. Submete a query
     resp = requests.post(
         f"{HOST}/api/2.0/sql/statements",
         headers=HEADERS,
@@ -57,15 +56,16 @@ def run_query():
     )
     resp.raise_for_status()
     payload = resp.json()
+
     statement_id = payload["statement_id"]
     status = payload.get("status", {}).get("state", "")
 
-    # 2. Polling se ainda não terminou
-    import time
     for _ in range(20):
         if status in ("SUCCEEDED", "FAILED", "CANCELED", "CLOSED"):
             break
+
         time.sleep(3)
+
         poll = requests.get(
             f"{HOST}/api/2.0/sql/statements/{statement_id}",
             headers=HEADERS,
@@ -81,28 +81,53 @@ def run_query():
     return payload
 
 
+def to_float(value):
+    """Converte valor numérico com segurança."""
+    if value is None or value == "":
+        return 0.0
+
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return 0.0
+
+
+def to_str(value):
+    """Converte para string sem retornar None."""
+    if value is None:
+        return ""
+    return str(value)
+
+
 def parse_results(payload):
-    """Converte resultado da API para lista de dicts."""
+    """Converte resultado da API em lista de registros no formato do front."""
     manifest = payload.get("manifest", {})
     columns = [c["name"] for c in manifest.get("schema", {}).get("columns", [])]
     rows = payload.get("result", {}).get("data_array", [])
 
     records = []
+
     for row in rows:
         r = dict(zip(columns, row))
+
         records.append({
-            "n_aprovacao":  r.get("n_aprovacao", ""),
-            "n_doesboco":   r.get("n_doesboco", ""),
-            "data":         r.get("data", ""),
-            "solicitante":  r.get("solicitante", ""),
-            "aprovador":    r.get("aprovador", ""),
-            "filial":       r.get("filial", ""),
-            "dscription":   r.get("dscription", ""),
-            "line_total":   float(r.get("line_total") or 0),
-            "status":       r.get("status", "Pendente"),
-            "motivo":       "",
-            "historico":    [],
+            "Prioridade": to_str(r.get("Prioridade")),
+            "Usuário": to_str(r.get("Usuário")),
+            "Esboço": to_str(r.get("Esboço")),
+            "Número do Pedido": to_str(r.get("Número do Pedido")),
+            "Segmento": to_str(r.get("Segmento")),
+            "Data de Lançamento": to_str(r.get("Data de Lançamento")),
+            "Data do Esboço": to_str(r.get("Data do Esboço")),
+            "Valor Total": to_float(r.get("Valor Total")),
+            "Observações": to_str(r.get("Observações")),
+            "Código do Item": to_str(r.get("Código do Item")),
+            "Descrição do Item": to_str(r.get("Descrição do Item")),
+            "Data de Atualização": to_str(r.get("Data de Atualização")),
+            "Status": "Pendente",
+            "Motivo": "",
+            "historico": [],
         })
+
     return records
 
 
@@ -110,7 +135,7 @@ def main():
     print("Consultando Databricks...")
     payload = run_query()
     records = parse_results(payload)
-    print(f"  {len(records)} registros encontrados.")
+    print(f"{len(records)} registros encontrados.")
 
     output = {
         "updated_at": datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC"),
