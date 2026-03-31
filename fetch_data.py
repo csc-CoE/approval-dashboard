@@ -136,7 +136,7 @@ def map_situacao_tratamento(status_esboco):
     return "Em análise pelo time"
 
 
-def parse_results(payload):
+def def parse_results(payload):
     manifest = payload.get("manifest", {})
     columns = [c["name"] for c in manifest.get("schema", {}).get("columns", [])]
     rows = payload.get("result", {}).get("data_array", [])
@@ -146,7 +146,7 @@ def parse_results(payload):
     for row in rows:
         r = dict(zip(columns, row))
 
-        status_oficial = to_str(r.get("Status Esboço")).strip()
+        status_oficial = to_str(r.get("Status")).strip()
         if not status_oficial:
             status_oficial = "Esboço Pendente"
 
@@ -169,7 +169,6 @@ def parse_results(payload):
         })
 
     return records
-
 def main():
     print("Consultando Databricks...")
     payload = run_query()
