@@ -19,20 +19,29 @@ WAREHOUSE_ID = os.environ["DATABRICKS_WAREHOUSE_ID"]
 
 SQL_QUERY = """
 SELECT 
-    prioridade                         AS `Prioridade`,
-    ptr_usuario_nome                   AS `Usuário`,
-    ptr_esboco                         AS `Esboço`,
-    ptr_numero                         AS `Número do Pedido`,
-    ptr_segmento                       AS `Segmento`,
-    ptr_data_lancamento                AS `Data de Lançamento`,
-    ptr_data_esboco                    AS `Data do Esboço`,
-    ptr_valor_total                    AS `Valor Total`,
-    ptr_observacoes                    AS `Observações`,
-    ptr_item_codigo                    AS `Código do Item`,
-    ptr_item_descricao                 AS `Descrição do Item`,
-    data_atualizacao_tabela            AS `Data de Atualização`
-FROM `gold`.`sap`.`fato_atendimento_pedido_transf_estoque`
-WHERE ptr_data_esboco >= '2026-01-01'
+    a.prioridade              AS `Prioridade`,
+    a.ptr_usuario_nome        AS `Usuário`,
+    b.email_corporativo       AS `Email do Usuário`,
+    a.ptr_esboco              AS `Esboço`,
+    a.ptr_numero              AS `Número do Pedido`,
+    a.ptr_segmento            AS `Segmento`,
+    a.ptr_data_lancamento     AS `Data de Lançamento`,
+    a.ptr_data_esboco         AS `Data do Esboço`,
+    a.ptr_valor_total         AS `Valor Total`,
+    a.ptr_observacoes         AS `Observações`,
+    a.ptr_item_codigo         AS `Código do Item`,
+    a.ptr_item_descricao      AS `Descrição do Item`,
+    a.data_atualizacao_tabela AS `Data de Atualização`
+FROM `gold`.`sap`.`fato_atendimento_pedido_transf_estoque` a
+LEFT JOIN (
+    SELECT
+        nome,
+        email_corporativo
+    FROM `gold`.`rh`.`fato_funcionario`
+    WHERE situacao = 'A - Ativo'
+) b
+    ON TRIM(UPPER(a.ptr_usuario_nome)) = TRIM(UPPER(b.nome))
+WHERE a.ptr_data_esboco >= '2026-01-01'
 """
 
 HEADERS = {
