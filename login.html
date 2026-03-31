@@ -3,220 +3,1073 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Login - Painel de Aprovações</title>
+  <title>Painel de Esboços</title>
   <style>
     :root {
       --bg: #0b1020;
-      --card: #141b34;
+      --surface: #141b34;
+      --surface-2: #1a2342;
       --border: #26304f;
       --accent: #5b8cff;
-      --accent2: #7c4dff;
+      --accent-2: #7c4dff;
       --text: #f3f6ff;
       --muted: #a9b4d0;
+      --success: #30d18c;
+      --warning: #ffd166;
       --danger: #ff6b6b;
+      --info: #6ec1ff;
     }
 
     * { box-sizing: border-box; }
 
     body {
       margin: 0;
-      min-height: 100vh;
       font-family: "Segoe UI", Arial, sans-serif;
-      color: var(--text);
       background:
-        radial-gradient(circle at top left, rgba(91,140,255,0.25), transparent 30%),
-        radial-gradient(circle at bottom right, rgba(124,77,255,0.20), transparent 28%),
-        linear-gradient(135deg, #08101f, #0d1730 55%, #0a1224);
+        radial-gradient(circle at top left, rgba(91,140,255,0.12), transparent 30%),
+        linear-gradient(180deg, #08101f 0%, #0b1020 100%);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    .header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(11, 16, 32, 0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
       display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      padding: 18px 28px;
+      flex-wrap: wrap;
+    }
+
+    .title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .title-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 20px;
+    }
+
+    .title { font-size: 18px; font-weight: 700; }
+    .subtitle { color: var(--muted); font-size: 13px; }
+
+    .header-right {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .chip, .toggle-btn, .btn {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 14px;
+      font-size: 13px;
+      color: var(--text);
+    }
+
+    .chip { color: var(--muted); }
+    .toggle-btn, .btn { cursor: pointer; }
+
+    .toggle-btn.active {
+      background: rgba(91,140,255,0.16);
+      border-color: rgba(91,140,255,0.5);
+    }
+
+    .container {
+      max-width: 1500px;
+      margin: 0 auto;
+      padding: 28px;
+    }
+
+    .banner {
+      display: none;
+      margin-bottom: 20px;
+      background: rgba(91,140,255,0.12);
+      border: 1px solid rgba(91,140,255,0.30);
+      color: #dbe7ff;
+      border-radius: 14px;
+      padding: 14px 16px;
+      font-size: 14px;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+      margin-bottom: 22px;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 22px;
+    }
+
+    .card .label {
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 10px;
+    }
+
+    .card .value {
+      font-size: 30px;
+      font-weight: 800;
+    }
+
+    .filters {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 18px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-bottom: 22px;
+    }
+
+    .filters span {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    input, select {
+      background: var(--surface-2);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 14px;
+      font-size: 14px;
+      outline: none;
+    }
+
+    input { min-width: 240px; flex: 1; }
+    select { min-width: 180px; }
+
+    .table-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      overflow: hidden;
+    }
+
+    .table-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 20px;
+      border-bottom: 1px solid var(--border);
+      font-weight: 700;
+    }
+
+    .table-count {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .table-scroll {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 1250px;
+    }
+
+    th {
+      text-align: left;
+      padding: 14px 16px;
+      background: var(--surface-2);
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.7px;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+
+    td {
+      padding: 14px 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      font-size: 14px;
+      vertical-align: top;
+    }
+
+    tr.group-row {
+      cursor: pointer;
+    }
+
+    tr.group-row:hover td {
+      background: rgba(255,255,255,0.02);
+    }
+
+    .status {
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      display: inline-block;
+      white-space: nowrap;
+    }
+
+    .status-pendente {
+      background: rgba(255,209,102,0.14);
+      color: var(--warning);
+    }
+
+    .status-fechado {
+      background: rgba(48,209,140,0.15);
+      color: var(--success);
+    }
+
+    .status-tratamento {
+      background: rgba(110,193,255,0.14);
+      color: var(--info);
+    }
+
+    .status-sla-noprazo {
+      background: rgba(48,209,140,0.15);
+      color: var(--success);
+    }
+
+    .status-sla-vencehoje {
+      background: rgba(255,209,102,0.14);
+      color: var(--warning);
+    }
+
+    .status-sla-vencido {
+      background: rgba(255,107,107,0.14);
+      color: var(--danger);
+    }
+
+    .empty {
+      padding: 28px 20px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.55);
+      z-index: 1000;
       align-items: center;
       justify-content: center;
       padding: 24px;
     }
 
-    .card {
-      width: 100%;
-      max-width: 420px;
-      background: rgba(20, 27, 52, 0.96);
+    .modal-overlay.open { display: flex; }
+
+    .modal {
+      width: min(1200px, 96vw);
+      max-height: 90vh;
+      overflow: auto;
+      background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 18px;
-      padding: 32px;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+      padding: 22px;
     }
 
-    .logo {
+    .modal-header {
       display: flex;
-      align-items: center;
-      gap: 12px;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: start;
       margin-bottom: 18px;
     }
 
-    .logo-icon {
-      width: 46px;
-      height: 46px;
-      border-radius: 12px;
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 22px;
-    }
-
-    h1 {
-      margin: 0 0 6px;
-      font-size: 28px;
-    }
-
-    .sub {
-      color: var(--muted);
-      font-size: 14px;
-      margin-bottom: 26px;
-      line-height: 1.5;
-    }
-
-    label {
-      display: block;
-      font-size: 13px;
-      color: var(--muted);
-      margin-bottom: 8px;
-      font-weight: 600;
-    }
-
-    input {
-      width: 100%;
-      padding: 14px 16px;
-      border-radius: 12px;
-      border: 1px solid var(--border);
-      background: #0f1630;
-      color: var(--text);
-      font-size: 15px;
-      outline: none;
-      transition: 0.2s;
-    }
-
-    input:focus {
-      border-color: var(--accent);
-      box-shadow: 0 0 0 4px rgba(91,140,255,0.15);
-    }
-
-    button {
-      width: 100%;
-      margin-top: 18px;
-      padding: 14px 16px;
-      border: none;
-      border-radius: 12px;
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
-      color: white;
-      font-size: 15px;
+    .modal-title {
+      font-size: 20px;
       font-weight: 700;
-      cursor: pointer;
-      transition: 0.2s;
     }
 
-    button:hover {
-      transform: translateY(-1px);
-      opacity: 0.96;
-    }
-
-    .hint {
-      margin-top: 16px;
+    .modal-sub {
       color: var(--muted);
-      font-size: 12px;
+      font-size: 13px;
+      margin-top: 6px;
+    }
+
+    .modal-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .mini-card {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+    }
+
+    .mini-card .label {
+      color: var(--muted);
+      font-size: 11px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .mini-card .value {
+      font-size: 16px;
+      font-weight: 700;
       line-height: 1.4;
     }
 
-    .error {
-      display: none;
-      margin-top: 14px;
-      padding: 12px 14px;
-      border-radius: 10px;
-      background: rgba(255,107,107,0.12);
-      border: 1px solid rgba(255,107,107,0.35);
-      color: #ffd0d0;
-      font-size: 13px;
-      font-weight: 600;
+    .editor-box {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 18px;
+    }
+
+    .editor-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: end;
+    }
+
+    .editor-row > div {
+      flex: 1;
+      min-width: 240px;
+    }
+
+    .editor-row label {
+      display: block;
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+    }
+
+    .items-title {
+      font-size: 16px;
+      font-weight: 700;
+      margin: 10px 0 12px;
+    }
+
+    .small-btn {
+      padding: 10px 14px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      cursor: pointer;
+    }
+
+    @media (max-width: 1100px) {
+      .cards { grid-template-columns: repeat(2, 1fr); }
+      .modal-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 700px) {
+      .cards, .modal-grid { grid-template-columns: 1fr; }
+      .container { padding: 16px; }
+      .header { padding: 14px 16px; }
     }
   </style>
 </head>
 <body>
-  <div class="card">
-    <div class="logo">
-      <div class="logo-icon">📋</div>
+  <div class="header">
+    <div class="title-wrap">
+      <div class="title-icon">📋</div>
       <div>
-        <h1>Painel de Aprovações</h1>
-        <div style="color:#a9b4d0;font-size:13px;">Controle de acesso</div>
+        <div class="title">Painel de Esboços</div>
+        <div class="subtitle" id="updatedAt">Atualizado: carregando...</div>
       </div>
     </div>
 
-    <div class="sub">
-      Entre com seu e-mail corporativo para acessar o painel.
+    <div class="header-right">
+      <div id="viewToggle" style="display:none; gap:10px;">
+        <button class="toggle-btn active" id="btnViewTime" onclick="setViewMode('time')">Visão Time</button>
+        <button class="toggle-btn" id="btnViewSolicitante" onclick="setViewMode('solicitante')">Visão Solicitante</button>
+      </div>
+      <div class="chip" id="userChip">Usuário: -</div>
+      <div class="chip" id="roleChip">Perfil: -</div>
+      <button class="btn" onclick="logout()">Sair</button>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="banner" id="solicitanteBanner">
+      Você está na visão de solicitante. Acompanhe o andamento dos seus esboços.
     </div>
 
-    <label for="email">E-mail</label>
-    <input id="email" type="email" placeholder="seuemail@alloha.com" autocomplete="off" />
+    <div class="cards">
+      <div class="card">
+        <div class="label">Total Esboços</div>
+        <div class="value" id="statTotal">0</div>
+      </div>
+      <div class="card">
+        <div class="label">Esboço Pendente</div>
+        <div class="value" id="statPendentes">0</div>
+      </div>
+      <div class="card">
+        <div class="label">Esboço Fechado</div>
+        <div class="value" id="statFechados">0</div>
+      </div>
+      <div class="card">
+        <div class="label">Valor Total</div>
+        <div class="value" id="statValor">R$ 0,00</div>
+      </div>
+    </div>
 
-    <button onclick="login()">Entrar</button>
+    <div class="filters">
+      <span>Filtros:</span>
 
-    <div class="error" id="errorBox">Usuário não autorizado.</div>
+      <input
+        id="searchInput"
+        type="text"
+        placeholder="Buscar responsável, esboço, item, observação..."
+        oninput="applyFilters()"
+      />
 
-    <div class="hint">
-      Time Interno acessa a visão completa. Solicitante acessa apenas os próprios registros.
+      <select id="statusFilter" onchange="applyFilters()">
+        <option value="">Todos os status</option>
+        <option value="Esboço Pendente">Esboço Pendente</option>
+        <option value="Esboço Fechado">Esboço Fechado</option>
+      </select>
+
+      <select id="prioridadeFilter" onchange="applyFilters()">
+        <option value="">Todas as prioridades</option>
+      </select>
+
+      <select id="segmentoFilter" onchange="applyFilters()">
+        <option value="">Todos os segmentos</option>
+      </select>
+
+      <select id="responsavelFilter" onchange="applyFilters()">
+        <option value="">Todos os responsáveis</option>
+      </select>
+
+      <input id="dataInicioFilter" type="date" onchange="applyFilters()" />
+      <input id="dataFimFilter" type="date" onchange="applyFilters()" />
+
+      <button class="btn" onclick="clearFilters()">Limpar filtros</button>
+    </div>
+
+    <div class="table-box">
+      <div class="table-head">
+        <div>Fila de Esboços Agrupada</div>
+        <div class="table-count" id="tableCount">0 registros</div>
+      </div>
+
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>Prioridade</th>
+              <th>Responsável Esboço</th>
+              <th>Nº Esboço</th>
+              <th>Segmento</th>
+              <th>Data do Esboço</th>
+              <th>Dias em Aberto</th>
+              <th>Status</th>
+              <th>Situação do Tratamento</th>
+              <th>Status SLA</th>
+              <th>Qtde Itens</th>
+              <th>Valor Total</th>
+              <th>Última Atualização</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+      </div>
+
+      <div class="empty" id="emptyState" style="display:none;">
+        Nenhum registro encontrado.
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="detailModal">
+    <div class="modal">
+      <div class="modal-header">
+        <div>
+          <div class="modal-title" id="modalTitle">Esboço</div>
+          <div class="modal-sub" id="modalSub">Detalhes</div>
+        </div>
+        <button class="small-btn" onclick="closeModal()">Fechar</button>
+      </div>
+
+      <div class="modal-grid" id="modalCards"></div>
+
+      <div class="editor-box" id="editorBox" style="display:none;">
+        <div class="editor-row">
+          <div>
+            <label for="tratamentoSelect">Situação do Tratamento</label>
+            <select id="tratamentoSelect">
+              <option value="Em análise pelo time">Em análise pelo time</option>
+              <option value="Aguardando validação">Aguardando validação</option>
+              <option value="Aguardando ajuste de informações">Aguardando ajuste de informações</option>
+              <option value="Aguardando correção do pedido">Aguardando correção do pedido</option>
+              <option value="Sem saldo em estoque">Sem saldo em estoque</option>
+              <option value="Material indisponível">Material indisponível</option>
+              <option value="Erro cadastral">Erro cadastral</option>
+              <option value="Erro no SAP">Erro no SAP</option>
+              <option value="Divergência de dados">Divergência de dados</option>
+              <option value="Em tratativa com Estoque">Em tratativa com Estoque</option>
+              <option value="Em tratativa com Suprimentos">Em tratativa com Suprimentos</option>
+              <option value="Em tratativa com Planejamento">Em tratativa com Planejamento</option>
+              <option value="Aguardando retorno da área">Aguardando retorno da área</option>
+            </select>
+          </div>
+          <div style="flex:0 0 auto;">
+            <button class="small-btn" onclick="saveTratamento()">Salvar tratativa</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="items-title">Itens do Esboço</div>
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>Código do Item</th>
+              <th>Descrição do Item</th>
+              <th>Valor Total</th>
+              <th>Observações</th>
+              <th>Data de Atualização</th>
+            </tr>
+          </thead>
+          <tbody id="itemsBody"></tbody>
+        </table>
+      </div>
     </div>
   </div>
 
   <script>
-    const usuarios = {
-      dev: [
-    "wender.souza@alloha.com"
-       ],
-      
-      time: [
-        
-        "luiza.carvalho@alloha.com"
-      
-      ],
-      solicitante: [
-        "talita.nascimento@alloha.com",
-        "john.santana@alloha.com",
-        "rafael.liao@alloha.com"
-      ]
-    };
+    const LOGIN_PAGE = "login.html";
 
-    function login() {
-      const email = document.getElementById("email").value.trim().toLowerCase();
-      const errorBox = document.getElementById("errorBox");
+    let rawData = [];
+    let groupedData = [];
+    let filteredData = [];
+    let currentUser = null;
+    let currentRole = null;
+    let currentViewMode = "time";
+    let activeGroup = null;
 
-      if (!email) {
-        errorBox.style.display = "block";
-        errorBox.textContent = "Informe seu e-mail.";
-        return;
+    function checkAuth() {
+      const usuario = localStorage.getItem("usuario");
+      const perfil = localStorage.getItem("perfil");
+
+      if (!usuario || !perfil) {
+        window.location.href = LOGIN_PAGE;
+        return false;
       }
 
-      let perfil = null;
+      currentUser = usuario.trim().toLowerCase();
+      currentRole = perfil;
+      currentViewMode = perfil === "solicitante" ? "solicitante" : "time";
 
-      if (usuarios.dev.includes(email)) {
-        perfil = "dev";
-      if (usuarios.time.includes(email)) {
-        perfil = "time";
-      } else if (usuarios.solicitante.includes(email)) {
-        perfil = "solicitante";
+      document.getElementById("userChip").textContent = "Usuário: " + currentUser;
+      document.getElementById("roleChip").textContent =
+        "Perfil: " + (currentRole === "dev" ? "Desenvolvedor" : currentRole === "time" ? "Time Interno" : "Solicitante");
+
+      if (currentRole === "dev") {
+        document.getElementById("viewToggle").style.display = "flex";
       }
 
-      if (!perfil) {
-        errorBox.style.display = "block";
-        errorBox.textContent = "Usuário não autorizado.";
-        return;
-      }
-
-      localStorage.setItem("usuario", email);
-      localStorage.setItem("perfil", perfil);
-      window.location.href = "index.html";
+      renderViewMode();
+      return true;
     }
 
-    const usuarioLogado = localStorage.getItem("usuario");
-    const perfilLogado = localStorage.getItem("perfil");
+    function renderViewMode() {
+      const banner = document.getElementById("solicitanteBanner");
+      const btnTime = document.getElementById("btnViewTime");
+      const btnSolicitante = document.getElementById("btnViewSolicitante");
 
-    if (usuarioLogado && perfilLogado) {
-      window.location.href = "index.html";
+      banner.style.display = currentViewMode === "solicitante" ? "block" : "none";
+
+      if (btnTime && btnSolicitante) {
+        btnTime.classList.toggle("active", currentViewMode === "time");
+        btnSolicitante.classList.toggle("active", currentViewMode === "solicitante");
+      }
+    }
+
+    function setViewMode(mode) {
+      if (currentRole !== "dev") return;
+      currentViewMode = mode;
+      renderViewMode();
+      applyFilters();
+    }
+
+    function logout() {
+      localStorage.removeItem("usuario");
+      localStorage.removeItem("perfil");
+      window.location.href = LOGIN_PAGE;
+    }
+
+    async function loadData() {
+      try {
+        const response = await fetch("data.json?t=" + Date.now());
+        const json = await response.json();
+
+        rawData = Array.isArray(json.records) ? json.records : [];
+        applyOverridesFromLocal();
+        groupedData = groupByEsboco(rawData);
+
+        document.getElementById("updatedAt").textContent = "Atualizado: " + (json.updated_at || "-");
+        populateFilters();
+        applyFilters();
+      } catch (error) {
+        document.getElementById("updatedAt").textContent = "Erro ao carregar dados";
+        console.error(error);
+      }
+    }
+
+    function applyOverridesFromLocal() {
+      const saved = JSON.parse(localStorage.getItem("tratativas_esboco") || "{}");
+
+      rawData = rawData.map(item => {
+        const key = String(item["Numero Esboço"] || "");
+        const override = saved[key];
+        if (!override) return item;
+
+        return {
+          ...item,
+          "Situação do Tratamento": override
+        };
+      });
+    }
+
+    function saveOverride(numeroEsboco, tratamento) {
+      const saved = JSON.parse(localStorage.getItem("tratativas_esboco") || "{}");
+      saved[String(numeroEsboço)] = tratamento;
+      localStorage.setItem("tratativas_esboco", JSON.stringify(saved));
+    }
+
+    function groupByEsboco(data) {
+      const map = new Map();
+
+      for (const item of data) {
+        const key = String(item["Numero Esboço"] || "").trim();
+        if (!key) continue;
+
+        if (!map.has(key)) {
+          map.set(key, {
+            "Numero Esboço": key,
+            "Prioridade": item["Prioridade"] || "",
+            "Responsavel Esboço": item["Responsavel Esboço"] || "",
+            "Segmento": item["Segmento"] || "",
+            "Data do Esboço": item["Data do Esboço"] || "",
+            "Status": item["Status"] || "Esboço Pendente",
+            "Situação do Tratamento": item["Status"] === "Esboço Pendente"
+              ? (item["Situação do Tratamento"] || "Em análise pelo time")
+              : "",
+            "Valor Total": 0,
+            "Qtde Itens": 0,
+            "Data de Atualização": item["Data de Atualização"] || "",
+            "Itens": []
+          });
+        }
+
+        const group = map.get(key);
+        group["Itens"].push(item);
+        group["Qtde Itens"] += 1;
+        group["Valor Total"] += Number(item["Valor Total"] || 0);
+
+        if (comparePrioridade(item["Prioridade"], group["Prioridade"]) < 0) {
+          group["Prioridade"] = item["Prioridade"] || group["Prioridade"];
+        }
+
+        group["Status"] = resolveGroupStatus(group["Status"], item["Status"]);
+
+        if (group["Status"] === "Esboço Pendente") {
+          if (!group["Situação do Tratamento"]) {
+            group["Situação do Tratamento"] = item["Situação do Tratamento"] || "Em análise pelo time";
+          }
+        } else {
+          group["Situação do Tratamento"] = "";
+        }
+
+        group["Data de Atualização"] = getLatestDateText(group["Data de Atualização"], item["Data de Atualização"]);
+      }
+
+      return Array.from(map.values());
+    }
+
+    function resolveGroupStatus(currentStatus, nextStatus) {
+      const a = String(currentStatus || "").trim();
+      const b = String(nextStatus || "").trim();
+
+      if (a === "Esboço Pendente" || b === "Esboço Pendente") return "Esboço Pendente";
+      if (a === "Esboço Fechado" || b === "Esboço Fechado") return "Esboço Fechado";
+      return a || b || "Esboço Pendente";
+    }
+
+    function comparePrioridade(a, b) {
+      return getPrioridadePeso(a) - getPrioridadePeso(b);
+    }
+
+    function getLatestDateText(a, b) {
+      const da = parseAnyDate(a);
+      const db = parseAnyDate(b);
+
+      if (!da && !db) return a || b || "";
+      if (!da) return b || "";
+      if (!db) return a || "";
+
+      return db > da ? b : a;
+    }
+
+    function populateFilters() {
+      const prioridadeFilter = document.getElementById("prioridadeFilter");
+      const segmentoFilter = document.getElementById("segmentoFilter");
+      const responsavelFilter = document.getElementById("responsavelFilter");
+
+      prioridadeFilter.innerHTML = '<option value="">Todas as prioridades</option>';
+      segmentoFilter.innerHTML = '<option value="">Todos os segmentos</option>';
+      responsavelFilter.innerHTML = '<option value="">Todos os responsáveis</option>';
+
+      const prioridades = [...new Set(groupedData.map(r => r["Prioridade"]).filter(Boolean))].sort();
+      const segmentos = [...new Set(groupedData.map(r => r["Segmento"]).filter(Boolean))].sort();
+      const responsaveis = [...new Set(groupedData.map(r => r["Responsavel Esboço"]).filter(Boolean))].sort();
+
+      prioridades.forEach(item => appendOption(prioridadeFilter, item));
+      segmentos.forEach(item => appendOption(segmentoFilter, item));
+      responsaveis.forEach(item => appendOption(responsavelFilter, item));
+    }
+
+    function appendOption(select, value) {
+      const option = document.createElement("option");
+      option.value = value;
+      option.textContent = value;
+      select.appendChild(option);
+    }
+
+    function parseAnyDate(value) {
+      if (!value) return null;
+
+      const iso = new Date(value);
+      if (!isNaN(iso.getTime())) return iso;
+
+      const brDateTime = String(value).match(/^(\d{2})\/(\d{2})\/(\d{4})(?:\s+(\d{2}):(\d{2}))?/);
+      if (brDateTime) {
+        const hh = brDateTime[4] || "00";
+        const mm = brDateTime[5] || "00";
+        const dt = new Date(`${brDateTime[3]}-${brDateTime[2]}-${brDateTime[1]}T${hh}:${mm}:00`);
+        if (!isNaN(dt.getTime())) return dt;
+      }
+
+      return null;
+    }
+
+    function normalizeDate(value) {
+      const d = parseAnyDate(value);
+      if (!d) return null;
+      d.setHours(0, 0, 0, 0);
+      return d;
+    }
+
+    function getDiasEmAberto(dataTexto) {
+      const data = normalizeDate(dataTexto);
+      if (!data) return 0;
+
+      const hoje = new Date();
+      hoje.setHours(0, 0, 0, 0);
+
+      const diffMs = hoje - data;
+      return Math.max(0, Math.floor(diffMs / (1000 * 60 * 60 * 24)));
+    }
+
+    function getPrioridadePeso(prioridade) {
+      const p = String(prioridade || "").toLowerCase();
+
+      if (p === "alta") return 1;
+      if (p === "média" || p === "media") return 2;
+      if (p === "baixa") return 3;
+
+      return 99;
+    }
+
+    function getStatusSla(prioridade, dataEsboco, status) {
+      if (String(status || "").trim() === "Esboço Fechado") return "Fechado";
+
+      const dias = getDiasEmAberto(dataEsboco);
+      const peso = getPrioridadePeso(prioridade);
+
+      let limite = 0;
+      if (peso === 1) limite = 2;
+      else if (peso === 2) limite = 5;
+      else if (peso === 3) limite = 10;
+      else return "Sem regra";
+
+      if (dias > limite) return "Vencido";
+      if (dias === limite) return "Vence hoje";
+      return "No prazo";
+    }
+
+    function getStatusClass(status) {
+      if (String(status || "").trim() === "Esboço Fechado") return "status-fechado";
+      return "status-pendente";
+    }
+
+    function getSlaClass(statusSla) {
+      const s = String(statusSla || "").toLowerCase();
+      if (s === "vencido") return "status-sla-vencido";
+      if (s === "vence hoje") return "status-sla-vencehoje";
+      return "status-sla-noprazo";
+    }
+
+    function applyFilters() {
+      const search = document.getElementById("searchInput").value.trim().toLowerCase();
+      const status = document.getElementById("statusFilter").value;
+      const prioridade = document.getElementById("prioridadeFilter").value;
+      const segmento = document.getElementById("segmentoFilter").value;
+      const responsavel = document.getElementById("responsavelFilter").value;
+      const dataInicio = document.getElementById("dataInicioFilter").value;
+      const dataFim = document.getElementById("dataFimFilter").value;
+
+      const dtInicio = dataInicio ? new Date(dataInicio + "T00:00:00") : null;
+      const dtFim = dataFim ? new Date(dataFim + "T00:00:00") : null;
+
+      filteredData = groupedData.filter(r => {
+        if (currentViewMode === "solicitante") {
+          return false;
+        }
+
+        const texto = `
+          ${r["Prioridade"] || ""}
+          ${r["Responsavel Esboço"] || ""}
+          ${r["Numero Esboço"] || ""}
+          ${r["Segmento"] || ""}
+          ${r["Situação do Tratamento"] || ""}
+          ${r["Status"] || ""}
+        `.toLowerCase();
+
+        if (search && !texto.includes(search)) return false;
+        if (status && String(r["Status"] || "").trim() !== status) return false;
+        if (prioridade && String(r["Prioridade"] || "").trim() !== prioridade) return false;
+        if (segmento && String(r["Segmento"] || "").trim() !== segmento) return false;
+        if (responsavel && String(r["Responsavel Esboço"] || "").trim() !== responsavel) return false;
+
+        const dataRegistro = normalizeDate(r["Data do Esboço"]);
+        if (dtInicio && (!dataRegistro || dataRegistro < dtInicio)) return false;
+        if (dtFim && (!dataRegistro || dataRegistro > dtFim)) return false;
+
+        return true;
+      });
+
+      filteredData.sort((a, b) => {
+        const pesoA = getPrioridadePeso(a["Prioridade"]);
+        const pesoB = getPrioridadePeso(b["Prioridade"]);
+
+        if (pesoA !== pesoB) return pesoA - pesoB;
+
+        return getDiasEmAberto(b["Data do Esboço"]) - getDiasEmAberto(a["Data do Esboço"]);
+      });
+
+      updateStats();
+      renderTable();
+    }
+
+    function clearFilters() {
+      document.getElementById("searchInput").value = "";
+      document.getElementById("statusFilter").value = "";
+      document.getElementById("prioridadeFilter").value = "";
+      document.getElementById("segmentoFilter").value = "";
+      document.getElementById("responsavelFilter").value = "";
+      document.getElementById("dataInicioFilter").value = "";
+      document.getElementById("dataFimFilter").value = "";
+      applyFilters();
+    }
+
+    function updateStats() {
+      const total = filteredData.length;
+
+      const pendentes = filteredData.filter(r =>
+        String(r["Status"] || "").trim() === "Esboço Pendente"
+      ).length;
+
+      const fechados = filteredData.filter(r =>
+        String(r["Status"] || "").trim() === "Esboço Fechado"
+      ).length;
+
+      const valorTotal = filteredData.reduce((acc, r) =>
+        acc + Number(r["Valor Total"] || 0), 0
+      );
+
+      document.getElementById("statTotal").textContent = total;
+      document.getElementById("statPendentes").textContent = pendentes;
+      document.getElementById("statFechados").textContent = fechados;
+      document.getElementById("statValor").textContent = formatCurrency(valorTotal);
+      document.getElementById("tableCount").textContent = total + " registros";
+    }
+
+    function renderTable() {
+      const tableBody = document.getElementById("tableBody");
+      const emptyState = document.getElementById("emptyState");
+
+      if (!filteredData.length) {
+        tableBody.innerHTML = "";
+        emptyState.style.display = "block";
+        return;
+      }
+
+      emptyState.style.display = "none";
+
+      tableBody.innerHTML = filteredData.map((r, idx) => {
+        const status = r["Status"] || "-";
+        const statusSla = getStatusSla(r["Prioridade"], r["Data do Esboço"], status);
+        const situacao = status === "Esboço Pendente" ? (r["Situação do Tratamento"] || "-") : "-";
+
+        return `
+          <tr class="group-row" onclick="openModal(${idx})">
+            <td>${escapeHtml(r["Prioridade"] || "-")}</td>
+            <td>${escapeHtml(r["Responsavel Esboço"] || "-")}</td>
+            <td>${escapeHtml(r["Numero Esboço"] || "-")}</td>
+            <td>${escapeHtml(r["Segmento"] || "-")}</td>
+            <td>${formatDate(r["Data do Esboço"])}</td>
+            <td>${getDiasEmAberto(r["Data do Esboço"])}</td>
+            <td><span class="status ${getStatusClass(status)}">${escapeHtml(status)}</span></td>
+            <td>${status === "Esboço Pendente" ? `<span class="status status-tratamento">${escapeHtml(situacao)}</span>` : "-"}</td>
+            <td><span class="status ${getSlaClass(statusSla)}">${escapeHtml(statusSla)}</span></td>
+            <td>${r["Qtde Itens"] || 0}</td>
+            <td>${formatCurrency(r["Valor Total"] || 0)}</td>
+            <td>${escapeHtml(r["Data de Atualização"] || "-")}</td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    function openModal(index) {
+      activeGroup = filteredData[index];
+      if (!activeGroup) return;
+
+      document.getElementById("modalTitle").textContent = `Esboço ${activeGroup["Numero Esboço"] || "-"}`;
+      document.getElementById("modalSub").textContent = `${activeGroup["Responsavel Esboço"] || "-"} • ${activeGroup["Segmento"] || "-"}`;
+
+      const statusSla = getStatusSla(activeGroup["Prioridade"], activeGroup["Data do Esboço"], activeGroup["Status"]);
+
+      document.getElementById("modalCards").innerHTML = `
+        <div class="mini-card">
+          <div class="label">Prioridade</div>
+          <div class="value">${escapeHtml(activeGroup["Prioridade"] || "-")}</div>
+        </div>
+        <div class="mini-card">
+          <div class="label">Dias em Aberto</div>
+          <div class="value">${getDiasEmAberto(activeGroup["Data do Esboço"])}</div>
+        </div>
+        <div class="mini-card">
+          <div class="label">Status</div>
+          <div class="value">${escapeHtml(activeGroup["Status"] || "-")}</div>
+        </div>
+        <div class="mini-card">
+          <div class="label">Status SLA</div>
+          <div class="value">${escapeHtml(statusSla)}</div>
+        </div>
+      `;
+
+      const editorBox = document.getElementById("editorBox");
+      const podeEditarTratativa =
+        (currentViewMode === "time" || currentRole === "dev") &&
+        activeGroup["Status"] === "Esboço Pendente";
+
+      if (podeEditarTratativa) {
+        editorBox.style.display = "block";
+        document.getElementById("tratamentoSelect").value =
+          activeGroup["Situação do Tratamento"] || "Em análise pelo time";
+      } else {
+        editorBox.style.display = "none";
+      }
+
+      document.getElementById("itemsBody").innerHTML = activeGroup["Itens"].map(item => `
+        <tr>
+          <td>${escapeHtml(item["Código do Item"] || "-")}</td>
+          <td>${escapeHtml(item["Descrição do Item"] || "-")}</td>
+          <td>${formatCurrency(item["Valor Total"] || 0)}</td>
+          <td>${escapeHtml(item["Observações"] || "-")}</td>
+          <td>${escapeHtml(item["Data de Atualização"] || "-")}</td>
+        </tr>
+      `).join("");
+
+      document.getElementById("detailModal").classList.add("open");
+    }
+
+    function closeModal() {
+      document.getElementById("detailModal").classList.remove("open");
+      activeGroup = null;
+    }
+
+    function saveTratamento() {
+      if (!activeGroup) return;
+      if (activeGroup["Status"] !== "Esboço Pendente") return;
+
+      const novoValor = document.getElementById("tratamentoSelect").value;
+      activeGroup["Situação do Tratamento"] = novoValor;
+
+      groupedData = groupedData.map(group =>
+        String(group["Numero Esboço"]) === String(activeGroup["Numero Esboço"])
+          ? { ...group, "Situação do Tratamento": novoValor }
+          : group
+      );
+
+      rawData = rawData.map(item =>
+        String(item["Numero Esboço"]) === String(activeGroup["Numero Esboço"])
+          ? { ...item, "Situação do Tratamento": novoValor }
+          : item
+      );
+
+      saveOverride(activeGroup["Numero Esboço"], novoValor);
+      applyFilters();
+
+      const newIndex = filteredData.findIndex(
+        x => String(x["Numero Esboço"]) === String(activeGroup["Numero Esboço"])
+      );
+
+      if (newIndex >= 0) openModal(newIndex);
+    }
+
+    function formatCurrency(value) {
+      return Number(value || 0).toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL"
+      });
+    }
+
+    function formatDate(value) {
+      if (!value) return "-";
+      const d = parseAnyDate(value);
+      if (d) return d.toLocaleDateString("pt-BR");
+      return escapeHtml(String(value));
+    }
+
+    function escapeHtml(text) {
+      return String(text)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    if (checkAuth()) {
+      loadData();
     }
   </script>
 </body>
