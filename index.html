@@ -3,48 +3,50 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Painel de Esboços</title>
+  <title>Painel de Esboços – Alloha Fibra</title>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
+
     :root {
-      --bg: #071226;
-      --surface: #0f1c3d;
-      --surface-2: #16264d;
-      --border: #243766;
-      --accent: #2f80ff;
-      --accent-2: #7b61ff;
-      --text: #f4f7ff;
-      --muted: #aab7d6;
-      --success: #1fc77e;
-      --warning: #f2b94b;
-      --danger: #eb5757;
-      --info: #56ccf2;
+      --bg: #0a0a0a;
+      --surface: #141414;
+      --surface-2: #1c1c1c;
+      --border: #2a2a2a;
+      --accent: #FF6B00;
+      --accent-dark: #cc5500;
+      --accent-light: #ff8c33;
+      --accent-glow: rgba(255,107,0,0.18);
+      --text: #f5f5f5;
+      --muted: #999;
+      --success: #22c55e;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --info: #38bdf8;
+      --radius: 14px;
     }
 
-    * { box-sizing: border-box; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      margin: 0;
-      font-family: "Segoe UI", Arial, sans-serif;
-      background:
-        radial-gradient(circle at top left, rgba(47,128,255,0.16), transparent 28%),
-        radial-gradient(circle at top right, rgba(123,97,255,0.10), transparent 22%),
-        linear-gradient(180deg, #06101f 0%, #071226 100%);
+      font-family: 'Nunito', 'Segoe UI', Arial, sans-serif;
+      background: var(--bg);
       color: var(--text);
       min-height: 100vh;
     }
 
+    /* ── HEADER ── */
     .header {
       position: sticky;
       top: 0;
       z-index: 20;
-      background: rgba(7, 18, 38, 0.94);
-      backdrop-filter: blur(10px);
-      border-bottom: 1px solid rgba(255,255,255,0.06);
+      background: rgba(10,10,10,0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255,107,0,0.18);
       display: flex;
       justify-content: space-between;
       align-items: center;
       gap: 16px;
-      padding: 18px 28px;
+      padding: 14px 28px;
       flex-wrap: wrap;
     }
 
@@ -54,26 +56,36 @@
       gap: 14px;
     }
 
-    .title-icon {
-      width: 46px;
-      height: 46px;
-      border-radius: 14px;
-      background: linear-gradient(135deg, #2f80ff, #7b61ff);
+    /* SVG logo inline Alloha */
+    .logo-box {
       display: flex;
-      justify-content: center;
       align-items: center;
-      font-size: 20px;
-      box-shadow: 0 10px 24px rgba(47,128,255,0.18);
+      gap: 10px;
+    }
+
+    .logo-svg {
+      height: 38px;
+      width: auto;
+    }
+
+    .logo-divider {
+      width: 1px;
+      height: 32px;
+      background: rgba(255,107,0,0.35);
     }
 
     .title {
-      font-size: 18px;
-      font-weight: 700;
+      font-size: 17px;
+      font-weight: 800;
+      color: var(--text);
+      letter-spacing: -0.3px;
     }
 
     .subtitle {
       color: var(--muted);
-      font-size: 13px;
+      font-size: 12px;
+      font-weight: 600;
+      margin-top: 2px;
     }
 
     .header-right {
@@ -83,142 +95,215 @@
       flex-wrap: wrap;
     }
 
-    .chip, .toggle-btn, .btn {
+    .chip {
       background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 10px 14px;
-      font-size: 13px;
-      color: var(--text);
-    }
-
-    .chip {
+      border-radius: 999px;
+      padding: 7px 14px;
+      font-size: 12px;
+      font-weight: 700;
       color: var(--muted);
     }
 
-    .toggle-btn, .btn {
+    .toggle-btn {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 8px 14px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--muted);
       cursor: pointer;
       transition: 0.2s;
+      font-family: inherit;
     }
 
     .toggle-btn.active {
-      background: rgba(47,128,255,0.16);
-      border-color: rgba(47,128,255,0.5);
+      background: var(--accent-glow);
+      border-color: rgba(255,107,0,0.5);
+      color: var(--accent-light);
     }
 
-    .btn:hover, .toggle-btn:hover {
+    .btn {
+      background: var(--accent);
+      border: none;
+      border-radius: 10px;
+      padding: 9px 18px;
+      font-size: 13px;
+      font-weight: 800;
+      color: #fff;
+      cursor: pointer;
+      transition: 0.2s;
+      font-family: inherit;
+      letter-spacing: 0.3px;
+    }
+
+    .btn:hover {
+      background: var(--accent-light);
       transform: translateY(-1px);
     }
 
+    .btn-ghost {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+
+    .btn-ghost:hover {
+      border-color: var(--accent);
+      color: var(--accent-light);
+      background: var(--surface);
+    }
+
+    /* ── LAYOUT ── */
     .container {
-      max-width: 1500px;
+      max-width: 1520px;
       margin: 0 auto;
       padding: 28px;
     }
 
+    /* ── BANNER ── */
     .banner {
       display: none;
       margin-bottom: 20px;
-      background: rgba(47,128,255,0.12);
-      border: 1px solid rgba(47,128,255,0.30);
-      color: #dbe7ff;
-      border-radius: 14px;
-      padding: 14px 16px;
+      background: rgba(255,107,0,0.10);
+      border: 1px solid rgba(255,107,0,0.30);
+      color: #ffd4a8;
+      border-radius: var(--radius);
+      padding: 12px 18px;
       font-size: 14px;
+      font-weight: 600;
     }
 
+    /* ── STAT CARDS ── */
     .cards {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 18px;
+      gap: 16px;
       margin-bottom: 22px;
     }
 
     .card {
-      background: linear-gradient(180deg, rgba(15,28,61,0.98), rgba(13,24,52,0.98));
-      border: 1px solid rgba(255,255,255,0.06);
-      border-radius: 20px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 18px;
       padding: 22px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.18);
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.2s;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--accent), var(--accent-light));
+    }
+
+    .card:hover {
+      border-color: rgba(255,107,0,0.3);
     }
 
     .card .label {
       color: var(--muted);
-      font-size: 12px;
+      font-size: 11px;
+      font-weight: 800;
       text-transform: uppercase;
-      letter-spacing: 0.8px;
-      margin-bottom: 10px;
+      letter-spacing: 1px;
+      margin-bottom: 12px;
     }
 
     .card .value {
       font-size: 30px;
-      font-weight: 800;
-      letter-spacing: -0.5px;
+      font-weight: 900;
+      letter-spacing: -1px;
+      color: var(--text);
     }
 
+    .card .icon {
+      position: absolute;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 32px;
+      opacity: 0.08;
+    }
+
+    /* ── FILTERS ── */
     .filters {
-      background: linear-gradient(180deg, rgba(15,28,61,0.98), rgba(13,24,52,0.98));
-      border: 1px solid rgba(255,255,255,0.06);
-      border-radius: 20px;
-      padding: 18px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 16px 18px;
       display: flex;
-      gap: 12px;
+      gap: 10px;
       flex-wrap: wrap;
       align-items: center;
-      margin-bottom: 22px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.16);
+      margin-bottom: 20px;
     }
 
-    .filters span {
-      color: var(--muted);
-      font-size: 14px;
+    .filters-label {
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1px;
     }
 
     input, select {
       background: var(--surface-2);
       color: var(--text);
       border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 12px 14px;
-      font-size: 14px;
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 13px;
+      font-family: inherit;
+      font-weight: 600;
       outline: none;
+      transition: border-color 0.2s;
     }
 
-    input {
-      min-width: 240px;
-      flex: 1;
+    input:focus, select:focus {
+      border-color: rgba(255,107,0,0.5);
     }
 
-    select {
-      min-width: 180px;
-    }
+    input { min-width: 240px; flex: 1; }
+    select { min-width: 170px; }
 
+    /* ── TABLE BOX ── */
     .table-box {
-      background: linear-gradient(180deg, rgba(15,28,61,0.98), rgba(13,24,52,0.98));
-      border: 1px solid rgba(255,255,255,0.06);
-      border-radius: 20px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 18px;
       overflow: hidden;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.16);
     }
 
     .table-head {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 18px 20px;
-      border-bottom: 1px solid rgba(255,255,255,0.06);
-      font-weight: 700;
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .table-head-title {
+      font-size: 15px;
+      font-weight: 800;
+      letter-spacing: -0.2px;
     }
 
     .table-count {
       color: var(--muted);
-      font-size: 13px;
-      font-weight: 500;
+      font-size: 12px;
+      font-weight: 700;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 4px 12px;
     }
 
-    .table-scroll {
-      overflow-x: auto;
-    }
+    .table-scroll { overflow-x: auto; }
 
     table {
       width: 100%;
@@ -228,106 +313,77 @@
 
     th {
       text-align: left;
-      padding: 14px 16px;
-      background: #182954;
-      color: #b8c5e2;
-      font-size: 12px;
+      padding: 12px 16px;
+      background: #111;
+      color: #666;
+      font-size: 11px;
+      font-weight: 800;
       text-transform: uppercase;
-      letter-spacing: 0.7px;
-      border-bottom: 1px solid rgba(255,255,255,0.06);
+      letter-spacing: 0.8px;
+      border-bottom: 1px solid var(--border);
       white-space: nowrap;
     }
 
     td {
-      padding: 14px 16px;
-      border-bottom: 1px solid rgba(255,255,255,0.04);
-      font-size: 14px;
-      vertical-align: top;
+      padding: 13px 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+      font-size: 13px;
+      font-weight: 600;
+      vertical-align: middle;
     }
 
-    tr.group-row {
-      cursor: pointer;
-    }
+    tr.group-row { cursor: pointer; }
 
-    tr.group-row:hover td {
-      background: rgba(255,255,255,0.02);
-    }
+    tr.group-row:hover td { background: rgba(255,107,0,0.04); }
 
+    /* ── STATUS BADGES ── */
     .status {
-      padding: 6px 10px;
+      padding: 5px 10px;
       border-radius: 999px;
-      font-size: 12px;
-      font-weight: 700;
+      font-size: 11px;
+      font-weight: 800;
       display: inline-block;
       white-space: nowrap;
       border: 1px solid transparent;
+      letter-spacing: 0.3px;
     }
 
-    .status-pendente {
-      background: rgba(242,185,75,0.14);
-      color: #f2c15c;
-      border-color: rgba(242,185,75,0.18);
-    }
-
-    .status-fechado {
-      background: rgba(31,199,126,0.14);
-      color: #35d48d;
-      border-color: rgba(31,199,126,0.18);
-    }
-
-    .status-tratamento {
-      background: rgba(86,204,242,0.14);
-      color: #7fdcff;
-      border-color: rgba(86,204,242,0.18);
-    }
-
-    .status-sla-noprazo {
-      background: rgba(31,199,126,0.14);
-      color: #35d48d;
-      border-color: rgba(31,199,126,0.18);
-    }
-
-    .status-sla-vencehoje {
-      background: rgba(242,185,75,0.14);
-      color: #f2c15c;
-      border-color: rgba(242,185,75,0.18);
-    }
-
-    .status-sla-vencido {
-      background: rgba(235,87,87,0.14);
-      color: #ff7d7d;
-      border-color: rgba(235,87,87,0.18);
-    }
+    .status-pendente   { background: rgba(245,158,11,0.14); color: #fbbf24; border-color: rgba(245,158,11,0.25); }
+    .status-fechado    { background: rgba(34,197,94,0.14);  color: #4ade80; border-color: rgba(34,197,94,0.25); }
+    .status-tratamento { background: rgba(56,189,248,0.14); color: #7dd3fc; border-color: rgba(56,189,248,0.25); }
+    .status-sla-noprazo  { background: rgba(34,197,94,0.14);  color: #4ade80; border-color: rgba(34,197,94,0.25); }
+    .status-sla-vencehoje{ background: rgba(245,158,11,0.14); color: #fbbf24; border-color: rgba(245,158,11,0.25); }
+    .status-sla-vencido  { background: rgba(239,68,68,0.14);  color: #f87171; border-color: rgba(239,68,68,0.25); }
 
     .empty {
-      padding: 28px 20px;
+      padding: 36px 20px;
       color: var(--muted);
       font-size: 14px;
+      text-align: center;
     }
 
+    /* ── MODAL ── */
     .modal-overlay {
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,0.55);
+      background: rgba(0,0,0,0.72);
       z-index: 1000;
       align-items: center;
       justify-content: center;
       padding: 24px;
     }
 
-    .modal-overlay.open {
-      display: flex;
-    }
+    .modal-overlay.open { display: flex; }
 
     .modal {
       width: min(1200px, 96vw);
       max-height: 90vh;
       overflow: auto;
       background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      padding: 22px;
+      border: 1px solid rgba(255,107,0,0.25);
+      border-radius: 20px;
+      padding: 24px;
     }
 
     .modal-header {
@@ -335,53 +391,58 @@
       justify-content: space-between;
       gap: 16px;
       align-items: start;
-      margin-bottom: 18px;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
     }
 
     .modal-title {
       font-size: 20px;
-      font-weight: 700;
+      font-weight: 900;
+      letter-spacing: -0.5px;
     }
 
     .modal-sub {
       color: var(--muted);
       font-size: 13px;
-      margin-top: 6px;
+      margin-top: 4px;
+      font-weight: 600;
     }
 
     .modal-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 14px;
-      margin-bottom: 18px;
+      gap: 12px;
+      margin-bottom: 20px;
     }
 
     .mini-card {
       background: var(--surface-2);
       border: 1px solid var(--border);
-      border-radius: 14px;
+      border-radius: 12px;
       padding: 14px;
     }
 
     .mini-card .label {
       color: var(--muted);
-      font-size: 11px;
+      font-size: 10px;
+      font-weight: 800;
       text-transform: uppercase;
+      letter-spacing: 1px;
       margin-bottom: 8px;
     }
 
     .mini-card .value {
       font-size: 16px;
-      font-weight: 700;
-      line-height: 1.4;
+      font-weight: 800;
     }
 
     .editor-box {
       background: var(--surface-2);
-      border: 1px solid var(--border);
+      border: 1px solid rgba(255,107,0,0.2);
       border-radius: 14px;
       padding: 16px;
-      margin-bottom: 18px;
+      margin-bottom: 20px;
     }
 
     .editor-row {
@@ -391,67 +452,75 @@
       align-items: end;
     }
 
-    .editor-row > div {
-      flex: 1;
-      min-width: 240px;
-    }
+    .editor-row > div { flex: 1; min-width: 240px; }
 
     .editor-row label {
       display: block;
-      font-size: 12px;
+      font-size: 11px;
+      font-weight: 800;
       color: var(--muted);
       margin-bottom: 8px;
       text-transform: uppercase;
+      letter-spacing: 0.8px;
     }
 
     .items-title {
-      font-size: 16px;
-      font-weight: 700;
-      margin: 10px 0 12px;
+      font-size: 15px;
+      font-weight: 800;
+      margin: 4px 0 14px;
+      color: var(--accent-light);
     }
 
     .small-btn {
-      padding: 10px 14px;
-      border-radius: 12px;
+      padding: 10px 16px;
+      border-radius: 10px;
       border: 1px solid var(--border);
       background: var(--surface);
       color: var(--text);
       cursor: pointer;
+      font-family: inherit;
+      font-weight: 700;
+      font-size: 13px;
+      transition: 0.2s;
     }
 
+    .small-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent-light);
+    }
+
+    /* ── FOOTER ── */
     .footer-dev {
-      margin-top: 28px;
-      padding: 18px 28px 26px;
+      margin-top: 32px;
+      padding: 0 28px 28px;
     }
 
     .footer-dev-inner {
-      max-width: 1500px;
+      max-width: 1520px;
       margin: 0 auto;
       display: flex;
       justify-content: center;
       align-items: center;
       gap: 10px;
       color: var(--muted);
-      font-size: 13px;
-      border-top: 1px solid rgba(255,255,255,0.06);
-      padding-top: 18px;
+      font-size: 12px;
+      font-weight: 700;
+      border-top: 1px solid var(--border);
+      padding-top: 20px;
     }
 
     .footer-tag {
-      padding: 5px 10px;
+      padding: 4px 10px;
       border-radius: 999px;
-      background: rgba(47,128,255,0.14);
-      color: #8fc0ff;
-      border: 1px solid rgba(47,128,255,0.18);
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.6px;
+      background: rgba(255,107,0,0.14);
+      color: var(--accent-light);
+      border: 1px solid rgba(255,107,0,0.25);
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: 1px;
     }
 
-    .footer-text {
-      opacity: 0.95;
-    }
-
+    /* ── RESPONSIVE ── */
     @media (max-width: 1100px) {
       .cards { grid-template-columns: repeat(2, 1fr); }
       .modal-grid { grid-template-columns: repeat(2, 1fr); }
@@ -459,18 +528,33 @@
 
     @media (max-width: 700px) {
       .cards, .modal-grid { grid-template-columns: 1fr; }
-      .container { padding: 16px; }
-      .header { padding: 14px 16px; }
+      .container { padding: 14px; }
+      .header { padding: 12px 16px; }
     }
   </style>
 </head>
 <body>
+
+  <!-- HEADER -->
   <div class="header">
     <div class="title-wrap">
-      <div class="title-icon">📋</div>
-      <div>
-        <div class="title">Painel de Esboços</div>
-        <div class="subtitle" id="updatedAt">Atualizado: carregando...</div>
+      <div class="logo-box">
+        <!-- Alloha Fibra logo SVG inline -->
+        <svg class="logo-svg" viewBox="0 0 160 44" xmlns="http://www.w3.org/2000/svg" fill="none">
+          <!-- Ícone de fibra/sinal -->
+          <circle cx="22" cy="22" r="20" fill="#FF6B00"/>
+          <path d="M12 22 Q22 10 32 22" stroke="#fff" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+          <path d="M15 27 Q22 17 29 27" stroke="#fff" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+          <circle cx="22" cy="31" r="2.5" fill="#fff"/>
+          <!-- Texto ALLOHA -->
+          <text x="48" y="17" font-family="Nunito,Arial,sans-serif" font-weight="900" font-size="14" fill="#FF6B00" letter-spacing="-0.5">ALLOHA</text>
+          <text x="48" y="32" font-family="Nunito,Arial,sans-serif" font-weight="700" font-size="10" fill="#fff" letter-spacing="2" opacity="0.8">FIBRA</text>
+        </svg>
+        <div class="logo-divider"></div>
+        <div>
+          <div class="title">Painel de Esboços</div>
+          <div class="subtitle" id="updatedAt">Atualizado: carregando...</div>
+        </div>
       </div>
     </div>
 
@@ -481,69 +565,63 @@
       </div>
       <div class="chip" id="userChip">Usuário: -</div>
       <div class="chip" id="roleChip">Perfil: -</div>
-      <button class="btn" onclick="logout()">Sair</button>
+      <button class="btn btn-ghost" onclick="logout()">Sair</button>
     </div>
   </div>
 
+  <!-- CONTENT -->
   <div class="container">
     <div class="banner" id="solicitanteBanner">
-      Você está na visão de solicitante.
+      📢 Você está visualizando na visão de solicitante.
     </div>
 
+    <!-- STAT CARDS -->
     <div class="cards">
       <div class="card">
         <div class="label">Total Esboços</div>
         <div class="value" id="statTotal">0</div>
+        <div class="icon">📋</div>
       </div>
       <div class="card">
         <div class="label">Esboço Pendente</div>
         <div class="value" id="statPendentes">0</div>
+        <div class="icon">⏳</div>
       </div>
       <div class="card">
         <div class="label">Esboço Fechado</div>
         <div class="value" id="statFechados">0</div>
+        <div class="icon">✅</div>
       </div>
       <div class="card">
         <div class="label">Valor Total</div>
         <div class="value" id="statValor">R$ 0,00</div>
+        <div class="icon">💰</div>
       </div>
     </div>
 
+    <!-- FILTERS -->
     <div class="filters">
-      <span>Filtros:</span>
-
+      <span class="filters-label">Filtros</span>
       <input id="searchInput" type="text" placeholder="Buscar responsável, esboço, item, observação..." oninput="applyFilters()" />
-
       <select id="statusFilter" onchange="applyFilters()">
         <option value="">Todos os status</option>
         <option value="Esboço Pendente">Esboço Pendente</option>
         <option value="Esboço Fechado">Esboço Fechado</option>
       </select>
-
-      <select id="prioridadeFilter" onchange="applyFilters()">
-        <option value="">Todas as prioridades</option>
-      </select>
-
-      <select id="segmentoFilter" onchange="applyFilters()">
-        <option value="">Todos os segmentos</option>
-      </select>
-
-      <select id="responsavelFilter" onchange="applyFilters()">
-        <option value="">Todos os responsáveis</option>
-      </select>
-
+      <select id="prioridadeFilter" onchange="applyFilters()"><option value="">Todas as prioridades</option></select>
+      <select id="segmentoFilter" onchange="applyFilters()"><option value="">Todos os segmentos</option></select>
+      <select id="responsavelFilter" onchange="applyFilters()"><option value="">Todos os responsáveis</option></select>
       <input id="dataInicioFilter" type="date" onchange="applyFilters()" />
       <input id="dataFimFilter" type="date" onchange="applyFilters()" />
-
-      <button class="btn" onclick="clearFilters()">Limpar filtros</button>
+      <button class="btn btn-ghost" onclick="clearFilters()">Limpar filtros</button>
     </div>
 
+    <!-- TABLE -->
     <div class="table-box">
       <div class="table-head">
-        <div>Fila de Esboços Agrupada</div>
+        <div class="table-head-title">Fila de Esboços Agrupada</div>
         <div class="table-count" id="tableCount">0 registros</div>
       </div>
-
       <div class="table-scroll">
         <table>
           <thead>
@@ -565,13 +643,11 @@
           <tbody id="tableBody"></tbody>
         </table>
       </div>
-
-      <div class="empty" id="emptyState" style="display:none;">
-        Nenhum registro encontrado.
-      </div>
+      <div class="empty" id="emptyState" style="display:none;">Nenhum registro encontrado.</div>
     </div>
   </div>
 
+  <!-- MODAL -->
   <div class="modal-overlay" id="detailModal">
     <div class="modal">
       <div class="modal-header">
@@ -579,11 +655,9 @@
           <div class="modal-title" id="modalTitle">Esboço</div>
           <div class="modal-sub" id="modalSub">Detalhes</div>
         </div>
-        <button class="small-btn" onclick="closeModal()">Fechar</button>
+        <button class="small-btn" onclick="closeModal()">✕ Fechar</button>
       </div>
-
       <div class="modal-grid" id="modalCards"></div>
-
       <div class="editor-box" id="editorBox" style="display:none;">
         <div class="editor-row">
           <div>
@@ -605,11 +679,10 @@
             </select>
           </div>
           <div style="flex:0 0 auto;">
-            <button class="small-btn" onclick="saveTratamento()">Salvar tratativa</button>
+            <button class="btn" onclick="saveTratamento()">💾 Salvar tratativa</button>
           </div>
         </div>
       </div>
-
       <div class="items-title">Itens do Esboço</div>
       <div class="table-scroll">
         <table>
@@ -628,72 +701,45 @@
     </div>
   </div>
 
+  <!-- FOOTER -->
   <footer class="footer-dev">
     <div class="footer-dev-inner">
       <span class="footer-tag">COE</span>
-      <span class="footer-text">Desenvolvido por COE - Wender</span>
+      <span>Desenvolvido por COE – Wender</span>
     </div>
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
     const LOGIN_PAGE = "login.html";
-
     const SUPABASE_URL = "https://ojgtpdwjcmqcbiydaesx.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9qZ3RwZHdqY21xY2JpeWRhZXN4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUwMzA3NTQsImV4cCI6MjA5MDYwNjc1NH0.U87vGwcmaZW6UoOYrKSqIoArVqquCFAzvbqQaeUbhIE";
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    let rawData = [];
-    let groupedData = [];
-    let filteredData = [];
-    let currentUser = null;
-    let currentRole = null;
-    let currentViewMode = "time";
-    let activeGroup = null;
+    let rawData = [], groupedData = [], filteredData = [];
+    let currentUser = null, currentRole = null;
+    let currentViewMode = "time", activeGroup = null;
 
     function checkAuth() {
       const usuario = localStorage.getItem("usuario");
-      const perfil = localStorage.getItem("perfil");
-
-      if (!usuario || !perfil) {
-        window.location.href = LOGIN_PAGE;
-        return false;
-      }
-
+      const perfil  = localStorage.getItem("perfil");
+      if (!usuario || !perfil) { window.location.href = LOGIN_PAGE; return false; }
       currentUser = usuario.trim().toLowerCase();
       currentRole = perfil;
-
-      if (perfil === "dev") {
-        currentViewMode = "time";
-      } else if (perfil === "solicitante") {
-        currentViewMode = "solicitante";
-      } else {
-        currentViewMode = "time";
-      }
-
+      currentViewMode = perfil === "solicitante" ? "solicitante" : "time";
       document.getElementById("userChip").textContent = "Usuário: " + currentUser;
-      document.getElementById("roleChip").textContent =
-        "Perfil: " + (currentRole === "dev" ? "Desenvolvedor" : currentRole === "time" ? "Time Interno" : "Solicitante");
-
-      if (currentRole === "dev") {
-        document.getElementById("viewToggle").style.display = "flex";
-      }
-
+      document.getElementById("roleChip").textContent = "Perfil: " + (perfil === "dev" ? "Desenvolvedor" : perfil === "time" ? "Time Interno" : "Solicitante");
+      if (perfil === "dev") document.getElementById("viewToggle").style.display = "flex";
       renderViewMode();
       return true;
     }
 
     function renderViewMode() {
-      const banner = document.getElementById("solicitanteBanner");
+      document.getElementById("solicitanteBanner").style.display = currentViewMode === "solicitante" ? "block" : "none";
       const btnTime = document.getElementById("btnViewTime");
-      const btnSolicitante = document.getElementById("btnViewSolicitante");
-
-      banner.style.display = currentViewMode === "solicitante" ? "block" : "none";
-
-      if (btnTime && btnSolicitante) {
-        btnTime.classList.toggle("active", currentViewMode === "time");
-        btnSolicitante.classList.toggle("active", currentViewMode === "solicitante");
-      }
+      const btnSol  = document.getElementById("btnViewSolicitante");
+      if (btnTime) btnTime.classList.toggle("active", currentViewMode === "time");
+      if (btnSol)  btnSol.classList.toggle("active", currentViewMode === "solicitante");
     }
 
     function setViewMode(mode) {
@@ -710,24 +756,10 @@
     }
 
     async function fetchTratativasSupabase() {
-      const { data, error } = await supabaseClient
-        .from("tratativas_esboco")
-        .select("numero_esboco, situacao_tratamento, updated_by, updated_at");
-
-      if (error) {
-        console.error("Erro ao buscar tratativas no Supabase:", error);
-        return {};
-      }
-
+      const { data, error } = await supabaseClient.from("tratativas_esboco").select("numero_esboco, situacao_tratamento, updated_by, updated_at");
+      if (error) { console.error(error); return {}; }
       const map = {};
-      (data || []).forEach(item => {
-        map[String(item.numero_esboco)] = {
-          situacao_tratamento: item.situacao_tratamento,
-          updated_by: item.updated_by,
-          updated_at: item.updated_at
-        };
-      });
-
+      (data || []).forEach(item => { map[String(item.numero_esboco)] = { situacao_tratamento: item.situacao_tratamento, updated_by: item.updated_by, updated_at: item.updated_at }; });
       return map;
     }
 
@@ -735,30 +767,15 @@
       try {
         const response = await fetch("data.json?t=" + Date.now());
         const json = await response.json();
-
         rawData = Array.isArray(json.records) ? json.records : [];
-
-        rawData = rawData.map(item => ({
-          ...item,
-          "Status": item["Status Esboço"] || item["Status"] || "Esboço Pendente"
-        }));
-
+        rawData = rawData.map(item => ({ ...item, "Status": item["Status Esboço"] || item["Status"] || "Esboço Pendente" }));
         const tratativasMap = await fetchTratativasSupabase();
-
         rawData = rawData.map(item => {
-          const numeroEsboco = String(item["Numero Esboço"] || "");
-          const tratativa = tratativasMap[numeroEsboco];
-
-          if (!tratativa) return item;
-
-          return {
-            ...item,
-            "Situação do Tratamento": tratativa.situacao_tratamento || item["Situação do Tratamento"]
-          };
+          const num = String(item["Numero Esboço"] || "");
+          const t = tratativasMap[num];
+          return t ? { ...item, "Situação do Tratamento": t.situacao_tratamento || item["Situação do Tratamento"] } : item;
         });
-
         groupedData = groupByEsboco(rawData);
-
         document.getElementById("updatedAt").textContent = "Atualizado: " + (json.updated_at || "-");
         populateFilters();
         applyFilters();
@@ -770,225 +787,130 @@
 
     function groupByEsboco(data) {
       const map = new Map();
-
       for (const item of data) {
         const key = String(item["Numero Esboço"] || "").trim();
         if (!key) continue;
-
         const statusItem = String(item["Status Esboço"] || item["Status"] || "Esboço Pendente").trim();
-
         if (!map.has(key)) {
-          map.set(key, {
-            "Numero Esboço": key,
-            "Prioridade": item["Prioridade"] || "",
-            "Responsavel Esboço": item["Responsavel Esboço"] || "",
-            "Segmento": item["Segmento"] || "",
-            "Data do Esboço": item["Data do Esboço"] || "",
-            "Status": statusItem,
-            "Situação do Tratamento": statusItem === "Esboço Pendente"
-              ? (item["Situação do Tratamento"] || "Em análise pelo time")
-              : "",
-            "Valor Total": 0,
-            "Qtde Itens": 0,
-            "Data de Atualização": item["Data de Atualização"] || "",
-            "Itens": []
-          });
+          map.set(key, { "Numero Esboço": key, "Prioridade": item["Prioridade"] || "", "Responsavel Esboço": item["Responsavel Esboço"] || "", "Segmento": item["Segmento"] || "", "Data do Esboço": item["Data do Esboço"] || "", "Status": statusItem, "Situação do Tratamento": statusItem === "Esboço Pendente" ? (item["Situação do Tratamento"] || "Em análise pelo time") : "", "Valor Total": 0, "Qtde Itens": 0, "Data de Atualização": item["Data de Atualização"] || "", "Itens": [] });
         }
-
         const group = map.get(key);
         group["Itens"].push(item);
         group["Qtde Itens"] += 1;
         group["Valor Total"] += Number(item["Valor Total"] || 0);
-
-        if (comparePrioridade(item["Prioridade"], group["Prioridade"]) < 0) {
-          group["Prioridade"] = item["Prioridade"] || group["Prioridade"];
-        }
-
+        if (comparePrioridade(item["Prioridade"], group["Prioridade"]) < 0) group["Prioridade"] = item["Prioridade"] || group["Prioridade"];
         group["Status"] = resolveGroupStatus(group["Status"], statusItem);
-
-        if (group["Status"] === "Esboço Pendente") {
-          if (!group["Situação do Tratamento"]) {
-            group["Situação do Tratamento"] = item["Situação do Tratamento"] || "Em análise pelo time";
-          }
-        } else {
-          group["Situação do Tratamento"] = "";
-        }
-
+        if (group["Status"] === "Esboço Pendente") { if (!group["Situação do Tratamento"]) group["Situação do Tratamento"] = item["Situação do Tratamento"] || "Em análise pelo time"; } else group["Situação do Tratamento"] = "";
         group["Data de Atualização"] = getLatestDateText(group["Data de Atualização"], item["Data de Atualização"]);
       }
-
       return Array.from(map.values());
     }
 
-    function resolveGroupStatus(currentStatus, nextStatus) {
-      const a = String(currentStatus || "").trim();
-      const b = String(nextStatus || "").trim();
-
+    function resolveGroupStatus(a, b) {
+      a = String(a||"").trim(); b = String(b||"").trim();
       if (a === "Esboço Pendente" || b === "Esboço Pendente") return "Esboço Pendente";
-      if (a === "Esboço Fechado" || b === "Esboço Fechado") return "Esboço Fechado";
+      if (a === "Esboço Fechado"  || b === "Esboço Fechado")  return "Esboço Fechado";
       return a || b || "Esboço Pendente";
     }
 
-    function comparePrioridade(a, b) {
-      return getPrioridadePeso(a) - getPrioridadePeso(b);
-    }
+    function comparePrioridade(a, b) { return getPrioridadePeso(a) - getPrioridadePeso(b); }
 
     function getLatestDateText(a, b) {
-      const da = parseAnyDate(a);
-      const db = parseAnyDate(b);
-
+      const da = parseAnyDate(a), db = parseAnyDate(b);
       if (!da && !db) return a || b || "";
-      if (!da) return b || "";
-      if (!db) return a || "";
-
+      if (!da) return b || ""; if (!db) return a || "";
       return db > da ? b : a;
     }
 
     function populateFilters() {
-      const prioridadeFilter = document.getElementById("prioridadeFilter");
-      const segmentoFilter = document.getElementById("segmentoFilter");
-      const responsavelFilter = document.getElementById("responsavelFilter");
-
-      prioridadeFilter.innerHTML = '<option value="">Todas as prioridades</option>';
-      segmentoFilter.innerHTML = '<option value="">Todos os segmentos</option>';
-      responsavelFilter.innerHTML = '<option value="">Todos os responsáveis</option>';
-
-      [...new Set(groupedData.map(r => r["Prioridade"]).filter(Boolean))].sort()
-        .forEach(item => appendOption(prioridadeFilter, item));
-
-      [...new Set(groupedData.map(r => r["Segmento"]).filter(Boolean))].sort()
-        .forEach(item => appendOption(segmentoFilter, item));
-
-      [...new Set(groupedData.map(r => r["Responsavel Esboço"]).filter(Boolean))].sort()
-        .forEach(item => appendOption(responsavelFilter, item));
+      const pF = document.getElementById("prioridadeFilter");
+      const sF = document.getElementById("segmentoFilter");
+      const rF = document.getElementById("responsavelFilter");
+      pF.innerHTML = '<option value="">Todas as prioridades</option>';
+      sF.innerHTML = '<option value="">Todos os segmentos</option>';
+      rF.innerHTML = '<option value="">Todos os responsáveis</option>';
+      [...new Set(groupedData.map(r => r["Prioridade"]).filter(Boolean))].sort().forEach(v => appendOption(pF, v));
+      [...new Set(groupedData.map(r => r["Segmento"]).filter(Boolean))].sort().forEach(v => appendOption(sF, v));
+      [...new Set(groupedData.map(r => r["Responsavel Esboço"]).filter(Boolean))].sort().forEach(v => appendOption(rF, v));
     }
 
-    function appendOption(select, value) {
-      const option = document.createElement("option");
-      option.value = value;
-      option.textContent = value;
-      select.appendChild(option);
-    }
+    function appendOption(sel, val) { const o = document.createElement("option"); o.value = val; o.textContent = val; sel.appendChild(o); }
 
     function parseAnyDate(value) {
       if (!value) return null;
-
       const iso = new Date(value);
       if (!isNaN(iso.getTime())) return iso;
-
-      const brDateTime = String(value).match(/^(\d{2})\/(\d{2})\/(\d{4})(?:\s+(\d{2}):(\d{2}))?/);
-      if (brDateTime) {
-        const hh = brDateTime[4] || "00";
-        const mm = brDateTime[5] || "00";
-        const dt = new Date(`${brDateTime[3]}-${brDateTime[2]}-${brDateTime[1]}T${hh}:${mm}:00`);
-        if (!isNaN(dt.getTime())) return dt;
-      }
-
+      const br = String(value).match(/^(\d{2})\/(\d{2})\/(\d{4})(?:\s+(\d{2}):(\d{2}))?/);
+      if (br) { const dt = new Date(`${br[3]}-${br[2]}-${br[1]}T${br[4]||"00"}:${br[5]||"00"}:00`); if (!isNaN(dt.getTime())) return dt; }
       return null;
     }
 
     function normalizeDate(value) {
       const d = parseAnyDate(value);
       if (!d) return null;
-      d.setHours(0, 0, 0, 0);
+      d.setHours(0,0,0,0);
       return d;
     }
 
     function getDiasEmAberto(dataTexto) {
       const data = normalizeDate(dataTexto);
       if (!data) return 0;
-
-      const hoje = new Date();
-      hoje.setHours(0, 0, 0, 0);
-
-      const diffMs = hoje - data;
-      return Math.max(0, Math.floor(diffMs / (1000 * 60 * 60 * 24)));
+      const hoje = new Date(); hoje.setHours(0,0,0,0);
+      return Math.max(0, Math.floor((hoje - data) / 86400000));
     }
 
-    function getPrioridadePeso(prioridade) {
-      const p = String(prioridade || "")
-        .trim()
-        .toLowerCase()
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "");
-
-      if (p === "alto") return 1;
-      if (p === "medio") return 2;
-      if (p === "baixo") return 3;
-
-      return 99;
+    function getPrioridadePeso(p) {
+      p = String(p||"").trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
+      if (p==="alto") return 1; if (p==="medio") return 2; if (p==="baixo") return 3; return 99;
     }
 
     function getStatusSla(prioridade, dataEsboco, status) {
-      if (String(status || "").trim() === "Esboço Fechado") return "Fechado";
-
+      if (String(status||"").trim() === "Esboço Fechado") return "Fechado";
       const dias = getDiasEmAberto(dataEsboco);
       const peso = getPrioridadePeso(prioridade);
-
-      let limite = 0;
-      if (peso === 1) limite = 5;
-      else if (peso === 2) limite = 10;
-      else if (peso === 3) limite = 15;
-      else return "Sem regra";
-
+      let limite = peso===1?5:peso===2?10:peso===3?15:0;
+      if (!limite) return "Sem regra";
       if (dias > limite) return "Vencido";
       if (dias === limite) return "Vence hoje";
       return "No prazo";
     }
 
-    function getStatusClass(status) {
-      if (String(status || "").trim() === "Esboço Fechado") return "status-fechado";
-      return "status-pendente";
-    }
+    function getStatusClass(status) { return String(status||"").trim() === "Esboço Fechado" ? "status-fechado" : "status-pendente"; }
 
-    function getSlaClass(statusSla) {
-      const s = String(statusSla || "").toLowerCase();
-      if (s === "vencido") return "status-sla-vencido";
-      if (s === "vence hoje") return "status-sla-vencehoje";
+    function getSlaClass(s) {
+      s = String(s||"").toLowerCase();
+      if (s==="vencido") return "status-sla-vencido";
+      if (s==="vence hoje") return "status-sla-vencehoje";
       return "status-sla-noprazo";
     }
 
     function applyFilters() {
-      const search = document.getElementById("searchInput").value.trim().toLowerCase();
-      const status = document.getElementById("statusFilter").value;
-      const prioridade = document.getElementById("prioridadeFilter").value;
-      const segmento = document.getElementById("segmentoFilter").value;
-      const responsavel = document.getElementById("responsavelFilter").value;
-      const dataInicio = document.getElementById("dataInicioFilter").value;
-      const dataFim = document.getElementById("dataFimFilter").value;
-
-      const dtInicio = dataInicio ? new Date(dataInicio + "T00:00:00") : null;
-      const dtFim = dataFim ? new Date(dataFim + "T00:00:00") : null;
+      const search    = document.getElementById("searchInput").value.trim().toLowerCase();
+      const status    = document.getElementById("statusFilter").value;
+      const prioridade= document.getElementById("prioridadeFilter").value;
+      const segmento  = document.getElementById("segmentoFilter").value;
+      const responsavel=document.getElementById("responsavelFilter").value;
+      const dataInicio= document.getElementById("dataInicioFilter").value;
+      const dataFim   = document.getElementById("dataFimFilter").value;
+      const dtInicio  = dataInicio ? new Date(dataInicio + "T00:00:00") : null;
+      const dtFim     = dataFim    ? new Date(dataFim    + "T00:00:00") : null;
 
       filteredData = groupedData.filter(r => {
-        const texto = `
-          ${r["Prioridade"] || ""}
-          ${r["Responsavel Esboço"] || ""}
-          ${r["Numero Esboço"] || ""}
-          ${r["Segmento"] || ""}
-          ${r["Situação do Tratamento"] || ""}
-          ${r["Status"] || ""}
-        `.toLowerCase();
-
+        const texto = `${r["Prioridade"]||""} ${r["Responsavel Esboço"]||""} ${r["Numero Esboço"]||""} ${r["Segmento"]||""} ${r["Situação do Tratamento"]||""} ${r["Status"]||""}`.toLowerCase();
         if (search && !texto.includes(search)) return false;
-        if (status && String(r["Status"] || "").trim() !== status) return false;
-        if (prioridade && String(r["Prioridade"] || "").trim() !== prioridade) return false;
-        if (segmento && String(r["Segmento"] || "").trim() !== segmento) return false;
-        if (responsavel && String(r["Responsavel Esboço"] || "").trim() !== responsavel) return false;
-
-        const dataRegistro = normalizeDate(r["Data do Esboço"]);
-        if (dtInicio && (!dataRegistro || dataRegistro < dtInicio)) return false;
-        if (dtFim && (!dataRegistro || dataRegistro > dtFim)) return false;
-
+        if (status    && String(r["Status"]||"").trim()             !== status)     return false;
+        if (prioridade&& String(r["Prioridade"]||"").trim()         !== prioridade) return false;
+        if (segmento  && String(r["Segmento"]||"").trim()           !== segmento)   return false;
+        if (responsavel&&String(r["Responsavel Esboço"]||"").trim() !== responsavel)return false;
+        const dr = normalizeDate(r["Data do Esboço"]);
+        if (dtInicio && (!dr || dr < dtInicio)) return false;
+        if (dtFim    && (!dr || dr > dtFim))    return false;
         return true;
       });
 
-      filteredData.sort((a, b) => {
-        const pesoA = getPrioridadePeso(a["Prioridade"]);
-        const pesoB = getPrioridadePeso(b["Prioridade"]);
-
-        if (pesoA !== pesoB) return pesoA - pesoB;
-
+      filteredData.sort((a,b) => {
+        const pa = getPrioridadePeso(a["Prioridade"]), pb = getPrioridadePeso(b["Prioridade"]);
+        if (pa !== pb) return pa - pb;
         return getDiasEmAberto(b["Data do Esboço"]) - getDiasEmAberto(a["Data do Esboço"]);
       });
 
@@ -997,198 +919,101 @@
     }
 
     function clearFilters() {
-      document.getElementById("searchInput").value = "";
-      document.getElementById("statusFilter").value = "";
-      document.getElementById("prioridadeFilter").value = "";
-      document.getElementById("segmentoFilter").value = "";
-      document.getElementById("responsavelFilter").value = "";
-      document.getElementById("dataInicioFilter").value = "";
-      document.getElementById("dataFimFilter").value = "";
+      ["searchInput","dataInicioFilter","dataFimFilter"].forEach(id => document.getElementById(id).value = "");
+      ["statusFilter","prioridadeFilter","segmentoFilter","responsavelFilter"].forEach(id => document.getElementById(id).value = "");
       applyFilters();
     }
 
     function updateStats() {
-      const total = filteredData.length;
-      const pendentes = filteredData.filter(r => String(r["Status"] || "").trim() === "Esboço Pendente").length;
-      const fechados = filteredData.filter(r => String(r["Status"] || "").trim() === "Esboço Fechado").length;
-      const valorTotal = filteredData.reduce((acc, r) => acc + Number(r["Valor Total"] || 0), 0);
-
-      document.getElementById("statTotal").textContent = total;
-      document.getElementById("statPendentes").textContent = pendentes;
+      const total     = filteredData.length;
+      const pendentes = filteredData.filter(r => String(r["Status"]||"").trim() === "Esboço Pendente").length;
+      const fechados  = filteredData.filter(r => String(r["Status"]||"").trim() === "Esboço Fechado").length;
+      const valor     = filteredData.reduce((acc,r) => acc + Number(r["Valor Total"]||0), 0);
+      document.getElementById("statTotal").textContent    = total;
+      document.getElementById("statPendentes").textContent= pendentes;
       document.getElementById("statFechados").textContent = fechados;
-      document.getElementById("statValor").textContent = formatCurrency(valorTotal);
-      document.getElementById("tableCount").textContent = total + " registros";
+      document.getElementById("statValor").textContent    = formatCurrency(valor);
+      document.getElementById("tableCount").textContent   = total + " registros";
     }
 
     function renderTable() {
-      const tableBody = document.getElementById("tableBody");
-      const emptyState = document.getElementById("emptyState");
-
-      if (!filteredData.length) {
-        tableBody.innerHTML = "";
-        emptyState.style.display = "block";
-        return;
-      }
-
-      emptyState.style.display = "none";
-
-      tableBody.innerHTML = filteredData.map((r, idx) => {
-        const status = r["Status"] || "-";
+      const tbody = document.getElementById("tableBody");
+      const empty = document.getElementById("emptyState");
+      if (!filteredData.length) { tbody.innerHTML = ""; empty.style.display = "block"; return; }
+      empty.style.display = "none";
+      tbody.innerHTML = filteredData.map((r, idx) => {
+        const status    = r["Status"] || "-";
         const statusSla = getStatusSla(r["Prioridade"], r["Data do Esboço"], status);
-        const situacao = status === "Esboço Pendente" ? (r["Situação do Tratamento"] || "-") : "-";
-
+        const situacao  = status === "Esboço Pendente" ? (r["Situação do Tratamento"] || "-") : "-";
         return `
           <tr class="group-row" onclick="openModal(${idx})">
-            <td>${escapeHtml(r["Prioridade"] || "-")}</td>
-            <td>${escapeHtml(r["Responsavel Esboço"] || "-")}</td>
-            <td>${escapeHtml(r["Numero Esboço"] || "-")}</td>
-            <td>${escapeHtml(r["Segmento"] || "-")}</td>
+            <td>${escapeHtml(r["Prioridade"]||"-")}</td>
+            <td>${escapeHtml(r["Responsavel Esboço"]||"-")}</td>
+            <td>${escapeHtml(r["Numero Esboço"]||"-")}</td>
+            <td>${escapeHtml(r["Segmento"]||"-")}</td>
             <td>${formatDate(r["Data do Esboço"])}</td>
             <td>${getDiasEmAberto(r["Data do Esboço"])}</td>
             <td><span class="status ${getStatusClass(status)}">${escapeHtml(status)}</span></td>
-            <td>${status === "Esboço Pendente" ? `<span class="status status-tratamento">${escapeHtml(situacao)}</span>` : "-"}</td>
+            <td>${status==="Esboço Pendente"?`<span class="status status-tratamento">${escapeHtml(situacao)}</span>`:"-"}</td>
             <td><span class="status ${getSlaClass(statusSla)}">${escapeHtml(statusSla)}</span></td>
-            <td>${r["Qtde Itens"] || 0}</td>
-            <td>${formatCurrency(r["Valor Total"] || 0)}</td>
-            <td>${escapeHtml(r["Data de Atualização"] || "-")}</td>
-          </tr>
-        `;
+            <td>${r["Qtde Itens"]||0}</td>
+            <td>${formatCurrency(r["Valor Total"]||0)}</td>
+            <td>${escapeHtml(r["Data de Atualização"]||"-")}</td>
+          </tr>`;
       }).join("");
     }
 
     function openModal(index) {
       activeGroup = filteredData[index];
       if (!activeGroup) return;
-
-      document.getElementById("modalTitle").textContent = `Esboço ${activeGroup["Numero Esboço"] || "-"}`;
-      document.getElementById("modalSub").textContent = `${activeGroup["Responsavel Esboço"] || "-"} • ${activeGroup["Segmento"] || "-"}`;
-
+      document.getElementById("modalTitle").textContent = `Esboço ${activeGroup["Numero Esboço"]||"-"}`;
+      document.getElementById("modalSub").textContent   = `${activeGroup["Responsavel Esboço"]||"-"} • ${activeGroup["Segmento"]||"-"}`;
       const statusSla = getStatusSla(activeGroup["Prioridade"], activeGroup["Data do Esboço"], activeGroup["Status"]);
-
       document.getElementById("modalCards").innerHTML = `
-        <div class="mini-card">
-          <div class="label">Prioridade</div>
-          <div class="value">${escapeHtml(activeGroup["Prioridade"] || "-")}</div>
-        </div>
-        <div class="mini-card">
-          <div class="label">Dias em Aberto</div>
-          <div class="value">${getDiasEmAberto(activeGroup["Data do Esboço"])}</div>
-        </div>
-        <div class="mini-card">
-          <div class="label">Status</div>
-          <div class="value">${escapeHtml(activeGroup["Status"] || "-")}</div>
-        </div>
-        <div class="mini-card">
-          <div class="label">Status SLA</div>
-          <div class="value">${escapeHtml(statusSla)}</div>
-        </div>
-      `;
+        <div class="mini-card"><div class="label">Prioridade</div><div class="value">${escapeHtml(activeGroup["Prioridade"]||"-")}</div></div>
+        <div class="mini-card"><div class="label">Dias em Aberto</div><div class="value">${getDiasEmAberto(activeGroup["Data do Esboço"])}</div></div>
+        <div class="mini-card"><div class="label">Status</div><div class="value">${escapeHtml(activeGroup["Status"]||"-")}</div></div>
+        <div class="mini-card"><div class="label">Status SLA</div><div class="value">${escapeHtml(statusSla)}</div></div>`;
 
       const editorBox = document.getElementById("editorBox");
-      const podeEditarTratativa =
-        (currentViewMode === "time" || currentRole === "dev") &&
-        activeGroup["Status"] === "Esboço Pendente";
-
-      if (podeEditarTratativa) {
-        editorBox.style.display = "block";
-        document.getElementById("tratamentoSelect").value =
-          activeGroup["Situação do Tratamento"] || "Em análise pelo time";
-      } else {
-        editorBox.style.display = "none";
-      }
+      const podeEditar = (currentViewMode === "time" || currentRole === "dev") && activeGroup["Status"] === "Esboço Pendente";
+      if (podeEditar) { editorBox.style.display = "block"; document.getElementById("tratamentoSelect").value = activeGroup["Situação do Tratamento"] || "Em análise pelo time"; }
+      else editorBox.style.display = "none";
 
       document.getElementById("itemsBody").innerHTML = activeGroup["Itens"].map(item => `
         <tr>
-          <td>${escapeHtml(item["Código do Item"] || "-")}</td>
-          <td>${escapeHtml(item["Descrição do Item"] || "-")}</td>
-          <td>${formatCurrency(item["Valor Total"] || 0)}</td>
-          <td>${escapeHtml(item["Observações"] || "-")}</td>
-          <td>${escapeHtml(item["Data de Atualização"] || "-")}</td>
-        </tr>
-      `).join("");
+          <td>${escapeHtml(item["Código do Item"]||"-")}</td>
+          <td>${escapeHtml(item["Descrição do Item"]||"-")}</td>
+          <td>${formatCurrency(item["Valor Total"]||0)}</td>
+          <td>${escapeHtml(item["Observações"]||"-")}</td>
+          <td>${escapeHtml(item["Data de Atualização"]||"-")}</td>
+        </tr>`).join("");
 
       document.getElementById("detailModal").classList.add("open");
     }
 
-    function closeModal() {
-      document.getElementById("detailModal").classList.remove("open");
-      activeGroup = null;
-    }
+    function closeModal() { document.getElementById("detailModal").classList.remove("open"); activeGroup = null; }
 
     async function saveTratamento() {
-      if (!activeGroup) return;
-      if (activeGroup["Status"] !== "Esboço Pendente") return;
-
-      const numeroEsboco = String(activeGroup["Numero Esboço"] || "");
-      const novoValor = document.getElementById("tratamentoSelect").value;
-      const usuario = currentUser || "";
-
-      const { error } = await supabaseClient
-        .from("tratativas_esboco")
-        .upsert({
-          numero_esboco: numeroEsboco,
-          situacao_tratamento: novoValor,
-          updated_by: usuario,
-          updated_at: new Date().toISOString()
-        });
-
-      if (error) {
-        console.error("Erro ao salvar tratativa:", error);
-        alert("Erro ao salvar tratativa.");
-        return;
-      }
-
+      if (!activeGroup || activeGroup["Status"] !== "Esboço Pendente") return;
+      const num      = String(activeGroup["Numero Esboço"]||"");
+      const novoValor= document.getElementById("tratamentoSelect").value;
+      const { error }= await supabaseClient.from("tratativas_esboco").upsert({ numero_esboco: num, situacao_tratamento: novoValor, updated_by: currentUser||"", updated_at: new Date().toISOString() });
+      if (error) { console.error(error); alert("Erro ao salvar tratativa."); return; }
       activeGroup["Situação do Tratamento"] = novoValor;
-
-      groupedData = groupedData.map(group =>
-        String(group["Numero Esboço"]) === numeroEsboco
-          ? { ...group, "Situação do Tratamento": novoValor }
-          : group
-      );
-
-      rawData = rawData.map(item =>
-        String(item["Numero Esboço"]) === numeroEsboco
-          ? { ...item, "Situação do Tratamento": novoValor }
-          : item
-      );
-
+      groupedData = groupedData.map(g => String(g["Numero Esboço"])===num ? {...g,"Situação do Tratamento":novoValor} : g);
+      rawData     = rawData.map(i =>     String(i["Numero Esboço"])===num ? {...i,"Situação do Tratamento":novoValor} : i);
       applyFilters();
-
-      const newIndex = filteredData.findIndex(
-        x => String(x["Numero Esboço"]) === numeroEsboco
-      );
-
-      if (newIndex >= 0) openModal(newIndex);
-
+      const newIdx = filteredData.findIndex(x => String(x["Numero Esboço"])===num);
+      if (newIdx >= 0) openModal(newIdx);
       alert("Tratativa salva com sucesso.");
     }
 
-    function formatCurrency(value) {
-      return Number(value || 0).toLocaleString("pt-BR", {
-        style: "currency",
-        currency: "BRL"
-      });
-    }
+    function formatCurrency(value) { return Number(value||0).toLocaleString("pt-BR",{style:"currency",currency:"BRL"}); }
+    function formatDate(value) { if (!value) return "-"; const d = parseAnyDate(value); return d ? d.toLocaleDateString("pt-BR") : escapeHtml(String(value)); }
+    function escapeHtml(text) { return String(text).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;"); }
 
-    function formatDate(value) {
-      if (!value) return "-";
-      const d = parseAnyDate(value);
-      if (d) return d.toLocaleDateString("pt-BR");
-      return escapeHtml(String(value));
-    }
-
-    function escapeHtml(text) {
-      return String(text)
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
-    }
-
-    if (checkAuth()) {
-      loadData();
-    }
+    if (checkAuth()) loadData();
   </script>
 </body>
 </html>
