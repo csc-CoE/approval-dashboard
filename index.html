@@ -56,7 +56,6 @@
       gap: 14px;
     }
 
-    /* SVG logo inline Alloha */
     .logo-box {
       display: flex;
       align-items: center;
@@ -178,7 +177,7 @@
     /* ── STAT CARDS ── */
     .cards {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(5, 1fr);
       gap: 16px;
       margin-bottom: 22px;
     }
@@ -201,9 +200,20 @@
       background: linear-gradient(90deg, var(--accent), var(--accent-light));
     }
 
+    .card.card-tratativas::before {
+      background: linear-gradient(90deg, #38bdf8, #7dd3fc);
+    }
+
+    .card.card-finalizados::before {
+      background: linear-gradient(90deg, #22c55e, #4ade80);
+    }
+
     .card:hover {
       border-color: rgba(255,107,0,0.3);
     }
+
+    .card.card-tratativas:hover { border-color: rgba(56,189,248,0.3); }
+    .card.card-finalizados:hover { border-color: rgba(34,197,94,0.3); }
 
     .card .label {
       color: var(--muted);
@@ -220,6 +230,9 @@
       letter-spacing: -1px;
       color: var(--text);
     }
+
+    .card.card-tratativas .value { color: #7dd3fc; }
+    .card.card-finalizados .value { color: #4ade80; }
 
     .card .icon {
       position: absolute;
@@ -251,7 +264,7 @@
       letter-spacing: 1px;
     }
 
-    input, select {
+    input, select, textarea {
       background: var(--surface-2);
       color: var(--text);
       border: 1px solid var(--border);
@@ -264,12 +277,19 @@
       transition: border-color 0.2s;
     }
 
-    input:focus, select:focus {
+    input:focus, select:focus, textarea:focus {
       border-color: rgba(255,107,0,0.5);
     }
 
     input { min-width: 240px; flex: 1; }
     select { min-width: 170px; }
+
+    textarea {
+      width: 100%;
+      resize: vertical;
+      min-height: 80px;
+      line-height: 1.5;
+    }
 
     /* ── TABLE BOX ── */
     .table-box {
@@ -308,7 +328,7 @@
     table {
       width: 100%;
       border-collapse: collapse;
-      min-width: 1250px;
+      min-width: 1350px;
     }
 
     th {
@@ -333,7 +353,6 @@
     }
 
     tr.group-row { cursor: pointer; }
-
     tr.group-row:hover td { background: rgba(255,107,0,0.04); }
 
     /* ── STATUS BADGES ── */
@@ -351,6 +370,7 @@
     .status-pendente   { background: rgba(245,158,11,0.14); color: #fbbf24; border-color: rgba(245,158,11,0.25); }
     .status-fechado    { background: rgba(34,197,94,0.14);  color: #4ade80; border-color: rgba(34,197,94,0.25); }
     .status-tratamento { background: rgba(56,189,248,0.14); color: #7dd3fc; border-color: rgba(56,189,248,0.25); }
+    .status-finalizado { background: rgba(34,197,94,0.14);  color: #4ade80; border-color: rgba(34,197,94,0.25); }
     .status-sla-noprazo  { background: rgba(34,197,94,0.14);  color: #4ade80; border-color: rgba(34,197,94,0.25); }
     .status-sla-vencehoje{ background: rgba(245,158,11,0.14); color: #fbbf24; border-color: rgba(245,158,11,0.25); }
     .status-sla-vencido  { background: rgba(239,68,68,0.14);  color: #f87171; border-color: rgba(239,68,68,0.25); }
@@ -445,6 +465,15 @@
       margin-bottom: 20px;
     }
 
+    .editor-section-title {
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--accent-light);
+      margin-bottom: 12px;
+    }
+
     .editor-row {
       display: flex;
       gap: 12px;
@@ -455,6 +484,21 @@
     .editor-row > div { flex: 1; min-width: 240px; }
 
     .editor-row label {
+      display: block;
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--muted);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+    }
+
+    /* Observação field full-width row */
+    .editor-obs-row {
+      margin-bottom: 14px;
+    }
+
+    .editor-obs-row label {
       display: block;
       font-size: 11px;
       font-weight: 800;
@@ -521,9 +565,13 @@
     }
 
     /* ── RESPONSIVE ── */
-    @media (max-width: 1100px) {
-      .cards { grid-template-columns: repeat(2, 1fr); }
+    @media (max-width: 1200px) {
+      .cards { grid-template-columns: repeat(3, 1fr); }
       .modal-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 900px) {
+      .cards { grid-template-columns: repeat(2, 1fr); }
     }
 
     @media (max-width: 700px) {
@@ -539,14 +587,11 @@
   <div class="header">
     <div class="title-wrap">
       <div class="logo-box">
-        <!-- Alloha Fibra logo SVG inline -->
         <svg class="logo-svg" viewBox="0 0 160 44" xmlns="http://www.w3.org/2000/svg" fill="none">
-          <!-- Ícone de fibra/sinal -->
           <circle cx="22" cy="22" r="20" fill="#FF6B00"/>
           <path d="M12 22 Q22 10 32 22" stroke="#fff" stroke-width="2.5" stroke-linecap="round" fill="none"/>
           <path d="M15 27 Q22 17 29 27" stroke="#fff" stroke-width="2.5" stroke-linecap="round" fill="none"/>
           <circle cx="22" cy="31" r="2.5" fill="#fff"/>
-          <!-- Texto ALLOHA -->
           <text x="48" y="17" font-family="Nunito,Arial,sans-serif" font-weight="900" font-size="14" fill="#FF6B00" letter-spacing="-0.5">ALLOHA</text>
           <text x="48" y="32" font-family="Nunito,Arial,sans-serif" font-weight="700" font-size="10" fill="#fff" letter-spacing="2" opacity="0.8">FIBRA</text>
         </svg>
@@ -575,23 +620,33 @@
       📢 Você está visualizando na visão de solicitante.
     </div>
 
-    <!-- STAT CARDS -->
+    <!-- STAT CARDS — agora 5 cards -->
     <div class="cards">
+      <!-- 1. Total Esboços Criados -->
       <div class="card">
-        <div class="label">Total Esboços</div>
+        <div class="label">Total Esboços Criados</div>
         <div class="value" id="statTotal">0</div>
         <div class="icon">📋</div>
       </div>
+      <!-- 2. Esboço Pendente -->
       <div class="card">
         <div class="label">Esboço Pendente</div>
         <div class="value" id="statPendentes">0</div>
         <div class="icon">⏳</div>
       </div>
-      <div class="card">
-        <div class="label">Esboço Fechado</div>
-        <div class="value" id="statFechados">0</div>
+      <!-- 3. Em Tratativas (antes: "Em análise pelo time") -->
+      <div class="card card-tratativas">
+        <div class="label">Em Tratativas</div>
+        <div class="value" id="statTratativas">0</div>
+        <div class="icon">🔄</div>
+      </div>
+      <!-- 4. Finalizados -->
+      <div class="card card-finalizados">
+        <div class="label">Finalizados</div>
+        <div class="value" id="statFinalizados">0</div>
         <div class="icon">✅</div>
       </div>
+      <!-- 5. Valor Total -->
       <div class="card">
         <div class="label">Valor Total</div>
         <div class="value" id="statValor">R$ 0,00</div>
@@ -633,6 +688,7 @@
               <th>Data do Esboço</th>
               <th>Dias em Aberto</th>
               <th>Status</th>
+              <th>Observação</th>
               <th>Situação do Tratamento</th>
               <th>Status SLA</th>
               <th>Qtde Itens</th>
@@ -658,7 +714,18 @@
         <button class="small-btn" onclick="closeModal()">✕ Fechar</button>
       </div>
       <div class="modal-grid" id="modalCards"></div>
+
+      <!-- EDITOR BOX: Observação + Situação do Tratamento -->
       <div class="editor-box" id="editorBox" style="display:none;">
+        <div class="editor-section-title">✏️ Tratativa & Observação</div>
+
+        <!-- OBSERVAÇÃO — campo de texto livre, acima da situação -->
+        <div class="editor-obs-row">
+          <label for="observacaoInput">Observação</label>
+          <textarea id="observacaoInput" placeholder="Escreva uma observação sobre este esboço..."></textarea>
+        </div>
+
+        <!-- SITUAÇÃO DO TRATAMENTO -->
         <div class="editor-row">
           <div>
             <label for="tratamentoSelect">Situação do Tratamento</label>
@@ -676,6 +743,7 @@
               <option value="Em tratativa com Suprimentos">Em tratativa com Suprimentos</option>
               <option value="Em tratativa com Planejamento">Em tratativa com Planejamento</option>
               <option value="Aguardando retorno da área">Aguardando retorno da área</option>
+              <option value="Finalizado">✅ Finalizado</option>
             </select>
           </div>
           <div style="flex:0 0 auto;">
@@ -683,6 +751,7 @@
           </div>
         </div>
       </div>
+
       <div class="items-title">Itens do Esboço</div>
       <div class="table-scroll">
         <table>
@@ -756,10 +825,19 @@
     }
 
     async function fetchTratativasSupabase() {
-      const { data, error } = await supabaseClient.from("tratativas_esboco").select("numero_esboco, situacao_tratamento, updated_by, updated_at");
+      const { data, error } = await supabaseClient
+        .from("tratativas_esboco")
+        .select("numero_esboco, situacao_tratamento, observacao, updated_by, updated_at");
       if (error) { console.error(error); return {}; }
       const map = {};
-      (data || []).forEach(item => { map[String(item.numero_esboco)] = { situacao_tratamento: item.situacao_tratamento, updated_by: item.updated_by, updated_at: item.updated_at }; });
+      (data || []).forEach(item => {
+        map[String(item.numero_esboco)] = {
+          situacao_tratamento: item.situacao_tratamento,
+          observacao: item.observacao || "",
+          updated_by: item.updated_by,
+          updated_at: item.updated_at
+        };
+      });
       return map;
     }
 
@@ -773,7 +851,11 @@
         rawData = rawData.map(item => {
           const num = String(item["Numero Esboço"] || "");
           const t = tratativasMap[num];
-          return t ? { ...item, "Situação do Tratamento": t.situacao_tratamento || item["Situação do Tratamento"] } : item;
+          return t ? {
+            ...item,
+            "Situação do Tratamento": t.situacao_tratamento || item["Situação do Tratamento"],
+            "Observação": t.observacao || item["Observação"] || ""
+          } : item;
         });
         groupedData = groupByEsboco(rawData);
         document.getElementById("updatedAt").textContent = "Atualizado: " + (json.updated_at || "-");
@@ -792,7 +874,20 @@
         if (!key) continue;
         const statusItem = String(item["Status Esboço"] || item["Status"] || "Esboço Pendente").trim();
         if (!map.has(key)) {
-          map.set(key, { "Numero Esboço": key, "Prioridade": item["Prioridade"] || "", "Responsavel Esboço": item["Responsavel Esboço"] || "", "Segmento": item["Segmento"] || "", "Data do Esboço": item["Data do Esboço"] || "", "Status": statusItem, "Situação do Tratamento": statusItem === "Esboço Pendente" ? (item["Situação do Tratamento"] || "Em análise pelo time") : "", "Valor Total": 0, "Qtde Itens": 0, "Data de Atualização": item["Data de Atualização"] || "", "Itens": [] });
+          map.set(key, {
+            "Numero Esboço": key,
+            "Prioridade": item["Prioridade"] || "",
+            "Responsavel Esboço": item["Responsavel Esboço"] || "",
+            "Segmento": item["Segmento"] || "",
+            "Data do Esboço": item["Data do Esboço"] || "",
+            "Status": statusItem,
+            "Situação do Tratamento": statusItem === "Esboço Pendente" ? (item["Situação do Tratamento"] || "Em análise pelo time") : "",
+            "Observação": item["Observação"] || "",
+            "Valor Total": 0,
+            "Qtde Itens": 0,
+            "Data de Atualização": item["Data de Atualização"] || "",
+            "Itens": []
+          });
         }
         const group = map.get(key);
         group["Itens"].push(item);
@@ -800,7 +895,13 @@
         group["Valor Total"] += Number(item["Valor Total"] || 0);
         if (comparePrioridade(item["Prioridade"], group["Prioridade"]) < 0) group["Prioridade"] = item["Prioridade"] || group["Prioridade"];
         group["Status"] = resolveGroupStatus(group["Status"], statusItem);
-        if (group["Status"] === "Esboço Pendente") { if (!group["Situação do Tratamento"]) group["Situação do Tratamento"] = item["Situação do Tratamento"] || "Em análise pelo time"; } else group["Situação do Tratamento"] = "";
+        if (group["Status"] === "Esboço Pendente") {
+          if (!group["Situação do Tratamento"]) group["Situação do Tratamento"] = item["Situação do Tratamento"] || "Em análise pelo time";
+        } else {
+          group["Situação do Tratamento"] = "";
+        }
+        // Observação: keep the most recent / non-empty
+        if (item["Observação"]) group["Observação"] = item["Observação"];
         group["Data de Atualização"] = getLatestDateText(group["Data de Atualização"], item["Data de Atualização"]);
       }
       return Array.from(map.values());
@@ -896,7 +997,7 @@
       const dtFim     = dataFim    ? new Date(dataFim    + "T00:00:00") : null;
 
       filteredData = groupedData.filter(r => {
-        const texto = `${r["Prioridade"]||""} ${r["Responsavel Esboço"]||""} ${r["Numero Esboço"]||""} ${r["Segmento"]||""} ${r["Situação do Tratamento"]||""} ${r["Status"]||""}`.toLowerCase();
+        const texto = `${r["Prioridade"]||""} ${r["Responsavel Esboço"]||""} ${r["Numero Esboço"]||""} ${r["Segmento"]||""} ${r["Situação do Tratamento"]||""} ${r["Status"]||""} ${r["Observação"]||""}`.toLowerCase();
         if (search && !texto.includes(search)) return false;
         if (status    && String(r["Status"]||"").trim()             !== status)     return false;
         if (prioridade&& String(r["Prioridade"]||"").trim()         !== prioridade) return false;
@@ -925,15 +1026,30 @@
     }
 
     function updateStats() {
-      const total     = filteredData.length;
-      const pendentes = filteredData.filter(r => String(r["Status"]||"").trim() === "Esboço Pendente").length;
-      const fechados  = filteredData.filter(r => String(r["Status"]||"").trim() === "Esboço Fechado").length;
-      const valor     = filteredData.reduce((acc,r) => acc + Number(r["Valor Total"]||0), 0);
-      document.getElementById("statTotal").textContent    = total;
-      document.getElementById("statPendentes").textContent= pendentes;
-      document.getElementById("statFechados").textContent = fechados;
-      document.getElementById("statValor").textContent    = formatCurrency(valor);
-      document.getElementById("tableCount").textContent   = total + " registros";
+      const total      = filteredData.length;
+      const pendentes  = filteredData.filter(r => String(r["Status"]||"").trim() === "Esboço Pendente").length;
+
+      // Em Tratativas = qualquer situação diferente de "Em análise pelo time" e diferente de "Finalizado", ou seja: esboços onde já foi feita alguma tratativa ativa
+      // Conforme solicitado: "tudo que está em análise do time" = card Em Tratativas
+      const tratativas = filteredData.filter(r =>
+        String(r["Status"]||"").trim() === "Esboço Pendente" &&
+        String(r["Situação do Tratamento"]||"").trim() === "Em análise pelo time"
+      ).length;
+
+      // Finalizados = situação "Finalizado" OU status "Esboço Fechado"
+      const finalizados = filteredData.filter(r =>
+        String(r["Status"]||"").trim() === "Esboço Fechado" ||
+        String(r["Situação do Tratamento"]||"").trim() === "Finalizado"
+      ).length;
+
+      const valor = filteredData.reduce((acc,r) => acc + Number(r["Valor Total"]||0), 0);
+
+      document.getElementById("statTotal").textContent      = total;
+      document.getElementById("statPendentes").textContent  = pendentes;
+      document.getElementById("statTratativas").textContent = tratativas;
+      document.getElementById("statFinalizados").textContent= finalizados;
+      document.getElementById("statValor").textContent      = formatCurrency(valor);
+      document.getElementById("tableCount").textContent     = total + " registros";
     }
 
     function renderTable() {
@@ -945,6 +1061,9 @@
         const status    = r["Status"] || "-";
         const statusSla = getStatusSla(r["Prioridade"], r["Data do Esboço"], status);
         const situacao  = status === "Esboço Pendente" ? (r["Situação do Tratamento"] || "-") : "-";
+        const obs       = r["Observação"] || "-";
+        // Situação badge class
+        const situacaoClass = situacao === "Finalizado" ? "status-finalizado" : "status-tratamento";
         return `
           <tr class="group-row" onclick="openModal(${idx})">
             <td>${escapeHtml(r["Prioridade"]||"-")}</td>
@@ -954,7 +1073,8 @@
             <td>${formatDate(r["Data do Esboço"])}</td>
             <td>${getDiasEmAberto(r["Data do Esboço"])}</td>
             <td><span class="status ${getStatusClass(status)}">${escapeHtml(status)}</span></td>
-            <td>${status==="Esboço Pendente"?`<span class="status status-tratamento">${escapeHtml(situacao)}</span>`:"-"}</td>
+            <td style="max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="${escapeHtml(obs)}">${escapeHtml(obs)}</td>
+            <td>${status==="Esboço Pendente"?`<span class="status ${situacaoClass}">${escapeHtml(situacao)}</span>`:"-"}</td>
             <td><span class="status ${getSlaClass(statusSla)}">${escapeHtml(statusSla)}</span></td>
             <td>${r["Qtde Itens"]||0}</td>
             <td>${formatCurrency(r["Valor Total"]||0)}</td>
@@ -977,8 +1097,13 @@
 
       const editorBox = document.getElementById("editorBox");
       const podeEditar = (currentViewMode === "time" || currentRole === "dev") && activeGroup["Status"] === "Esboço Pendente";
-      if (podeEditar) { editorBox.style.display = "block"; document.getElementById("tratamentoSelect").value = activeGroup["Situação do Tratamento"] || "Em análise pelo time"; }
-      else editorBox.style.display = "none";
+      if (podeEditar) {
+        editorBox.style.display = "block";
+        document.getElementById("tratamentoSelect").value = activeGroup["Situação do Tratamento"] || "Em análise pelo time";
+        document.getElementById("observacaoInput").value  = activeGroup["Observação"] || "";
+      } else {
+        editorBox.style.display = "none";
+      }
 
       document.getElementById("itemsBody").innerHTML = activeGroup["Itens"].map(item => `
         <tr>
@@ -996,13 +1121,21 @@
 
     async function saveTratamento() {
       if (!activeGroup || activeGroup["Status"] !== "Esboço Pendente") return;
-      const num      = String(activeGroup["Numero Esboço"]||"");
-      const novoValor= document.getElementById("tratamentoSelect").value;
-      const { error }= await supabaseClient.from("tratativas_esboco").upsert({ numero_esboco: num, situacao_tratamento: novoValor, updated_by: currentUser||"", updated_at: new Date().toISOString() });
+      const num        = String(activeGroup["Numero Esboço"]||"");
+      const novoValor  = document.getElementById("tratamentoSelect").value;
+      const novaObs    = document.getElementById("observacaoInput").value.trim();
+      const { error }  = await supabaseClient.from("tratativas_esboco").upsert({
+        numero_esboco: num,
+        situacao_tratamento: novoValor,
+        observacao: novaObs,
+        updated_by: currentUser||"",
+        updated_at: new Date().toISOString()
+      });
       if (error) { console.error(error); alert("Erro ao salvar tratativa."); return; }
       activeGroup["Situação do Tratamento"] = novoValor;
-      groupedData = groupedData.map(g => String(g["Numero Esboço"])===num ? {...g,"Situação do Tratamento":novoValor} : g);
-      rawData     = rawData.map(i =>     String(i["Numero Esboço"])===num ? {...i,"Situação do Tratamento":novoValor} : i);
+      activeGroup["Observação"] = novaObs;
+      groupedData = groupedData.map(g => String(g["Numero Esboço"])===num ? {...g,"Situação do Tratamento":novoValor,"Observação":novaObs} : g);
+      rawData     = rawData.map(i =>     String(i["Numero Esboço"])===num ? {...i,"Situação do Tratamento":novoValor,"Observação":novaObs} : i);
       applyFilters();
       const newIdx = filteredData.findIndex(x => String(x["Numero Esboço"])===num);
       if (newIdx >= 0) openModal(newIdx);
