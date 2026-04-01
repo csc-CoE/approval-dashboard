@@ -6,7 +6,7 @@
   <title>Login – Painel de Esboços </title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
- 
+
     :root {
       --bg: #0a0a0a;
       --surface: #141414;
@@ -18,8 +18,12 @@
       --text: #f5f5f5;
       --muted: #777;
     }
- 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
     body {
       font-family: 'Nunito', 'Segoe UI', Arial, sans-serif;
@@ -33,29 +37,31 @@
       position: relative;
       overflow: hidden;
     }
- 
-    /* Decorative background blobs */
+
     body::before {
       content: '';
       position: fixed;
-      top: -120px; left: -120px;
-      width: 500px; height: 500px;
+      top: -120px;
+      left: -120px;
+      width: 500px;
+      height: 500px;
       border-radius: 50%;
       background: radial-gradient(circle, rgba(255,107,0,0.12) 0%, transparent 70%);
       pointer-events: none;
     }
- 
+
     body::after {
       content: '';
       position: fixed;
-      bottom: -100px; right: -100px;
-      width: 400px; height: 400px;
+      bottom: -100px;
+      right: -100px;
+      width: 400px;
+      height: 400px;
       border-radius: 50%;
       background: radial-gradient(circle, rgba(255,107,0,0.08) 0%, transparent 70%);
       pointer-events: none;
     }
- 
-    /* Fiber lines decoration */
+
     .fiber-lines {
       position: fixed;
       inset: 0;
@@ -70,7 +76,7 @@
           #FF6B00 61px
         );
     }
- 
+
     .login-wrapper {
       width: 100%;
       max-width: 420px;
@@ -78,8 +84,7 @@
       position: relative;
       z-index: 1;
     }
- 
-    /* LOGO */
+
     .login-logo {
       display: flex;
       flex-direction: column;
@@ -87,7 +92,7 @@
       margin-bottom: 36px;
       gap: 16px;
     }
- 
+
     .logo-mark {
       width: 72px;
       height: 72px;
@@ -98,16 +103,16 @@
       justify-content: center;
       box-shadow: 0 16px 40px rgba(255,107,0,0.3), 0 0 0 1px rgba(255,107,0,0.2);
     }
- 
+
     .logo-mark svg {
       width: 40px;
       height: 40px;
     }
- 
+
     .logo-text {
       text-align: center;
     }
- 
+
     .logo-name {
       font-size: 26px;
       font-weight: 900;
@@ -115,11 +120,11 @@
       color: var(--text);
       line-height: 1;
     }
- 
+
     .logo-name span {
       color: var(--accent);
     }
- 
+
     .logo-sub {
       font-size: 12px;
       font-weight: 700;
@@ -128,8 +133,7 @@
       text-transform: uppercase;
       margin-top: 4px;
     }
- 
-    /* CARD */
+
     .login-card {
       background: var(--surface);
       border: 1px solid var(--border);
@@ -137,29 +141,28 @@
       padding: 32px;
       box-shadow: 0 24px 60px rgba(0,0,0,0.5);
     }
- 
+
     .card-header {
       margin-bottom: 28px;
     }
- 
+
     .card-title {
       font-size: 20px;
       font-weight: 900;
       letter-spacing: -0.3px;
       margin-bottom: 6px;
     }
- 
+
     .card-desc {
       font-size: 13px;
       color: var(--muted);
       font-weight: 600;
     }
- 
-    /* FORM */
+
     .form-group {
       margin-bottom: 18px;
     }
- 
+
     .form-group label {
       display: block;
       font-size: 11px;
@@ -169,9 +172,8 @@
       letter-spacing: 1px;
       margin-bottom: 8px;
     }
- 
-    .form-group input,
-    .form-group select {
+
+    .form-group input {
       width: 100%;
       background: var(--surface-2);
       color: var(--text);
@@ -184,18 +186,17 @@
       outline: none;
       transition: border-color 0.2s, box-shadow 0.2s;
     }
- 
-    .form-group input:focus,
-    .form-group select:focus {
+
+    .form-group input:focus {
       border-color: rgba(255,107,0,0.6);
       box-shadow: 0 0 0 3px rgba(255,107,0,0.10);
     }
- 
+
     .form-group input::placeholder {
       color: #444;
       font-weight: 600;
     }
- 
+
     .error-msg {
       display: none;
       background: rgba(239,68,68,0.1);
@@ -207,9 +208,11 @@
       font-weight: 700;
       margin-bottom: 18px;
     }
- 
-    .error-msg.show { display: block; }
- 
+
+    .error-msg.show {
+      display: block;
+    }
+
     .btn-login {
       width: 100%;
       background: var(--accent);
@@ -225,23 +228,22 @@
       transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
       box-shadow: 0 8px 24px rgba(255,107,0,0.28);
     }
- 
+
     .btn-login:hover {
       background: var(--accent-light);
       transform: translateY(-1px);
       box-shadow: 0 12px 32px rgba(255,107,0,0.36);
     }
- 
+
     .btn-login:active {
       transform: translateY(0);
     }
- 
-    /* FOOTER */
+
     .login-footer {
       margin-top: 28px;
       text-align: center;
     }
- 
+
     .footer-tag {
       display: inline-block;
       padding: 4px 10px;
@@ -254,39 +256,56 @@
       letter-spacing: 1px;
       margin-bottom: 6px;
     }
- 
+
     .footer-text {
       color: var(--muted);
       font-size: 12px;
       font-weight: 700;
-       
     }
   </style>
 </head>
 <body>
-  <div class="card">
-    <div class="logo">
-      <div class="logo-icon">📋</div>
-      <div>
-        <h1>Painel de Esboços</h1>
-        <div style="color:#a9b4d0;font-size:13px;">Controle de acesso</div>
+  <div class="fiber-lines"></div>
+
+  <div class="login-wrapper">
+    <div class="login-logo">
+      <div class="logo-mark">
+        <svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" fill="none">
+          <path d="M6 20 Q20 4 34 20" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+          <path d="M10 27 Q20 14 30 27" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+          <circle cx="20" cy="33" r="3.5" fill="#fff"/>
+        </svg>
+      </div>
+      <div class="logo-text">
+        <div class="logo-name">ALLOHA <span>FIBRA</span></div>
+        <div class="logo-sub">Painel de Esboços</div>
       </div>
     </div>
 
-    <div class="sub">
-      Entre com seu e-mail corporativo para acessar o painel.
+    <div class="login-card">
+      <div class="card-header">
+        <div class="card-title">Bem-vindo 👋</div>
+        <div class="card-desc">Entre com seu e-mail corporativo para acessar o painel.</div>
+      </div>
+
+      <div class="form-group">
+        <label for="emailInput">E-mail corporativo</label>
+        <input
+          id="emailInput"
+          type="email"
+          placeholder="seuemail@alloha.com"
+          autocomplete="username"
+        />
+      </div>
+
+      <div class="error-msg" id="errorMsg">⚠️ Usuário não autorizado.</div>
+
+      <button class="btn-login" onclick="fazerLogin()">Entrar no Painel</button>
     </div>
 
-    <form id="loginForm">
-      <label for="email">E-mail</label>
-      <input id="email" type="email" placeholder="seuemail@alloha.com" autocomplete="off" />
-      <button type="submit">Entrar</button>
-    </form>
-
-    <div class="error" id="errorBox">Usuário não autorizado.</div>
-
-    <div class="hint">
-      Desenvolvedor pode alternar entre as visões. Time interno acessa a fila operacional.
+    <div class="login-footer">
+      <div class="footer-tag">COE</div>
+      <div class="footer-text">Desenvolvido por – Wender</div>
     </div>
   </div>
 
@@ -305,12 +324,6 @@
       ]
     };
 
-    function mostrarErro(msg) {
-      const errorBox = document.getElementById("errorBox");
-      errorBox.style.display = "block";
-      errorBox.textContent = msg;
-    }
-
     function detectarPerfil(email) {
       if (usuarios.dev.includes(email)) return "dev";
       if (usuarios.time.includes(email)) return "time";
@@ -318,25 +331,25 @@
       return null;
     }
 
-    function login(event) {
-      if (event) event.preventDefault();
-
-      const errorBox = document.getElementById("errorBox");
-      errorBox.style.display = "none";
-
-      const email = document.getElementById("email").value.trim().toLowerCase();
+    function fazerLogin() {
+      const email = document.getElementById("emailInput").value.trim().toLowerCase();
+      const errorMsg = document.getElementById("errorMsg");
 
       if (!email) {
-        mostrarErro("Informe seu e-mail.");
+        errorMsg.textContent = "⚠️ Informe seu e-mail.";
+        errorMsg.classList.add("show");
         return;
       }
 
       const perfil = detectarPerfil(email);
 
       if (!perfil) {
-        mostrarErro("Usuário não autorizado.");
+        errorMsg.textContent = "⚠️ Usuário não autorizado.";
+        errorMsg.classList.add("show");
         return;
       }
+
+      errorMsg.classList.remove("show");
 
       localStorage.setItem("usuario", email);
       localStorage.setItem("perfil", perfil);
@@ -344,11 +357,9 @@
       window.location.href = "index.html";
     }
 
-    document.getElementById("loginForm").addEventListener("submit", login);
-
-    document.getElementById("email").addEventListener("keydown", function (e) {
+    document.addEventListener("keydown", function (e) {
       if (e.key === "Enter") {
-        login(e);
+        fazerLogin();
       }
     });
 
