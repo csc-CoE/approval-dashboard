@@ -552,8 +552,13 @@
     </div>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
     const LOGIN_PAGE = "login.html";
+
+    const SUPABASE_URL = "https://ojgtpdwjcmqcbiydaesx.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9qZ3RwZHdqY21xY2JpeWRhZXN4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUwMzA3NTQsImV4cCI6MjA5MDYwNjc1NH0.U87vGwcmaZW6UoOYrKSqIoArVqquCFAzvbqQaeUbhIE";
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     let rawData = [];
     let groupedData = [];
@@ -621,6 +626,28 @@
       window.location.href = LOGIN_PAGE;
     }
 
+    async function fetchTratativasSupabase() {
+      const { data, error } = await supabaseClient
+        .from("tratativas_esboco")
+        .select("numero_esboco, situacao_tratamento, updated_by, updated_at");
+
+      if (error) {
+        console.error("Erro ao buscar tratativas no Supabase:", error);
+        return {};
+      }
+
+      const map = {};
+      (data || []).forEach(item => {
+        map[String(item.numero_esboco)] = {
+          situacao_tratamento: item.situacao_tratamento,
+          updated_by: item.updated_by,
+          updated_at: item.updated_at
+        };
+      });
+
+      return map;
+    }
+
     async function loadData() {
       try {
         const response = await fetch("data.json?t=" + Date.now());
@@ -633,7 +660,20 @@
           "Status": item["Status Esboço"] || item["Status"] || "Esboço Pendente"
         }));
 
-        applyOverridesFromLocal();
+        const tratativasMap = await fetchTratativasSupabase();
+
+        rawData = rawData.map(item => {
+          const numeroEsboco = String(item["Numero Esboço"] || "");
+          const tratativa = tratativasMap[numeroEsboco];
+
+          if (!tratativa) return item;
+
+          return {
+            ...item,
+            "Situação do Tratamento": tratativa.situacao_tratamento || item["Situação do Tratamento"]
+          };
+        });
+
         groupedData = groupByEsboco(rawData);
 
         document.getElementById("updatedAt").textContent = "Atualizado: " + (json.updated_at || "-");
@@ -643,23 +683,6 @@
         document.getElementById("updatedAt").textContent = "Erro ao carregar dados";
         console.error(error);
       }
-    }
-
-    function applyOverridesFromLocal() {
-      const saved = JSON.parse(localStorage.getItem("tratativas_esboco") || "{}");
-
-      rawData = rawData.map(item => {
-        const key = String(item["Numero Esboço"] || "");
-        const override = saved[key];
-        if (!override) return item;
-        return { ...item, "Situação do Tratamento": override };
-      });
-    }
-
-    function saveOverride(numeroEsboco, tratamento) {
-      const saved = JSON.parse(localStorage.getItem("tratativas_esboco") || "{}");
-      saved[String(numeroEsboço)] = tratamento;
-      localStorage.setItem("tratativas_esboco", JSON.stringify(saved));
     }
 
     function groupByEsboco(data) {
@@ -1009,33 +1032,52 @@
       activeGroup = null;
     }
 
-    function saveTratamento() {
+    async function saveTratamento() {
       if (!activeGroup) return;
       if (activeGroup["Status"] !== "Esboço Pendente") return;
 
+      const numeroEsboco = String(activeGroup["Numero Esboço"] || "");
       const novoValor = document.getElementById("tratamentoSelect").value;
+      const usuario = currentUser || "";
+
+      const { error } = await supabaseClient
+        .from("tratativas_esboco")
+        .upsert({
+          numero_esboco: numeroEsboco,
+          situacao_tratamento: novoValor,
+          updated_by: usuario,
+          updated_at: new Date().toISOString()
+        });
+
+      if (error) {
+        console.error("Erro ao salvar tratativa:", error);
+        alert("Erro ao salvar tratativa.");
+        return;
+      }
+
       activeGroup["Situação do Tratamento"] = novoValor;
 
       groupedData = groupedData.map(group =>
-        String(group["Numero Esboço"]) === String(activeGroup["Numero Esboço"])
+        String(group["Numero Esboço"]) === numeroEsboco
           ? { ...group, "Situação do Tratamento": novoValor }
           : group
       );
 
       rawData = rawData.map(item =>
-        String(item["Numero Esboço"]) === String(activeGroup["Numero Esboço"])
+        String(item["Numero Esboço"]) === numeroEsboco
           ? { ...item, "Situação do Tratamento": novoValor }
           : item
       );
 
-      saveOverride(activeGroup["Numero Esboço"], novoValor);
       applyFilters();
 
       const newIndex = filteredData.findIndex(
-        x => String(x["Numero Esboço"]) === String(activeGroup["Numero Esboço"])
+        x => String(x["Numero Esboço"]) === numeroEsboco
       );
 
       if (newIndex >= 0) openModal(newIndex);
+
+      alert("Tratativa salva com sucesso.");
     }
 
     function formatCurrency(value) {
