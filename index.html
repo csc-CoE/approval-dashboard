@@ -323,7 +323,7 @@
 <footer class="footer-dev">
   <div class="footer-dev-inner">
     <span class="footer-tag">COE</span>
-    <span>Desenvolvido por COE – Wender</span>
+    <span>Desenvolvido por – Wender</span>
   </div>
 </footer>
 
@@ -431,7 +431,7 @@
           "Segmento":               item["Segmento"]||"",
           "Data do Esboço":         item["Data do Esboço"]||"",
           "Status":                 statusItem,
-          "Situação do Tratamento": item["Situação do Tratamento"]||"",  // começa vazio se nenhum registro Supabase
+          "Situação do Tratamento": item "",  // começa vazio se nenhum registro Supabase
           "Observação":             item["Observação"]||"",
           "Valor Total":            0,
           "Qtde Itens":             0,
@@ -517,7 +517,7 @@
     const total      =groupedData.length;
     const pendentes  =filteredData.filter(r=>String(r["Status"]||"").trim()==="Esboço Pendente").length;
     // Em Tratativas = "Em análise de cliente"
-    const tratativas =filteredData.filter(r=>String(r["Situação do Tratamento"]||"").trim()==="Em análise de cliente").length;
+    const tratativas =filteredData.filter(r=>String(r["Situação do Tratamento"]||"").trim()==="Em análise de time").length;
     // Finalizados = "Finalizado"
     const finalizados=filteredData.filter(r=>String(r["Situação do Tratamento"]||"").trim()==="Finalizado").length;
     const valor=filteredData.reduce((acc,r)=>acc+Number(r["Valor Total"]||0),0);
