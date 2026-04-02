@@ -199,7 +199,7 @@
     </div>
   </div>
 
-  <!-- FILTERS — 1 campo de data -->
+  <!-- FILTERS -->
   <div class="filters">
     <span class="filters-label">Filtros</span>
     <input id="searchInput" type="text" placeholder="Buscar responsável, esboço, item, observação..." oninput="applyFilters()" />
@@ -215,7 +215,7 @@
     <button class="btn btn-ghost" onclick="clearFilters()">Limpar filtros</button>
   </div>
 
-  <!-- TABLE — sem col Última Atualização; Observação depois de Situação -->
+  <!-- TABLE -->
   <div class="table-box">
     <div class="table-head">
       <div class="table-head-title">Fila de Esboços Agrupada</div>
@@ -258,11 +258,10 @@
     </div>
     <div class="modal-grid" id="modalCards"></div>
 
-    <!-- EDITOR: Situação primeiro, depois Observação -->
+    <!-- EDITOR -->
     <div class="editor-box" id="editorBox" style="display:none;">
       <div class="editor-section-title">✏️ Tratativa &amp; Observação</div>
 
-      <!-- 1. Situação do Tratamento -->
       <div class="editor-row">
         <div>
           <label for="tratamentoSelect">Situação do Tratamento</label>
@@ -287,7 +286,6 @@
         </div>
       </div>
 
-      <!-- 2. Observação (depois) -->
       <div class="editor-field">
         <label for="observacaoInput">Observação</label>
         <textarea id="observacaoInput" placeholder="Escreva uma observação sobre este esboço..."></textarea>
@@ -329,347 +327,423 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-  const LOGIN_PAGE       = "login.html";
-  const SUPABASE_URL     = "https://ojgtpdwjcmqcbiydaesx.supabase.co";
-  const SUPABASE_ANON_KEY= "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9qZ3RwZHdqY21xY2JpeWRhZXN4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUwMzA3NTQsImV4cCI6MjA5MDYwNjc1NH0.U87vGwcmaZW6UoOYrKSqIoArVqquCFAzvbqQaeUbhIE";
+  const LOGIN_PAGE        = "login.html";
+  const SUPABASE_URL      = "https://ojgtpdwjcmqcbiydaesx.supabase.co";
+  const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9qZ3RwZHdqY21xY2JpeWRhZXN4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUwMzA3NTQsImV4cCI6MjA5MDYwNjc1NH0.U87vGwcmaZW6UoOYrKSqIoArVqquCFAzvbqQaeUbhIE";
   const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-  let rawData=[], groupedData=[], filteredData=[];
-  let currentUser=null, currentRole=null, currentViewMode="time", activeGroup=null;
+  let rawData = [], groupedData = [], filteredData = [];
+  let currentUser = null, currentRole = null, currentViewMode = "time", activeGroup = null;
 
   /* ── TOAST ── */
-  function showToast(msg, type="success"){
-    const t=document.getElementById("toast");
-    t.textContent=msg; t.className=`toast ${type} show`;
-    setTimeout(()=>{t.className="toast";},3500);
+  function showToast(msg, type = "success") {
+    const t = document.getElementById("toast");
+    t.textContent = msg;
+    t.className = `toast ${type} show`;
+    setTimeout(() => { t.className = "toast"; }, 3500);
   }
 
   /* ── AUTH ── */
-  function checkAuth(){
-    const usuario=localStorage.getItem("usuario");
-    const perfil =localStorage.getItem("perfil");
-    if(!usuario||!perfil){window.location.href=LOGIN_PAGE;return false;}
-    currentUser=usuario.trim().toLowerCase();
-    currentRole=perfil;
-    currentViewMode=perfil==="solicitante"?"solicitante":"time";
-    document.getElementById("userChip").textContent="Usuário: "+currentUser;
-    document.getElementById("roleChip").textContent="Perfil: "+(perfil==="dev"?"Desenvolvedor":perfil==="time"?"Time Interno":"Solicitante");
-    if(perfil==="dev") document.getElementById("viewToggle").style.display="flex";
+  function checkAuth() {
+    const usuario = localStorage.getItem("usuario");
+    const perfil  = localStorage.getItem("perfil");
+    if (!usuario || !perfil) { window.location.href = LOGIN_PAGE; return false; }
+    currentUser = usuario.trim().toLowerCase();
+    currentRole = perfil;
+    currentViewMode = perfil === "solicitante" ? "solicitante" : "time";
+    document.getElementById("userChip").textContent = "Usuário: " + currentUser;
+    document.getElementById("roleChip").textContent = "Perfil: " + (perfil === "dev" ? "Desenvolvedor" : perfil === "time" ? "Time Interno" : "Solicitante");
+    if (perfil === "dev") document.getElementById("viewToggle").style.display = "flex";
     renderViewMode();
     return true;
   }
-  function renderViewMode(){
-    document.getElementById("solicitanteBanner").style.display=currentViewMode==="solicitante"?"block":"none";
-    const bT=document.getElementById("btnViewTime"), bS=document.getElementById("btnViewSolicitante");
-    if(bT) bT.classList.toggle("active",currentViewMode==="time");
-    if(bS) bS.classList.toggle("active",currentViewMode==="solicitante");
+
+  function renderViewMode() {
+    document.getElementById("solicitanteBanner").style.display = currentViewMode === "solicitante" ? "block" : "none";
+    const bT = document.getElementById("btnViewTime");
+    const bS = document.getElementById("btnViewSolicitante");
+    if (bT) bT.classList.toggle("active", currentViewMode === "time");
+    if (bS) bS.classList.toggle("active", currentViewMode === "solicitante");
   }
-  function setViewMode(mode){
-    if(currentRole!=="dev") return;
-    currentViewMode=mode; renderViewMode(); applyFilters();
+
+  function setViewMode(mode) {
+    if (currentRole !== "dev") return;
+    currentViewMode = mode;
+    renderViewMode();
+    applyFilters();
   }
-  function logout(){
-    localStorage.removeItem("usuario"); localStorage.removeItem("perfil");
-    window.location.href=LOGIN_PAGE;
+
+  function logout() {
+    localStorage.removeItem("usuario");
+    localStorage.removeItem("perfil");
+    window.location.href = LOGIN_PAGE;
   }
 
   /* ── SUPABASE ── */
-  async function fetchTratativasSupabase(){
-    const {data,error}=await sb.from("tratativas_esboco")
+  async function fetchTratativasSupabase() {
+    const { data, error } = await sb
+      .from("tratativas_esboco")
       .select("numero_esboco,situacao_tratamento,observacao,updated_by,updated_at");
-    if(error){console.error("fetchTratativas:",error);return {};}
-    const map={};
-    (data||[]).forEach(item=>{
-      map[String(item.numero_esboco).trim()]={
-        situacao_tratamento:item.situacao_tratamento||"",
-        observacao:         item.observacao||"",
-        updated_by:         item.updated_by,
-        updated_at:         item.updated_at
+    if (error) { console.error("fetchTratativas:", error); return {}; }
+    const map = {};
+    (data || []).forEach(item => {
+      map[String(item.numero_esboco).trim()] = {
+        situacao_tratamento: item.situacao_tratamento || "",
+        observacao:          item.observacao || "",
+        updated_by:          item.updated_by,
+        updated_at:          item.updated_at
       };
     });
     return map;
   }
 
   /* ── LOAD ── */
-  async function loadData(){
-    try{
-      const res=await fetch("data.json?t="+Date.now());
-      const json=await res.json();
-      rawData=Array.isArray(json.records)?json.records:[];
-      rawData=rawData.map(i=>({...i,"Status":i["Status Esboço"]||i["Status"]||"Esboço Pendente"}));
+  async function loadData() {
+    try {
+      const res  = await fetch("data.json?t=" + Date.now());
+      const json = await res.json();
+      rawData = Array.isArray(json.records) ? json.records : [];
+      rawData = rawData.map(i => ({ ...i, "Status": i["Status Esboço"] || i["Status"] || "Esboço Pendente" }));
 
-      const tMap=await fetchTratativasSupabase();
-      rawData=rawData.map(i=>{
-        const num=String(i["Numero Esboço"]||"").trim();
-        const t=tMap[num];
-        if(!t) return i;
-        return{...i,"Situação do Tratamento":t.situacao_tratamento,"Observação":t.observacao};
+      const tMap = await fetchTratativasSupabase();
+      rawData = rawData.map(i => {
+        const num = String(i["Numero Esboço"] || "").trim();
+        const t   = tMap[num];
+        if (!t) return i;
+        return { ...i, "Situação do Tratamento": t.situacao_tratamento, "Observação": t.observacao };
       });
 
-      groupedData=groupByEsboco(rawData);
-      document.getElementById("updatedAt").textContent="Atualizado: "+(json.updated_at||"-");
+      groupedData = groupByEsboco(rawData);
+      document.getElementById("updatedAt").textContent = "Atualizado: " + (json.updated_at || "-");
       populateFilters();
       applyFilters();
-    }catch(err){
-      document.getElementById("updatedAt").textContent="Erro ao carregar dados";
+    } catch (err) {
+      document.getElementById("updatedAt").textContent = "Erro ao carregar dados";
       console.error(err);
     }
   }
 
   /* ── GROUP ── */
-  function groupByEsboco(data){
-    const map=new Map();
-    for(const item of data){
-      const key=String(item["Numero Esboço"]||"").trim();
-      if(!key) continue;
-      const statusItem=String(item["Status Esboço"]||item["Status"]||"Esboço Pendente").trim();
-      if(!map.has(key)){
-        map.set(key,{
+  function groupByEsboco(data) {
+    const map = new Map();
+    for (const item of data) {
+      const key        = String(item["Numero Esboço"] || "").trim();
+      if (!key) continue;
+      const statusItem = String(item["Status Esboço"] || item["Status"] || "Esboço Pendente").trim();
+
+      if (!map.has(key)) {
+        map.set(key, {
           "Numero Esboço":          key,
-          "Prioridade":             item["Prioridade"]||"",
-          "Responsavel Esboço":     item["Responsavel Esboço"]||"",
-          "Segmento":               item["Segmento"]||"",
-          "Data do Esboço":         item["Data do Esboço"]||"",
+          "Prioridade":             item["Prioridade"] || "",
+          "Responsavel Esboço":     item["Responsavel Esboço"] || "",
+          "Segmento":               item["Segmento"] || "",
+          "Data do Esboço":         item["Data do Esboço"] || "",
           "Status":                 statusItem,
-          "Situação do Tratamento": item "",  // começa vazio se nenhum registro Supabase
-          "Observação":             item["Observação"]||"",
+          "Situação do Tratamento": item["Situação do Tratamento"] || "",
+          "Observação":             item["Observação"] || "",
           "Valor Total":            0,
           "Qtde Itens":             0,
           "Itens":                  []
         });
       }
-      const g=map.get(key);
+
+      const g = map.get(key);
       g["Itens"].push(item);
-      g["Qtde Itens"]+=1;
-      g["Valor Total"]+=Number(item["Valor Total"]||0);
-      if(comparePrioridade(item["Prioridade"],g["Prioridade"])<0) g["Prioridade"]=item["Prioridade"]||g["Prioridade"];
-      g["Status"]=resolveGroupStatus(g["Status"],statusItem);
-      if(!g["Situação do Tratamento"]&&item["Situação do Tratamento"]) g["Situação do Tratamento"]=item["Situação do Tratamento"];
-      if(!g["Observação"]&&item["Observação"]) g["Observação"]=item["Observação"];
+      g["Qtde Itens"] += 1;
+      g["Valor Total"] += Number(item["Valor Total"] || 0);
+      if (comparePrioridade(item["Prioridade"], g["Prioridade"]) < 0)
+        g["Prioridade"] = item["Prioridade"] || g["Prioridade"];
+      g["Status"] = resolveGroupStatus(g["Status"], statusItem);
+      if (!g["Situação do Tratamento"] && item["Situação do Tratamento"])
+        g["Situação do Tratamento"] = item["Situação do Tratamento"];
+      if (!g["Observação"] && item["Observação"])
+        g["Observação"] = item["Observação"];
     }
     return Array.from(map.values());
   }
 
-  function resolveGroupStatus(a,b){
-    a=String(a||"").trim(); b=String(b||"").trim();
-    if(a==="Esboço Pendente"||b==="Esboço Pendente") return"Esboço Pendente";
-    if(a==="Esboço Fechado" ||b==="Esboço Fechado")  return"Esboço Fechado";
-    return a||b||"Esboço Pendente";
+  function resolveGroupStatus(a, b) {
+    a = String(a || "").trim();
+    b = String(b || "").trim();
+    if (a === "Esboço Pendente" || b === "Esboço Pendente") return "Esboço Pendente";
+    if (a === "Esboço Fechado"  || b === "Esboço Fechado")  return "Esboço Fechado";
+    return a || b || "Esboço Pendente";
   }
-  function comparePrioridade(a,b){return getPrioridadePeso(a)-getPrioridadePeso(b);}
+
+  function comparePrioridade(a, b) { return getPrioridadePeso(a) - getPrioridadePeso(b); }
 
   /* ── FILTERS ── */
-  function populateFilters(){
-    const pF=document.getElementById("prioridadeFilter");
-    const sF=document.getElementById("segmentoFilter");
-    const rF=document.getElementById("responsavelFilter");
-    pF.innerHTML='<option value="">Todas as prioridades</option>';
-    sF.innerHTML='<option value="">Todos os segmentos</option>';
-    rF.innerHTML='<option value="">Todos os responsáveis</option>';
-    [...new Set(groupedData.map(r=>r["Prioridade"]).filter(Boolean))].sort().forEach(v=>appendOption(pF,v));
-    [...new Set(groupedData.map(r=>r["Segmento"]).filter(Boolean))].sort().forEach(v=>appendOption(sF,v));
-    [...new Set(groupedData.map(r=>r["Responsavel Esboço"]).filter(Boolean))].sort().forEach(v=>appendOption(rF,v));
+  function populateFilters() {
+    const pF = document.getElementById("prioridadeFilter");
+    const sF = document.getElementById("segmentoFilter");
+    const rF = document.getElementById("responsavelFilter");
+    pF.innerHTML = '<option value="">Todas as prioridades</option>';
+    sF.innerHTML = '<option value="">Todos os segmentos</option>';
+    rF.innerHTML = '<option value="">Todos os responsáveis</option>';
+    [...new Set(groupedData.map(r => r["Prioridade"]).filter(Boolean))].sort().forEach(v => appendOption(pF, v));
+    [...new Set(groupedData.map(r => r["Segmento"]).filter(Boolean))].sort().forEach(v => appendOption(sF, v));
+    [...new Set(groupedData.map(r => r["Responsavel Esboço"]).filter(Boolean))].sort().forEach(v => appendOption(rF, v));
   }
-  function appendOption(sel,val){const o=document.createElement("option");o.value=val;o.textContent=val;sel.appendChild(o);}
 
-  function applyFilters(){
-    const search    =document.getElementById("searchInput").value.trim().toLowerCase();
-    const status    =document.getElementById("statusFilter").value;
-    const prioridade=document.getElementById("prioridadeFilter").value;
-    const segmento  =document.getElementById("segmentoFilter").value;
-    const responsavel=document.getElementById("responsavelFilter").value;
-    const dataStr   =document.getElementById("dataFilter").value;
-    const dtFiltro  =dataStr?new Date(dataStr+"T00:00:00"):null;
+  function appendOption(sel, val) {
+    const o = document.createElement("option");
+    o.value = val;
+    o.textContent = val;
+    sel.appendChild(o);
+  }
 
-    filteredData=groupedData.filter(r=>{
-      const texto=`${r["Prioridade"]||""} ${r["Responsavel Esboço"]||""} ${r["Numero Esboço"]||""} ${r["Segmento"]||""} ${r["Situação do Tratamento"]||""} ${r["Status"]||""} ${r["Observação"]||""}`.toLowerCase();
-      if(search    &&!texto.includes(search))                                    return false;
-      if(status    &&String(r["Status"]||"").trim()             !==status)       return false;
-      if(prioridade&&String(r["Prioridade"]||"").trim()         !==prioridade)   return false;
-      if(segmento  &&String(r["Segmento"]||"").trim()           !==segmento)     return false;
-      if(responsavel&&String(r["Responsavel Esboço"]||"").trim()!==responsavel)  return false;
-      if(dtFiltro){
-        const dr=normalizeDate(r["Data do Esboço"]);
-        if(!dr||dr.toDateString()!==dtFiltro.toDateString()) return false;
+  function applyFilters() {
+    const search     = document.getElementById("searchInput").value.trim().toLowerCase();
+    const status     = document.getElementById("statusFilter").value;
+    const prioridade = document.getElementById("prioridadeFilter").value;
+    const segmento   = document.getElementById("segmentoFilter").value;
+    const responsavel= document.getElementById("responsavelFilter").value;
+    const dataStr    = document.getElementById("dataFilter").value;
+    const dtFiltro   = dataStr ? new Date(dataStr + "T00:00:00") : null;
+
+    filteredData = groupedData.filter(r => {
+      const texto = `${r["Prioridade"]||""} ${r["Responsavel Esboço"]||""} ${r["Numero Esboço"]||""} ${r["Segmento"]||""} ${r["Situação do Tratamento"]||""} ${r["Status"]||""} ${r["Observação"]||""}`.toLowerCase();
+
+      if (search     && !texto.includes(search))                                      return false;
+      if (status     && String(r["Status"]||"").trim()              !== status)        return false;
+      if (prioridade && String(r["Prioridade"]||"").trim()          !== prioridade)    return false;
+      if (segmento   && String(r["Segmento"]||"").trim()            !== segmento)      return false;
+      if (responsavel&& String(r["Responsavel Esboço"]||"").trim()  !== responsavel)   return false;
+      if (dtFiltro) {
+        const dr = normalizeDate(r["Data do Esboço"]);
+        if (!dr || dr.toDateString() !== dtFiltro.toDateString()) return false;
       }
       return true;
     });
 
-    filteredData.sort((a,b)=>{
-      const pa=getPrioridadePeso(a["Prioridade"]),pb=getPrioridadePeso(b["Prioridade"]);
-      if(pa!==pb) return pa-pb;
-      return getDiasEmAberto(b["Data do Esboço"])-getDiasEmAberto(a["Data do Esboço"]);
+    filteredData.sort((a, b) => {
+      const pa = getPrioridadePeso(a["Prioridade"]), pb = getPrioridadePeso(b["Prioridade"]);
+      if (pa !== pb) return pa - pb;
+      return getDiasEmAberto(b["Data do Esboço"]) - getDiasEmAberto(a["Data do Esboço"]);
     });
 
     updateStats();
     renderTable();
   }
 
-  function clearFilters(){
-    ["searchInput","dataFilter"].forEach(id=>document.getElementById(id).value="");
-    ["statusFilter","prioridadeFilter","segmentoFilter","responsavelFilter"].forEach(id=>document.getElementById(id).value="");
+  function clearFilters() {
+    ["searchInput", "dataFilter"].forEach(id => document.getElementById(id).value = "");
+    ["statusFilter", "prioridadeFilter", "segmentoFilter", "responsavelFilter"].forEach(id => document.getElementById(id).value = "");
     applyFilters();
   }
 
   /* ── STATS ── */
-  function updateStats(){
-    // Total = todos os esboços (não filtra por status nem filtros ativos)
-    const total      =groupedData.length;
-    const pendentes  =filteredData.filter(r=>String(r["Status"]||"").trim()==="Esboço Pendente").length;
-    // Em Tratativas = "Em análise de cliente"
-    const tratativas =filteredData.filter(r=>String(r["Situação do Tratamento"]||"").trim()==="Em análise de time").length;
-    // Finalizados = "Finalizado"
-    const finalizados=filteredData.filter(r=>String(r["Situação do Tratamento"]||"").trim()==="Finalizado").length;
-    const valor=filteredData.reduce((acc,r)=>acc+Number(r["Valor Total"]||0),0);
+  function updateStats() {
+    const total       = groupedData.length;
+    const pendentes   = filteredData.filter(r => String(r["Status"]||"").trim() === "Esboço Pendente").length;
+    // CORRIGIDO: conta "Em análise pelo time"
+    const tratativas  = filteredData.filter(r => String(r["Situação do Tratamento"]||"").trim() === "Em análise pelo time").length;
+    // Finalizados: conta situação "Finalizado"
+    const finalizados = filteredData.filter(r => String(r["Situação do Tratamento"]||"").trim() === "Finalizado").length;
+    const valor       = filteredData.reduce((acc, r) => acc + Number(r["Valor Total"] || 0), 0);
 
-    document.getElementById("statTotal").textContent      =total;
-    document.getElementById("statPendentes").textContent  =pendentes;
-    document.getElementById("statTratativas").textContent =tratativas;
-    document.getElementById("statFinalizados").textContent=finalizados;
-    document.getElementById("statValor").textContent      =formatCurrency(valor);
-    document.getElementById("tableCount").textContent     =filteredData.length+" registros";
+    document.getElementById("statTotal").textContent       = total;
+    document.getElementById("statPendentes").textContent   = pendentes;
+    document.getElementById("statTratativas").textContent  = tratativas;
+    document.getElementById("statFinalizados").textContent = finalizados;
+    document.getElementById("statValor").textContent       = formatCurrency(valor);
+    document.getElementById("tableCount").textContent      = filteredData.length + " registros";
   }
 
   /* ── TABLE ── */
-  function renderTable(){
-    const tbody=document.getElementById("tableBody");
-    const empty=document.getElementById("emptyState");
-    if(!filteredData.length){tbody.innerHTML="";empty.style.display="block";return;}
-    empty.style.display="none";
-    tbody.innerHTML=filteredData.map((r,idx)=>{
-      const status   =r["Status"]||"-";
-      const statusSla=getStatusSla(r["Prioridade"],r["Data do Esboço"],status);
-      const situacao =r["Situação do Tratamento"]||"";
-      const obs      =r["Observação"]||"-";
-      let situacaoBadge="-";
-      if(situacao){
-        const cls=situacao==="Finalizado"?"status-finalizado":"status-tratamento";
-        situacaoBadge=`<span class="status ${cls}">${escapeHtml(situacao)}</span>`;
+  function renderTable() {
+    const tbody = document.getElementById("tableBody");
+    const empty = document.getElementById("emptyState");
+    if (!filteredData.length) { tbody.innerHTML = ""; empty.style.display = "block"; return; }
+    empty.style.display = "none";
+    tbody.innerHTML = filteredData.map((r, idx) => {
+      const status    = r["Status"] || "-";
+      const statusSla = getStatusSla(r["Prioridade"], r["Data do Esboço"], status);
+      const situacao  = r["Situação do Tratamento"] || "";
+      const obs       = r["Observação"] || "-";
+      let situacaoBadge = "-";
+      if (situacao) {
+        const cls = situacao === "Finalizado" ? "status-finalizado" : "status-tratamento";
+        situacaoBadge = `<span class="status ${cls}">${escapeHtml(situacao)}</span>`;
       }
-      return`<tr class="group-row" onclick="openModal(${idx})">
-        <td>${escapeHtml(r["Prioridade"]||"-")}</td>
-        <td>${escapeHtml(r["Responsavel Esboço"]||"-")}</td>
-        <td>${escapeHtml(r["Numero Esboço"]||"-")}</td>
-        <td>${escapeHtml(r["Segmento"]||"-")}</td>
+      return `<tr class="group-row" onclick="openModal(${idx})">
+        <td>${escapeHtml(r["Prioridade"] || "-")}</td>
+        <td>${escapeHtml(r["Responsavel Esboço"] || "-")}</td>
+        <td>${escapeHtml(r["Numero Esboço"] || "-")}</td>
+        <td>${escapeHtml(r["Segmento"] || "-")}</td>
         <td>${formatDate(r["Data do Esboço"])}</td>
         <td>${getDiasEmAberto(r["Data do Esboço"])}</td>
         <td><span class="status ${getStatusClass(status)}">${escapeHtml(status)}</span></td>
         <td>${situacaoBadge}</td>
         <td style="max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="${escapeHtml(obs)}">${escapeHtml(obs)}</td>
         <td><span class="status ${getSlaClass(statusSla)}">${escapeHtml(statusSla)}</span></td>
-        <td>${r["Qtde Itens"]||0}</td>
-        <td>${formatCurrency(r["Valor Total"]||0)}</td>
+        <td>${r["Qtde Itens"] || 0}</td>
+        <td>${formatCurrency(r["Valor Total"] || 0)}</td>
       </tr>`;
     }).join("");
   }
 
   /* ── MODAL ── */
-  function openModal(index){
-    activeGroup=filteredData[index];
-    if(!activeGroup) return;
-    document.getElementById("modalTitle").textContent=`Esboço ${activeGroup["Numero Esboço"]||"-"}`;
-    document.getElementById("modalSub").textContent  =`${activeGroup["Responsavel Esboço"]||"-"} • ${activeGroup["Segmento"]||"-"}`;
-    const statusSla=getStatusSla(activeGroup["Prioridade"],activeGroup["Data do Esboço"],activeGroup["Status"]);
-    document.getElementById("modalCards").innerHTML=`
-      <div class="mini-card"><div class="label">Prioridade</div><div class="value">${escapeHtml(activeGroup["Prioridade"]||"-")}</div></div>
+  function openModal(index) {
+    activeGroup = filteredData[index];
+    if (!activeGroup) return;
+    document.getElementById("modalTitle").textContent = `Esboço ${activeGroup["Numero Esboço"] || "-"}`;
+    document.getElementById("modalSub").textContent   = `${activeGroup["Responsavel Esboço"] || "-"} • ${activeGroup["Segmento"] || "-"}`;
+    const statusSla = getStatusSla(activeGroup["Prioridade"], activeGroup["Data do Esboço"], activeGroup["Status"]);
+    document.getElementById("modalCards").innerHTML = `
+      <div class="mini-card"><div class="label">Prioridade</div><div class="value">${escapeHtml(activeGroup["Prioridade"] || "-")}</div></div>
       <div class="mini-card"><div class="label">Dias em Aberto</div><div class="value">${getDiasEmAberto(activeGroup["Data do Esboço"])}</div></div>
-      <div class="mini-card"><div class="label">Status</div><div class="value">${escapeHtml(activeGroup["Status"]||"-")}</div></div>
+      <div class="mini-card"><div class="label">Status</div><div class="value">${escapeHtml(activeGroup["Status"] || "-")}</div></div>
       <div class="mini-card"><div class="label">Status SLA</div><div class="value">${escapeHtml(statusSla)}</div></div>`;
 
-    const editorBox =document.getElementById("editorBox");
-    const podeEditar=(currentViewMode==="time"||currentRole==="dev")&&activeGroup["Status"]==="Esboço Pendente";
-    if(podeEditar){
-      editorBox.style.display="block";
-      document.getElementById("tratamentoSelect").value=activeGroup["Situação do Tratamento"]||"";
-      document.getElementById("observacaoInput").value =activeGroup["Observação"]||"";
-    }else{
-      editorBox.style.display="none";
+    const editorBox  = document.getElementById("editorBox");
+    const podeEditar = (currentViewMode === "time" || currentRole === "dev") && activeGroup["Status"] === "Esboço Pendente";
+    if (podeEditar) {
+      editorBox.style.display = "block";
+      document.getElementById("tratamentoSelect").value = activeGroup["Situação do Tratamento"] || "";
+      document.getElementById("observacaoInput").value  = activeGroup["Observação"] || "";
+    } else {
+      editorBox.style.display = "none";
     }
 
-    document.getElementById("itemsBody").innerHTML=activeGroup["Itens"].map(item=>`
+    document.getElementById("itemsBody").innerHTML = activeGroup["Itens"].map(item => `
       <tr>
-        <td>${escapeHtml(item["Código do Item"]||"-")}</td>
-        <td>${escapeHtml(item["Descrição do Item"]||"-")}</td>
-        <td>${formatCurrency(item["Valor Total"]||0)}</td>
-        <td>${escapeHtml(item["Observações"]||"-")}</td>
-        <td>${escapeHtml(item["Data de Atualização"]||"-")}</td>
+        <td>${escapeHtml(item["Código do Item"] || "-")}</td>
+        <td>${escapeHtml(item["Descrição do Item"] || "-")}</td>
+        <td>${formatCurrency(item["Valor Total"] || 0)}</td>
+        <td>${escapeHtml(item["Observações"] || "-")}</td>
+        <td>${escapeHtml(item["Data de Atualização"] || "-")}</td>
       </tr>`).join("");
 
     document.getElementById("detailModal").classList.add("open");
   }
 
-  function closeModal(){document.getElementById("detailModal").classList.remove("open");activeGroup=null;}
+  function closeModal() {
+    document.getElementById("detailModal").classList.remove("open");
+    activeGroup = null;
+  }
 
   /* ── SAVE ── */
-  async function saveTratamento(){
-    if(!activeGroup||activeGroup["Status"]!=="Esboço Pendente") return;
-    const num      =String(activeGroup["Numero Esboço"]||"").trim();
-    const novoValor=document.getElementById("tratamentoSelect").value;
-    const novaObs  =document.getElementById("observacaoInput").value.trim();
-    if(!num){showToast("Número do esboço inválido.","error");return;}
-    try{
-      const{error}=await sb.from("tratativas_esboco").upsert(
-        {numero_esboco:num,situacao_tratamento:novoValor,observacao:novaObs,updated_by:currentUser||"",updated_at:new Date().toISOString()},
-        {onConflict:"numero_esboco"}
+  async function saveTratamento() {
+    if (!activeGroup || activeGroup["Status"] !== "Esboço Pendente") return;
+    const num       = String(activeGroup["Numero Esboço"] || "").trim();
+    const novoValor = document.getElementById("tratamentoSelect").value;
+    const novaObs   = document.getElementById("observacaoInput").value.trim();
+    if (!num) { showToast("Número do esboço inválido.", "error"); return; }
+    try {
+      const { error } = await sb.from("tratativas_esboco").upsert(
+        {
+          numero_esboco:       num,
+          situacao_tratamento: novoValor,
+          observacao:          novaObs,
+          updated_by:          currentUser || "",
+          updated_at:          new Date().toISOString()
+        },
+        { onConflict: "numero_esboco" }
       );
-      if(error) throw error;
+      if (error) throw error;
 
-      activeGroup["Situação do Tratamento"]=novoValor;
-      activeGroup["Observação"]=novaObs;
-      groupedData=groupedData.map(g=>String(g["Numero Esboço"]).trim()===num?{...g,"Situação do Tratamento":novoValor,"Observação":novaObs}:g);
-      rawData    =rawData.map(i=>    String(i["Numero Esboço"]).trim()===num?{...i,"Situação do Tratamento":novoValor,"Observação":novaObs}:i);
+      activeGroup["Situação do Tratamento"] = novoValor;
+      activeGroup["Observação"]             = novaObs;
+      groupedData = groupedData.map(g =>
+        String(g["Numero Esboço"]).trim() === num
+          ? { ...g, "Situação do Tratamento": novoValor, "Observação": novaObs }
+          : g
+      );
+      rawData = rawData.map(i =>
+        String(i["Numero Esboço"]).trim() === num
+          ? { ...i, "Situação do Tratamento": novoValor, "Observação": novaObs }
+          : i
+      );
 
       applyFilters();
-      const newIdx=filteredData.findIndex(x=>String(x["Numero Esboço"]).trim()===num);
-      if(newIdx>=0) openModal(newIdx);
-      showToast("✅ Tratativa salva com sucesso!","success");
-    }catch(err){
-      console.error("Erro ao salvar tratativa:",err);
-      showToast("❌ Erro ao salvar: "+(err.message||"verifique o console."),"error");
+      const newIdx = filteredData.findIndex(x => String(x["Numero Esboço"]).trim() === num);
+      if (newIdx >= 0) openModal(newIdx);
+      showToast("✅ Tratativa salva com sucesso!", "success");
+    } catch (err) {
+      console.error("Erro ao salvar tratativa:", err);
+      showToast("❌ Erro ao salvar: " + (err.message || "verifique o console."), "error");
     }
   }
 
   /* ── HELPERS ── */
-  function parseAnyDate(value){
-    if(!value) return null;
-    const iso=new Date(value);
-    if(!isNaN(iso.getTime())) return iso;
-    const br=String(value).match(/^(\d{2})\/(\d{2})\/(\d{4})(?:\s+(\d{2}):(\d{2}))?/);
-    if(br){const dt=new Date(`${br[3]}-${br[2]}-${br[1]}T${br[4]||"00"}:${br[5]||"00"}:00`);if(!isNaN(dt.getTime())) return dt;}
+  function parseAnyDate(value) {
+    if (!value) return null;
+    const iso = new Date(value);
+    if (!isNaN(iso.getTime())) return iso;
+    const br = String(value).match(/^(\d{2})\/(\d{2})\/(\d{4})(?:\s+(\d{2}):(\d{2}))?/);
+    if (br) {
+      const dt = new Date(`${br[3]}-${br[2]}-${br[1]}T${br[4]||"00"}:${br[5]||"00"}:00`);
+      if (!isNaN(dt.getTime())) return dt;
+    }
     return null;
   }
-  function normalizeDate(value){const d=parseAnyDate(value);if(!d) return null;d.setHours(0,0,0,0);return d;}
-  function getDiasEmAberto(dataTexto){
-    const data=normalizeDate(dataTexto);if(!data) return 0;
-    const hoje=new Date();hoje.setHours(0,0,0,0);
-    return Math.max(0,Math.floor((hoje-data)/86400000));
-  }
-  function getPrioridadePeso(p){
-    p=String(p||"").trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
-    if(p==="alto") return 1;if(p==="medio") return 2;if(p==="baixo") return 3;return 99;
-  }
-  function getStatusSla(prioridade,dataEsboco,status){
-    if(String(status||"").trim()==="Esboço Fechado") return"Fechado";
-    const dias=getDiasEmAberto(dataEsboco);
-    const peso=getPrioridadePeso(prioridade);
-    const limite=peso===1?5:peso===2?10:peso===3?15:0;
-    if(!limite) return"Sem regra";
-    if(dias>limite) return"Vencido";
-    if(dias===limite) return"Vence hoje";
-    return"No prazo";
-  }
-  function getStatusClass(status){return String(status||"").trim()==="Esboço Fechado"?"status-fechado":"status-pendente";}
-  function getSlaClass(s){
-    s=String(s||"").toLowerCase();
-    if(s==="vencido") return"status-sla-vencido";
-    if(s==="vence hoje") return"status-sla-vencehoje";
-    return"status-sla-noprazo";
-  }
-  function formatCurrency(value){return Number(value||0).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});}
-  function formatDate(value){if(!value) return"-";const d=parseAnyDate(value);return d?d.toLocaleDateString("pt-BR"):escapeHtml(String(value));}
-  function escapeHtml(text){return String(text).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;");}
 
-  if(checkAuth()) loadData();
+  function normalizeDate(value) {
+    const d = parseAnyDate(value);
+    if (!d) return null;
+    d.setHours(0, 0, 0, 0);
+    return d;
+  }
+
+  function getDiasEmAberto(dataTexto) {
+    const data = normalizeDate(dataTexto);
+    if (!data) return 0;
+    const hoje = new Date();
+    hoje.setHours(0, 0, 0, 0);
+    return Math.max(0, Math.floor((hoje - data) / 86400000));
+  }
+
+  function getPrioridadePeso(p) {
+    p = String(p || "").trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    if (p === "alto")  return 1;
+    if (p === "medio") return 2;
+    if (p === "baixo") return 3;
+    return 99;
+  }
+
+  function getStatusSla(prioridade, dataEsboco, status) {
+    if (String(status || "").trim() === "Esboço Fechado") return "Fechado";
+    const dias  = getDiasEmAberto(dataEsboco);
+    const peso  = getPrioridadePeso(prioridade);
+    const limite = peso === 1 ? 5 : peso === 2 ? 10 : peso === 3 ? 15 : 0;
+    if (!limite)        return "Sem regra";
+    if (dias > limite)  return "Vencido";
+    if (dias === limite) return "Vence hoje";
+    return "No prazo";
+  }
+
+  function getStatusClass(status) {
+    return String(status || "").trim() === "Esboço Fechado" ? "status-fechado" : "status-pendente";
+  }
+
+  function getSlaClass(s) {
+    s = String(s || "").toLowerCase();
+    if (s === "vencido")     return "status-sla-vencido";
+    if (s === "vence hoje")  return "status-sla-vencehoje";
+    return "status-sla-noprazo";
+  }
+
+  function formatCurrency(value) {
+    return Number(value || 0).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+  }
+
+  function formatDate(value) {
+    if (!value) return "-";
+    const d = parseAnyDate(value);
+    return d ? d.toLocaleDateString("pt-BR") : escapeHtml(String(value));
+  }
+
+  function escapeHtml(text) {
+    return String(text)
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
+  }
+
+  if (checkAuth()) loadData();
 </script>
 </body>
 </html>
