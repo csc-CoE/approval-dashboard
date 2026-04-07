@@ -388,7 +388,7 @@
     const map = {};
     (data || []).forEach(item => {
       map[String(item.numero_esboco).trim()] = {
-        situacao_tratamento: item.situacao_tratamento || "",
+        situacao_tratamento: "",   // ← sempre nasce zerado, não carrega valor salvo
         observacao:          item.observacao || "",
         updated_by:          item.updated_by,
         updated_at:          item.updated_at
@@ -410,7 +410,11 @@
         const num = String(i["Numero Esboço"] || "").trim();
         const t   = tMap[num];
         if (!t) return i;
-        return { ...i, "Situação do Tratamento": t.situacao_tratamento, "Observação": t.observacao };
+        return {
+          ...i,
+          "Situação do Tratamento": "",   // ← sempre nasce zerado
+          "Observação": t.observacao
+        };
       });
 
       groupedData = groupByEsboco(rawData);
@@ -439,7 +443,7 @@
           "Segmento":               item["Segmento"] || "",
           "Data do Esboço":         item["Data do Esboço"] || "",
           "Status":                 statusItem,
-          "Situação do Tratamento": item["Situação do Tratamento"] || "",
+          "Situação do Tratamento": "",   // ← sempre nasce zerado no agrupamento
           "Observação":             item["Observação"] || "",
           "Valor Total":            0,
           "Qtde Itens":             0,
@@ -454,8 +458,7 @@
       if (comparePrioridade(item["Prioridade"], g["Prioridade"]) < 0)
         g["Prioridade"] = item["Prioridade"] || g["Prioridade"];
       g["Status"] = resolveGroupStatus(g["Status"], statusItem);
-      if (!g["Situação do Tratamento"] && item["Situação do Tratamento"])
-        g["Situação do Tratamento"] = item["Situação do Tratamento"];
+      // Situação do Tratamento permanece zerada — não herda de item
       if (!g["Observação"] && item["Observação"])
         g["Observação"] = item["Observação"];
     }
@@ -536,9 +539,7 @@
   function updateStats() {
     const total       = groupedData.length;
     const pendentes   = filteredData.filter(r => String(r["Status"]||"").trim() === "Esboço Pendente").length;
-    // CORRIGIDO: conta "Em análise pelo time"
     const tratativas  = filteredData.filter(r => String(r["Situação do Tratamento"]||"").trim() === "Em análise pelo time").length;
-    // Finalizados: conta situação "Finalizado"
     const finalizados = filteredData.filter(r => String(r["Situação do Tratamento"]||"").trim() === "Finalizado").length;
     const valor       = filteredData.reduce((acc, r) => acc + Number(r["Valor Total"] || 0), 0);
 
@@ -600,7 +601,7 @@
     const podeEditar = (currentViewMode === "time" || currentRole === "dev") && activeGroup["Status"] === "Esboço Pendente";
     if (podeEditar) {
       editorBox.style.display = "block";
-      document.getElementById("tratamentoSelect").value = activeGroup["Situação do Tratamento"] || "";
+      document.getElementById("tratamentoSelect").value = "";   // ← sempre nasce zerado ao abrir o modal
       document.getElementById("observacaoInput").value  = activeGroup["Observação"] || "";
     } else {
       editorBox.style.display = "none";
