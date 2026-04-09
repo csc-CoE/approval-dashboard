@@ -515,6 +515,30 @@
   }
 
   /* ── SUPABASE ── */
+  // Mapeamento de situações antigas para novas (migração automática)
+  const MIGRACOES_SITUACAO = {
+    "Em análise pelo time":             "Em Tratativa DRP",
+    "Em análise de cliente":            "Aguardando Retorno do Cliente – Material não Orçado",
+    "Aguardando validação":             "Em Tratativa DRP",
+    "Aguardando ajuste de informações": "Em Tratativa DRP",
+    "Aguardando correção do pedido":    "Em Tratativa DRP",
+    "Sem saldo em estoque":             "Aguardando Retorno do Cliente – Sem Saldo em Estoque",
+    "Material indisponível":            "Em Tratativa DRP",
+    "Erro cadastral":                   "Aguardando Retorno do Cliente – Erro Cadastro",
+    "Erro no SAP":                      "Em Tratativa DRP",
+    "Divergência de dados":             "Em Tratativa DRP",
+    "Em tratativa com Estoque":         "Em Tratativa DRP",
+    "Em tratativa com Suprimentos":     "Em Tratativa DRP",
+    "Em tratativa com Planejamento":    "Em Tratativa DRP",
+    "Aguardando retorno da área":       "Em Tratativa DRP",
+    "Finalizado":                       "Finalizado – Gerado PTR"
+  };
+
+  function normalizarSituacao(sit) {
+    if (!sit) return "";
+    return MIGRACOES_SITUACAO[sit] || sit;
+  }
+
   async function fetchTratativasSupabase() {
     const { data, error } = await sb
       .from("tratativas_esboco")
@@ -523,8 +547,7 @@
     const map = {};
     (data || []).forEach(item => {
       map[String(item.numero_esboco).trim()] = {
-        // ✅ FIX: carrega o valor real do Supabase (não zera mais)
-        situacao_tratamento: item.situacao_tratamento || "",
+        situacao_tratamento: normalizarSituacao(item.situacao_tratamento || ""),
         observacao:          item.observacao || "",
         updated_by:          item.updated_by,
         updated_at:          item.updated_at
@@ -549,7 +572,7 @@
         return {
           ...i,
           // ✅ FIX: carrega situacao_tratamento real do Supabase
-          "Situação do Tratamento": t.situacao_tratamento || "",
+          "Situação do Tratamento": normalizarSituacao(t.situacao_tratamento || ""),
           "Observação": t.observacao
         };
       });
@@ -596,9 +619,9 @@
       if (comparePrioridade(item["Prioridade"], g["Prioridade"]) < 0)
         g["Prioridade"] = item["Prioridade"] || g["Prioridade"];
       g["Status"] = resolveGroupStatus(g["Status"], statusItem);
-      // Mantém a situação do tratamento se já foi preenchida
+      // Mantém a situação do tratamento se já foi preenchida (normaliza legados)
       if (!g["Situação do Tratamento"] && item["Situação do Tratamento"])
-        g["Situação do Tratamento"] = item["Situação do Tratamento"];
+        g["Situação do Tratamento"] = normalizarSituacao(item["Situação do Tratamento"]);
       if (!g["Observação"] && item["Observação"])
         g["Observação"] = item["Observação"];
     }
@@ -679,8 +702,8 @@
   function updateStats() {
     const total = groupedData.length;
 
-    // Pendentes: esboços sem situação de tratamento definida
-    const pendentes = filteredData.filter(r => !String(r["Situação do Tratamento"]||"").trim()).length;
+    // Pendentes: total de esboços do Databricks SEM situação salva no Supabase (ignora filtros)
+    const pendentes = groupedData.filter(r => !String(r["Situação do Tratamento"]||"").trim()).length;
 
     // Em Tratativas: apenas "Em Tratativa DRP"
     const tratativas = filteredData.filter(r =>
