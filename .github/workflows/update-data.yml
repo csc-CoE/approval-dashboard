@@ -2,7 +2,7 @@ name: Atualizar data.json via Databricks
 
 on:
   schedule:
-    - cron: "0 */3 * * *"
+    - cron: '0 * * * *'    # toda hora"
   workflow_dispatch:
 
 permissions:
