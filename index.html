@@ -41,18 +41,21 @@
       color:#ffd4a8;border-radius:var(--radius);padding:12px 18px;font-size:14px;font-weight:600;}
 
     /* CARDS */
-    .cards{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;margin-bottom:22px;}
+    .cards{display:grid;grid-template-columns:repeat(6,1fr);gap:16px;margin-bottom:22px;}
     .card{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:22px;position:relative;overflow:hidden;transition:border-color .2s;}
     .card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent-light));}
     .card.card-tratativas::before{background:linear-gradient(90deg,#38bdf8,#7dd3fc);}
     .card.card-finalizados::before{background:linear-gradient(90deg,#22c55e,#4ade80);}
+    .card.card-aguardando::before{background:linear-gradient(90deg,#f59e0b,#fbbf24);}
     .card:hover{border-color:rgba(255,107,0,0.3);}
     .card.card-tratativas:hover{border-color:rgba(56,189,248,0.3);}
     .card.card-finalizados:hover{border-color:rgba(34,197,94,0.3);}
+    .card.card-aguardando:hover{border-color:rgba(245,158,11,0.3);}
     .card .label{color:var(--muted);font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;}
     .card .value{font-size:30px;font-weight:900;letter-spacing:-1px;color:var(--text);}
     .card.card-tratativas .value{color:#7dd3fc;}
     .card.card-finalizados .value{color:#4ade80;}
+    .card.card-aguardando .value{color:#fbbf24;}
     .card .icon{position:absolute;right:20px;top:50%;transform:translateY(-50%);font-size:32px;opacity:.08;}
 
     /* FILTERS */
@@ -201,6 +204,11 @@
       <div class="label">Finalizados</div>
       <div class="value" id="statFinalizados">0</div>
       <div class="icon">✅</div>
+    </div>
+    <div class="card card-aguardando">
+      <div class="label">Aguardando Cliente</div>
+      <div class="value" id="statAguardando">0</div>
+      <div class="icon">⏳</div>
     </div>
     <div class="card">
       <div class="label">Valor Total</div>
@@ -674,15 +682,19 @@
     // Pendentes: esboços sem situação de tratamento definida
     const pendentes = filteredData.filter(r => !String(r["Situação do Tratamento"]||"").trim()).length;
 
-    // Em Tratativas: qualquer situação que NÃO seja Finalizado e NÃO esteja vazia
-    const tratativas = filteredData.filter(r => {
-      const sit = String(r["Situação do Tratamento"]||"").trim();
-      return sit && !sit.startsWith("Finalizado");
-    }).length;
+    // Em Tratativas: apenas "Em Tratativa DRP"
+    const tratativas = filteredData.filter(r =>
+      String(r["Situação do Tratamento"]||"").trim() === "Em Tratativa DRP"
+    ).length;
 
-    // Finalizados
+    // Finalizados: qualquer situação que comece com "Finalizado" (PV ou PTR)
     const finalizados = filteredData.filter(r =>
       String(r["Situação do Tratamento"]||"").trim().startsWith("Finalizado")
+    ).length;
+
+    // Aguardando Retorno do Cliente
+    const aguardando = filteredData.filter(r =>
+      String(r["Situação do Tratamento"]||"").trim().startsWith("Aguardando Retorno do Cliente")
     ).length;
 
     const valor = filteredData.reduce((acc, r) => acc + Number(r["Valor Total"] || 0), 0);
@@ -691,6 +703,7 @@
     document.getElementById("statPendentes").textContent   = pendentes;
     document.getElementById("statTratativas").textContent  = tratativas;
     document.getElementById("statFinalizados").textContent = finalizados;
+    document.getElementById("statAguardando").textContent  = aguardando;
     document.getElementById("statValor").textContent       = formatCurrency(valor);
     document.getElementById("tableCount").textContent      = filteredData.length + " registros";
   }
