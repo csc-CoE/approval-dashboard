@@ -84,6 +84,7 @@
     .status-fechado    {background:rgba(34,197,94,0.14); color:#4ade80;border-color:rgba(34,197,94,0.25);}
     .status-tratamento {background:rgba(56,189,248,0.14);color:#7dd3fc;border-color:rgba(56,189,248,0.25);}
     .status-finalizado {background:rgba(34,197,94,0.14); color:#4ade80;border-color:rgba(34,197,94,0.25);}
+    .status-aguardando {background:rgba(245,158,11,0.14);color:#fbbf24;border-color:rgba(245,158,11,0.25);}
     .status-sla-noprazo   {background:rgba(34,197,94,0.14); color:#4ade80;border-color:rgba(34,197,94,0.25);}
     .status-sla-vencehoje {background:rgba(245,158,11,0.14);color:#fbbf24;border-color:rgba(245,158,11,0.25);}
     .status-sla-vencido   {background:rgba(239,68,68,0.14); color:#f87171;border-color:rgba(239,68,68,0.25);}
@@ -112,6 +113,15 @@
     .items-title{font-size:15px;font-weight:800;margin:4px 0 14px;color:var(--accent-light);}
     .small-btn{padding:10px 16px;border-radius:10px;border:1px solid var(--border);background:var(--surface);color:var(--text);cursor:pointer;font-family:inherit;font-weight:700;font-size:13px;transition:.2s;}
     .small-btn:hover{border-color:var(--accent);color:var(--accent-light);}
+
+    /* SUBLISTA */
+    .sublista-box{display:none;background:rgba(255,107,0,0.06);border:1px solid rgba(255,107,0,0.2);border-radius:10px;padding:14px;margin-top:10px;}
+    .sublista-box.visible{display:block;}
+    .sublista-box label{display:block;font-size:11px;font-weight:800;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:.8px;}
+    .pv-input-box{display:none;margin-top:10px;}
+    .pv-input-box.visible{display:block;}
+    .pv-input-box label{display:block;font-size:11px;font-weight:800;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:.8px;}
+    .required-mark{color:var(--danger);margin-left:2px;}
 
     /* TOAST */
     .toast{position:fixed;bottom:28px;right:28px;z-index:9999;background:#1e1e1e;border:1px solid var(--border);
@@ -264,25 +274,45 @@
 
       <div class="editor-row">
         <div>
+          <!-- SITUAÇÃO PRINCIPAL: 3 opções -->
           <label for="tratamentoSelect">Situação do Tratamento</label>
-          <select id="tratamentoSelect">
+          <select id="tratamentoSelect" onchange="onTratamentoChange()">
             <option value="">— Selecione uma situação —</option>
-            <option value="Em análise pelo time">Em análise pelo time</option>
-            <option value="Em análise de cliente">Em análise de cliente</option>
-            <option value="Aguardando validação">Aguardando validação</option>
-            <option value="Aguardando ajuste de informações">Aguardando ajuste de informações</option>
-            <option value="Aguardando correção do pedido">Aguardando correção do pedido</option>
-            <option value="Sem saldo em estoque">Sem saldo em estoque</option>
-            <option value="Material indisponível">Material indisponível</option>
-            <option value="Erro cadastral">Erro cadastral</option>
-            <option value="Erro no SAP">Erro no SAP</option>
-            <option value="Divergência de dados">Divergência de dados</option>
-            <option value="Em tratativa com Estoque">Em tratativa com Estoque</option>
-            <option value="Em tratativa com Suprimentos">Em tratativa com Suprimentos</option>
-            <option value="Em tratativa com Planejamento">Em tratativa com Planejamento</option>
-            <option value="Aguardando retorno da área">Aguardando retorno da área</option>
             <option value="Finalizado">✅ Finalizado</option>
+            <option value="Em Tratativa DRP">🔄 Em Tratativa DRP</option>
+            <option value="Aguardando Retorno do Cliente">⏳ Aguardando Retorno do Cliente</option>
           </select>
+
+          <!-- SUBLISTA: Finalizado -->
+          <div class="sublista-box" id="sublistaFinalizado">
+            <label>Tipo de Finalização <span class="required-mark">*</span></label>
+            <select id="finalizadoSubSelect" onchange="onFinalizadoSubChange()">
+              <option value="">— Selecione —</option>
+              <option value="Gerado PV">Gerado PV</option>
+              <option value="Gerado PTR">Gerado PTR</option>
+            </select>
+            <!-- Campo PV obrigatório -->
+            <div class="pv-input-box" id="pvInputBox">
+              <label>Número do PV <span class="required-mark">*</span></label>
+              <input type="text" id="pvNumeroInput" placeholder="Informe o número do PV..." />
+            </div>
+          </div>
+
+          <!-- SUBLISTA: Aguardando Retorno do Cliente -->
+          <div class="sublista-box" id="sublistaCliente">
+            <label>Motivo <span class="required-mark">*</span></label>
+            <select id="clienteSubSelect">
+              <option value="">— Selecione o motivo —</option>
+              <option value="Material não Orçado">Material não Orçado</option>
+              <option value="Material não Planejado">Material não Planejado</option>
+              <option value="Erro Cadastro">Erro Cadastro</option>
+              <option value="Sem Saldo em Estoque">Sem Saldo em Estoque</option>
+              <option value="Necessidade de PV">Necessidade de PV</option>
+              <option value="Material em Compra">Material em Compra</option>
+              <option value="Validar com PCM">Validar com PCM</option>
+              <option value="Material Acima do Consumo">Material Acima do Consumo</option>
+            </select>
+          </div>
         </div>
       </div>
 
@@ -379,6 +409,103 @@
     window.location.href = LOGIN_PAGE;
   }
 
+  /* ── SUBLISTA LOGIC ── */
+  function onTratamentoChange() {
+    const val = document.getElementById("tratamentoSelect").value;
+
+    // Esconde todas as sublistas e reseta
+    document.getElementById("sublistaFinalizado").classList.remove("visible");
+    document.getElementById("sublistaCliente").classList.remove("visible");
+    document.getElementById("pvInputBox").classList.remove("visible");
+    document.getElementById("finalizadoSubSelect").value = "";
+    document.getElementById("clienteSubSelect").value = "";
+    document.getElementById("pvNumeroInput").value = "";
+
+    if (val === "Finalizado") {
+      document.getElementById("sublistaFinalizado").classList.add("visible");
+    } else if (val === "Aguardando Retorno do Cliente") {
+      document.getElementById("sublistaCliente").classList.add("visible");
+    }
+    // "Em Tratativa DRP" → nenhuma sublista
+  }
+
+  function onFinalizadoSubChange() {
+    const val = document.getElementById("finalizadoSubSelect").value;
+    const pvBox = document.getElementById("pvInputBox");
+    if (val === "Gerado PV") {
+      pvBox.classList.add("visible");
+    } else {
+      pvBox.classList.remove("visible");
+      document.getElementById("pvNumeroInput").value = "";
+    }
+  }
+
+  /* Monta o valor final da situação para salvar no Supabase */
+  function buildSituacaoFinal() {
+    const principal = document.getElementById("tratamentoSelect").value;
+    if (!principal) return { situacao: "", obs_pv: null, valid: false, msg: "Selecione uma situação do tratamento." };
+
+    if (principal === "Finalizado") {
+      const sub = document.getElementById("finalizadoSubSelect").value;
+      if (!sub) return { situacao: "", obs_pv: null, valid: false, msg: "Selecione o tipo de finalização." };
+      if (sub === "Gerado PV") {
+        const pvNum = document.getElementById("pvNumeroInput").value.trim();
+        if (!pvNum) return { situacao: "", obs_pv: null, valid: false, msg: "Informe o número do PV. Campo obrigatório." };
+        return { situacao: `Finalizado – Gerado PV`, obs_pv: pvNum, valid: true };
+      }
+      return { situacao: `Finalizado – Gerado PTR`, obs_pv: null, valid: true };
+    }
+
+    if (principal === "Aguardando Retorno do Cliente") {
+      const sub = document.getElementById("clienteSubSelect").value;
+      if (!sub) return { situacao: "", obs_pv: null, valid: false, msg: "Selecione o motivo para aguardando retorno do cliente." };
+      return { situacao: `Aguardando Retorno do Cliente – ${sub}`, obs_pv: null, valid: true };
+    }
+
+    // Em Tratativa DRP — sem sublista
+    return { situacao: principal, obs_pv: null, valid: true };
+  }
+
+  /* Preenche os selects do modal ao abrir com valor já salvo */
+  function populateEditorFromSaved(situacaoSalva, observacaoSalva) {
+    // Reseta tudo primeiro
+    document.getElementById("tratamentoSelect").value = "";
+    document.getElementById("sublistaFinalizado").classList.remove("visible");
+    document.getElementById("sublistaCliente").classList.remove("visible");
+    document.getElementById("pvInputBox").classList.remove("visible");
+    document.getElementById("finalizadoSubSelect").value = "";
+    document.getElementById("clienteSubSelect").value = "";
+    document.getElementById("pvNumeroInput").value = "";
+    document.getElementById("observacaoInput").value = observacaoSalva || "";
+
+    if (!situacaoSalva) return;
+
+    if (situacaoSalva === "Em Tratativa DRP") {
+      document.getElementById("tratamentoSelect").value = "Em Tratativa DRP";
+
+    } else if (situacaoSalva.startsWith("Finalizado")) {
+      document.getElementById("tratamentoSelect").value = "Finalizado";
+      document.getElementById("sublistaFinalizado").classList.add("visible");
+
+      if (situacaoSalva.includes("Gerado PV")) {
+        document.getElementById("finalizadoSubSelect").value = "Gerado PV";
+        document.getElementById("pvInputBox").classList.add("visible");
+        // Tenta recuperar nº PV da observação se começar com "PV:"
+        if (observacaoSalva && observacaoSalva.startsWith("PV:")) {
+          document.getElementById("pvNumeroInput").value = observacaoSalva.replace("PV:", "").trim();
+        }
+      } else if (situacaoSalva.includes("Gerado PTR")) {
+        document.getElementById("finalizadoSubSelect").value = "Gerado PTR";
+      }
+
+    } else if (situacaoSalva.startsWith("Aguardando Retorno do Cliente")) {
+      document.getElementById("tratamentoSelect").value = "Aguardando Retorno do Cliente";
+      document.getElementById("sublistaCliente").classList.add("visible");
+      const partes = situacaoSalva.split(" – ");
+      if (partes[1]) document.getElementById("clienteSubSelect").value = partes[1];
+    }
+  }
+
   /* ── SUPABASE ── */
   async function fetchTratativasSupabase() {
     const { data, error } = await sb
@@ -388,7 +515,8 @@
     const map = {};
     (data || []).forEach(item => {
       map[String(item.numero_esboco).trim()] = {
-        situacao_tratamento: "",   // ← sempre nasce zerado, não carrega valor salvo
+        // ✅ FIX: carrega o valor real do Supabase (não zera mais)
+        situacao_tratamento: item.situacao_tratamento || "",
         observacao:          item.observacao || "",
         updated_by:          item.updated_by,
         updated_at:          item.updated_at
@@ -409,10 +537,11 @@
       rawData = rawData.map(i => {
         const num = String(i["Numero Esboço"] || "").trim();
         const t   = tMap[num];
-        if (!t) return i;
+        if (!t) return i; // ✅ esboço novo do Databricks → fica zerado
         return {
           ...i,
-          "Situação do Tratamento": "",   // ← sempre nasce zerado
+          // ✅ FIX: carrega situacao_tratamento real do Supabase
+          "Situação do Tratamento": t.situacao_tratamento || "",
           "Observação": t.observacao
         };
       });
@@ -443,7 +572,8 @@
           "Segmento":               item["Segmento"] || "",
           "Data do Esboço":         item["Data do Esboço"] || "",
           "Status":                 statusItem,
-          "Situação do Tratamento": "",   // ← sempre nasce zerado no agrupamento
+          // ✅ FIX: herda a situação do tratamento do item (vindo do Supabase via merge)
+          "Situação do Tratamento": item["Situação do Tratamento"] || "",
           "Observação":             item["Observação"] || "",
           "Valor Total":            0,
           "Qtde Itens":             0,
@@ -458,7 +588,9 @@
       if (comparePrioridade(item["Prioridade"], g["Prioridade"]) < 0)
         g["Prioridade"] = item["Prioridade"] || g["Prioridade"];
       g["Status"] = resolveGroupStatus(g["Status"], statusItem);
-      // Situação do Tratamento permanece zerada — não herda de item
+      // Mantém a situação do tratamento se já foi preenchida
+      if (!g["Situação do Tratamento"] && item["Situação do Tratamento"])
+        g["Situação do Tratamento"] = item["Situação do Tratamento"];
       if (!g["Observação"] && item["Observação"])
         g["Observação"] = item["Observação"];
     }
@@ -537,11 +669,23 @@
 
   /* ── STATS ── */
   function updateStats() {
-    const total       = groupedData.length;
-    const pendentes   = filteredData.filter(r => String(r["Status"]||"").trim() === "Esboço Pendente").length;
-    const tratativas  = filteredData.filter(r => String(r["Situação do Tratamento"]||"").trim() === "Em análise pelo time").length;
-    const finalizados = filteredData.filter(r => String(r["Situação do Tratamento"]||"").trim() === "Finalizado").length;
-    const valor       = filteredData.reduce((acc, r) => acc + Number(r["Valor Total"] || 0), 0);
+    const total = groupedData.length;
+
+    // Pendentes: esboços sem situação de tratamento definida
+    const pendentes = filteredData.filter(r => !String(r["Situação do Tratamento"]||"").trim()).length;
+
+    // Em Tratativas: qualquer situação que NÃO seja Finalizado e NÃO esteja vazia
+    const tratativas = filteredData.filter(r => {
+      const sit = String(r["Situação do Tratamento"]||"").trim();
+      return sit && !sit.startsWith("Finalizado");
+    }).length;
+
+    // Finalizados
+    const finalizados = filteredData.filter(r =>
+      String(r["Situação do Tratamento"]||"").trim().startsWith("Finalizado")
+    ).length;
+
+    const valor = filteredData.reduce((acc, r) => acc + Number(r["Valor Total"] || 0), 0);
 
     document.getElementById("statTotal").textContent       = total;
     document.getElementById("statPendentes").textContent   = pendentes;
@@ -564,7 +708,9 @@
       const obs       = r["Observação"] || "-";
       let situacaoBadge = "-";
       if (situacao) {
-        const cls = situacao === "Finalizado" ? "status-finalizado" : "status-tratamento";
+        let cls = "status-tratamento";
+        if (situacao.startsWith("Finalizado")) cls = "status-finalizado";
+        else if (situacao.startsWith("Aguardando")) cls = "status-aguardando";
         situacaoBadge = `<span class="status ${cls}">${escapeHtml(situacao)}</span>`;
       }
       return `<tr class="group-row" onclick="openModal(${idx})">
@@ -601,8 +747,8 @@
     const podeEditar = (currentViewMode === "time" || currentRole === "dev") && activeGroup["Status"] === "Esboço Pendente";
     if (podeEditar) {
       editorBox.style.display = "block";
-      document.getElementById("tratamentoSelect").value = "";   // ← sempre nasce zerado ao abrir o modal
-      document.getElementById("observacaoInput").value  = activeGroup["Observação"] || "";
+      // ✅ FIX: popula o editor com o valor já salvo no Supabase
+      populateEditorFromSaved(activeGroup["Situação do Tratamento"] || "", activeGroup["Observação"] || "");
     } else {
       editorBox.style.display = "none";
     }
@@ -627,16 +773,26 @@
   /* ── SAVE ── */
   async function saveTratamento() {
     if (!activeGroup || activeGroup["Status"] !== "Esboço Pendente") return;
-    const num       = String(activeGroup["Numero Esboço"] || "").trim();
-    const novoValor = document.getElementById("tratamentoSelect").value;
-    const novaObs   = document.getElementById("observacaoInput").value.trim();
+    const num = String(activeGroup["Numero Esboço"] || "").trim();
     if (!num) { showToast("Número do esboço inválido.", "error"); return; }
+
+    // Valida e monta situação final
+    const { situacao, obs_pv, valid, msg } = buildSituacaoFinal();
+    if (!valid) { showToast("⚠️ " + msg, "error"); return; }
+
+    // Monta observação: se PV, prefixo "PV: XXXX"; senão mantém observação digitada
+    const obsDigitada = document.getElementById("observacaoInput").value.trim();
+    let observacaoFinal = obsDigitada;
+    if (obs_pv) {
+      observacaoFinal = `PV: ${obs_pv}` + (obsDigitada ? `\n${obsDigitada}` : "");
+    }
+
     try {
       const { error } = await sb.from("tratativas_esboco").upsert(
         {
           numero_esboco:       num,
-          situacao_tratamento: novoValor,
-          observacao:          novaObs,
+          situacao_tratamento: situacao,
+          observacao:          observacaoFinal,
           updated_by:          currentUser || "",
           updated_at:          new Date().toISOString()
         },
@@ -644,16 +800,16 @@
       );
       if (error) throw error;
 
-      activeGroup["Situação do Tratamento"] = novoValor;
-      activeGroup["Observação"]             = novaObs;
+      activeGroup["Situação do Tratamento"] = situacao;
+      activeGroup["Observação"]             = observacaoFinal;
       groupedData = groupedData.map(g =>
         String(g["Numero Esboço"]).trim() === num
-          ? { ...g, "Situação do Tratamento": novoValor, "Observação": novaObs }
+          ? { ...g, "Situação do Tratamento": situacao, "Observação": observacaoFinal }
           : g
       );
       rawData = rawData.map(i =>
         String(i["Numero Esboço"]).trim() === num
-          ? { ...i, "Situação do Tratamento": novoValor, "Observação": novaObs }
+          ? { ...i, "Situação do Tratamento": situacao, "Observação": observacaoFinal }
           : i
       );
 
