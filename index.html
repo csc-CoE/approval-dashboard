@@ -88,6 +88,7 @@
     .status-tratamento {background:rgba(56,189,248,0.14);color:#7dd3fc;border-color:rgba(56,189,248,0.25);}
     .status-finalizado {background:rgba(34,197,94,0.14); color:#4ade80;border-color:rgba(34,197,94,0.25);}
     .status-aguardando {background:rgba(245,158,11,0.14);color:#fbbf24;border-color:rgba(245,158,11,0.25);}
+    .status-nao-iniciado{background:rgba(153,153,153,0.12);color:#888;border-color:rgba(153,153,153,0.2);}
     .status-sla-noprazo   {background:rgba(34,197,94,0.14); color:#4ade80;border-color:rgba(34,197,94,0.25);}
     .status-sla-vencehoje {background:rgba(245,158,11,0.14);color:#fbbf24;border-color:rgba(245,158,11,0.25);}
     .status-sla-vencido   {background:rgba(239,68,68,0.14); color:#f87171;border-color:rgba(239,68,68,0.25);}
@@ -183,7 +184,7 @@
 <div class="container">
   <div class="banner" id="solicitanteBanner">📢 Você está visualizando na visão de solicitante.</div>
 
-  <!-- 5 CARDS -->
+  <!-- 6 CARDS -->
   <div class="cards">
     <div class="card">
       <div class="label">Total Esboços Criados</div>
@@ -515,10 +516,18 @@
   }
 
   /* ── SUPABASE ── */
-  // Mapeamento de situações antigas para novas (migração automática)
+
+  // ✅ FIX: Valores que eram "padrão antigo" sem tratativa real iniciada
+  // São tratados como vazio — o esboço volta para "Pendente (não iniciado)"
+  const SITUACOES_LEGADAS_VAZIAS = new Set([
+    "Em análise pelo time",   // ← era o default antigo, equivale a "sem tratativa"
+    "Em análise de cliente",  // outros legados que não mapeiam para situação válida nova
+  ]);
+
+  // Mapeamento de situações legadas com significado real → novas situações válidas
   const MIGRACOES_SITUACAO = {
-    "Em análise pelo time":             "Em Tratativa DRP",
-    "Em análise de cliente":            "Aguardando Retorno do Cliente – Material não Orçado",
+    // ✅ REMOVIDO: "Em análise pelo time" → não é mais mapeado para "Em Tratativa DRP"
+    //    pois era apenas o valor padrão antigo (sem tratativa iniciada de verdade)
     "Aguardando validação":             "Em Tratativa DRP",
     "Aguardando ajuste de informações": "Em Tratativa DRP",
     "Aguardando correção do pedido":    "Em Tratativa DRP",
@@ -536,6 +545,12 @@
 
   function normalizarSituacao(sit) {
     if (!sit) return "";
+
+    // ✅ FIX: Situações legadas que significam "nenhuma tratativa iniciada"
+    // → retorna vazio para que o esboço conte como Pendente
+    if (SITUACOES_LEGADAS_VAZIAS.has(sit)) return "";
+
+    // Situações legadas com significado real → migra para nova nomenclatura
     return MIGRACOES_SITUACAO[sit] || sit;
   }
 
@@ -546,8 +561,12 @@
     if (error) { console.error("fetchTratativas:", error); return {}; }
     const map = {};
     (data || []).forEach(item => {
+      const situacaoNormalizada = normalizarSituacao(item.situacao_tratamento || "");
+      // ✅ FIX: Se após normalização a situação ficou vazia (era legado sem tratativa real),
+      // NÃO inclui no mapa — o esboço ficará sem situação (= Pendente não iniciado)
+      if (!situacaoNormalizada) return;
       map[String(item.numero_esboco).trim()] = {
-        situacao_tratamento: normalizarSituacao(item.situacao_tratamento || ""),
+        situacao_tratamento: situacaoNormalizada,
         observacao:          item.observacao || "",
         updated_by:          item.updated_by,
         updated_at:          item.updated_at
@@ -568,11 +587,12 @@
       rawData = rawData.map(i => {
         const num = String(i["Numero Esboço"] || "").trim();
         const t   = tMap[num];
-        if (!t) return i; // ✅ esboço novo do Databricks → fica zerado
+        // ✅ FIX: Se não tem entrada no mapa (sem tratativa ou legado vazio),
+        // o item fica com Situação do Tratamento e Observação vazios
+        if (!t) return { ...i, "Situação do Tratamento": "", "Observação": "" };
         return {
           ...i,
-          // ✅ FIX: carrega situacao_tratamento real do Supabase
-          "Situação do Tratamento": normalizarSituacao(t.situacao_tratamento || ""),
+          "Situação do Tratamento": t.situacao_tratamento,
           "Observação": t.observacao
         };
       });
@@ -603,7 +623,6 @@
           "Segmento":               item["Segmento"] || "",
           "Data do Esboço":         item["Data do Esboço"] || "",
           "Status":                 statusItem,
-          // ✅ FIX: herda a situação do tratamento do item (vindo do Supabase via merge)
           "Situação do Tratamento": item["Situação do Tratamento"] || "",
           "Observação":             item["Observação"] || "",
           "Valor Total":            0,
@@ -619,9 +638,8 @@
       if (comparePrioridade(item["Prioridade"], g["Prioridade"]) < 0)
         g["Prioridade"] = item["Prioridade"] || g["Prioridade"];
       g["Status"] = resolveGroupStatus(g["Status"], statusItem);
-      // Mantém a situação do tratamento se já foi preenchida (normaliza legados)
       if (!g["Situação do Tratamento"] && item["Situação do Tratamento"])
-        g["Situação do Tratamento"] = normalizarSituacao(item["Situação do Tratamento"]);
+        g["Situação do Tratamento"] = item["Situação do Tratamento"];
       if (!g["Observação"] && item["Observação"])
         g["Observação"] = item["Observação"];
     }
@@ -702,7 +720,8 @@
   function updateStats() {
     const total = groupedData.length;
 
-    // Pendentes: total de esboços do Databricks SEM situação salva no Supabase (ignora filtros)
+    // ✅ FIX: Pendentes = esboços SEM situação de tratamento salva (não iniciados)
+    // Considera o total geral (groupedData), não apenas os filtrados
     const pendentes = groupedData.filter(r => !String(r["Situação do Tratamento"]||"").trim()).length;
 
     // Em Tratativas: apenas "Em Tratativa DRP"
@@ -742,13 +761,18 @@
       const statusSla = getStatusSla(r["Prioridade"], r["Data do Esboço"], status);
       const situacao  = r["Situação do Tratamento"] || "";
       const obs       = r["Observação"] || "-";
-      let situacaoBadge = "-";
-      if (situacao) {
+
+      // ✅ FIX: Badge para esboço sem tratativa iniciada
+      let situacaoBadge;
+      if (!situacao) {
+        situacaoBadge = `<span class="status status-nao-iniciado">Não iniciado</span>`;
+      } else {
         let cls = "status-tratamento";
-        if (situacao.startsWith("Finalizado")) cls = "status-finalizado";
-        else if (situacao.startsWith("Aguardando")) cls = "status-aguardando";
+        if (situacao.startsWith("Finalizado"))                    cls = "status-finalizado";
+        else if (situacao.startsWith("Aguardando"))               cls = "status-aguardando";
         situacaoBadge = `<span class="status ${cls}">${escapeHtml(situacao)}</span>`;
       }
+
       return `<tr class="group-row" onclick="openModal(${idx})">
         <td>${escapeHtml(r["Prioridade"] || "-")}</td>
         <td>${escapeHtml(r["Responsavel Esboço"] || "-")}</td>
@@ -783,7 +807,6 @@
     const podeEditar = (currentViewMode === "time" || currentRole === "dev") && activeGroup["Status"] === "Esboço Pendente";
     if (podeEditar) {
       editorBox.style.display = "block";
-      // ✅ FIX: popula o editor com o valor já salvo no Supabase
       populateEditorFromSaved(activeGroup["Situação do Tratamento"] || "", activeGroup["Observação"] || "");
     } else {
       editorBox.style.display = "none";
