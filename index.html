@@ -717,38 +717,39 @@
   }
 
   /* ── STATS ── */
-  function updateStats() {
-    const total = groupedData.length;
+function updateStats() {
+  const total = groupedData.length;
 
-    // ✅ FIX: Pendentes = esboços SEM situação de tratamento salva (não iniciados)
-    // Considera o total geral (groupedData), não apenas os filtrados
-    const pendentes = groupedData.filter(r => !String(r["Situação do Tratamento"]||"").trim()).length;
+  // Pendentes: usa filteredData e conta pelo Status real vindo do Databricks
+  const pendentes = filteredData.filter(r =>
+    String(r["Status"] || "").trim() === "Esboço Pendente"
+  ).length;
 
-    // Em Tratativas: apenas "Em Tratativa DRP"
-    const tratativas = filteredData.filter(r =>
-      String(r["Situação do Tratamento"]||"").trim() === "Em Tratativa DRP"
-    ).length;
+  // Em Tratativas: apenas "Em Tratativa DRP"
+  const tratativas = filteredData.filter(r =>
+    String(r["Situação do Tratamento"] || "").trim() === "Em Tratativa DRP"
+  ).length;
 
-    // Finalizados: qualquer situação que comece com "Finalizado" (PV ou PTR)
-    const finalizados = filteredData.filter(r =>
-      String(r["Situação do Tratamento"]||"").trim().startsWith("Finalizado")
-    ).length;
+  // Finalizados: qualquer situação que comece com "Finalizado"
+  const finalizados = filteredData.filter(r =>
+    String(r["Situação do Tratamento"] || "").trim().startsWith("Finalizado")
+  ).length;
 
-    // Aguardando Retorno do Cliente
-    const aguardando = filteredData.filter(r =>
-      String(r["Situação do Tratamento"]||"").trim().startsWith("Aguardando Retorno do Cliente")
-    ).length;
+  // Aguardando Retorno do Cliente
+  const aguardando = filteredData.filter(r =>
+    String(r["Situação do Tratamento"] || "").trim().startsWith("Aguardando Retorno do Cliente")
+  ).length;
 
-    const valor = filteredData.reduce((acc, r) => acc + Number(r["Valor Total"] || 0), 0);
+  const valor = filteredData.reduce((acc, r) => acc + Number(r["Valor Total"] || 0), 0);
 
-    document.getElementById("statTotal").textContent       = total;
-    document.getElementById("statPendentes").textContent   = pendentes;
-    document.getElementById("statTratativas").textContent  = tratativas;
-    document.getElementById("statFinalizados").textContent = finalizados;
-    document.getElementById("statAguardando").textContent  = aguardando;
-    document.getElementById("statValor").textContent       = formatCurrency(valor);
-    document.getElementById("tableCount").textContent      = filteredData.length + " registros";
-  }
+  document.getElementById("statTotal").textContent       = total;
+  document.getElementById("statPendentes").textContent   = pendentes;
+  document.getElementById("statTratativas").textContent  = tratativas;
+  document.getElementById("statFinalizados").textContent = finalizados;
+  document.getElementById("statAguardando").textContent  = aguardando;
+  document.getElementById("statValor").textContent       = formatCurrency(valor);
+  document.getElementById("tableCount").textContent      = filteredData.length + " registros";
+}
 
   /* ── TABLE ── */
   function renderTable() {
