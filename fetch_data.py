@@ -18,7 +18,7 @@ WAREHOUSE_ID = os.environ["DATABRICKS_WAREHOUSE_ID"].strip().split("/")[-1]
 SQL_QUERY = """
 SELECT 
     prioridade AS `Prioridade`,
-    ptr_usuario_nome AS `Responsavel Esboço`,
+    esboco_usuario_nome AS `Responsavel Esboço`,
     ptr_esboco AS `Numero Esboço`,
     ptr_segmento AS `Segmento`,
     ptr_data_esboco AS `Data do Esboço`,
