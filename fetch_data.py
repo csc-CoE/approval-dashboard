@@ -1,39 +1,49 @@
 """
 Busca dados do Databricks via SQL Statement API e salva em data.json
+Configurar no GitHub Secrets:
+  - DATABRICKS_HOST          ex: https://adb-xxxx.azuredatabricks.net
+  - DATABRICKS_TOKEN         Personal Access Token do Databricks
+  - DATABRICKS_WAREHOUSE_ID  ID do SQL Warehouse
 """
 
 import os
 import json
 import time
 import requests
-from datetime import datetime, timedelta
+from datetime import datetime
 
-HOST = os.environ["DATABRICKS_HOST"].strip().rstrip("/")
-if not HOST.startswith("http://") and not HOST.startswith("https://"):
-    HOST = "https://" + HOST
-
+HOST = os.environ["DATABRICKS_HOST"].rstrip("/")
 TOKEN = os.environ["DATABRICKS_TOKEN"]
-WAREHOUSE_ID = os.environ["DATABRICKS_WAREHOUSE_ID"].strip().split("/")[-1]
+WAREHOUSE_ID = os.environ["DATABRICKS_WAREHOUSE_ID"]
 
 SQL_QUERY = """
-SELECT 
-    prioridade AS `Prioridade`,
-    esboco_usuario_nome AS `Responsavel Esboço`,
-    ptr_esboco AS `Numero Esboço`,
-    ptr_segmento AS `Segmento`,
-    ptr_data_esboco AS `Data do Esboço`,
-    ptr_valor_total AS `Valor Total`,
-    ptr_observacoes AS `Observações`,
-    ptr_item_codigo AS `Código do Item`,
-    ptr_item_descricao AS `Descrição do Item`,
-    ptr_material_status AS `Status Esboço`,
-    date_format(
-        from_utc_timestamp(data_atualizacao_tabela, 'America/Sao_Paulo'),
+SELECT
+    f.prioridade                                        AS prioridade,
+    UPPER(f.esboco_usuario_nome)                        AS solicitante,
+    r.email_corporativo                                 AS email_solicitante,
+    f.ptr_esboco                                        AS n_doesboco,
+    f.ptr_segmento                                      AS segmento,
+    DATE_FORMAT(f.ptr_data_esboco, 'dd/MM/yyyy')        AS data,
+    f.ptr_valor_total                                   AS line_total,
+    f.ptr_observacoes                                   AS observacoes,
+    f.ptr_item_codigo                                   AS item_code,
+    f.ptr_item_descricao                                AS dscription,
+    f.ptr_material_status                               AS status_sap,
+    DATE_FORMAT(
+        FROM_UTC_TIMESTAMP(f.data_atualizacao_tabela, 'America/Sao_Paulo'),
         'dd/MM/yyyy HH:mm'
-    ) AS `Data de Atualização`
-FROM `gold`.`sap`.`fato_atendimento_pedido_transf_estoque`
-WHERE ptr_data_esboco >= '2026-01-01'
-  AND ptr_numero IS NULL
+    )                                                   AS data_atualizacao
+FROM gold.sap.fato_atendimento_pedido_transf_estoque f
+LEFT JOIN (
+    SELECT
+        UPPER(nome)        AS nome,
+        email_corporativo
+    FROM gold.rh.fato_funcionario
+    WHERE situacao <> 'D - Demitido'
+) r ON UPPER(f.esboco_usuario_nome) = r.nome
+WHERE f.ptr_data_esboco >= '2026-01-01'
+  AND f.ptr_numero IS NULL
+ORDER BY f.ptr_data_esboco DESC
 """
 
 HEADERS = {
@@ -54,13 +64,7 @@ def run_query():
         },
         timeout=60,
     )
-
-    if not resp.ok:
-        print("Erro ao submeter statement:")
-        print("Status code:", resp.status_code)
-        print("Response text:", resp.text)
-        resp.raise_for_status()
-
+    resp.raise_for_status()
     payload = resp.json()
     statement_id = payload["statement_id"]
     status = payload.get("status", {}).get("state", "")
@@ -68,72 +72,20 @@ def run_query():
     for _ in range(20):
         if status in ("SUCCEEDED", "FAILED", "CANCELED", "CLOSED"):
             break
-
         time.sleep(3)
-
         poll = requests.get(
             f"{HOST}/api/2.0/sql/statements/{statement_id}",
             headers=HEADERS,
             timeout=30,
         )
-
-        if not poll.ok:
-            print("Erro no polling do statement:")
-            print("Status code:", poll.status_code)
-            print("Response text:", poll.text)
-            poll.raise_for_status()
-
+        poll.raise_for_status()
         payload = poll.json()
         status = payload.get("status", {}).get("state", "")
 
     if status != "SUCCEEDED":
-        print("Payload final:", json.dumps(payload, ensure_ascii=False, indent=2))
         raise RuntimeError(f"Query falhou com status: {status}")
 
     return payload
-
-
-def to_float(value):
-    if value is None or value == "":
-        return 0.0
-    try:
-        return float(value)
-    except (TypeError, ValueError):
-        return 0.0
-
-
-def to_str(value):
-    if value is None:
-        return ""
-    return str(value)
-
-
-def map_status(status_esboco, numero_ptr):
-    numero_ptr = to_str(numero_ptr).strip()
-    status_esboco = to_str(status_esboco).strip().lower()
-
-    if numero_ptr:
-        return "Esboço Fechado"
-
-    # como sua query já filtra ptr_numero is null, quase tudo aqui será pendente
-    return "Esboço Pendente"
-
-
-def map_situacao_tratamento(status_esboco):
-    s = to_str(status_esboco).strip().lower()
-
-    if "insuficiente" in s or "sem saldo" in s:
-        return "Sem saldo em estoque"
-    if "erro" in s:
-        return "Erro no SAP"
-    if "cancel" in s:
-        return "Cancelado"
-    if "atendido" in s:
-        return "Atendido"
-    if "parcial" in s:
-        return "Em tratativa com Estoque"
-
-    return "Em análise pelo time"
 
 
 def parse_results(payload):
@@ -142,51 +94,45 @@ def parse_results(payload):
     rows = payload.get("result", {}).get("data_array", [])
 
     records = []
-
-    for row in rows:
+    for i, row in enumerate(rows):
         r = dict(zip(columns, row))
-
-        status_oficial = to_str(r.get("Status Esboço")).strip()
-        if not status_oficial:
-            status_oficial = "Esboço Pendente"
-
-        situacao_tratamento = "Em análise pelo time" if status_oficial == "Esboço Pendente" else ""
-
         records.append({
-            "Prioridade": to_str(r.get("Prioridade")).strip(),
-            "Responsavel Esboço": to_str(r.get("Responsavel Esboço")).strip(),
-            "Numero Esboço": to_str(r.get("Numero Esboço")).strip(),
-            "Segmento": to_str(r.get("Segmento")).strip(),
-            "Data do Esboço": to_str(r.get("Data do Esboço")).strip(),
-            "Valor Total": to_float(r.get("Valor Total")),
-            "Observações": to_str(r.get("Observações")).strip(),
-            "Código do Item": to_str(r.get("Código do Item")).strip(),
-            "Descrição do Item": to_str(r.get("Descrição do Item")).strip(),
-            "Status Esboço": status_oficial,
-            "Data de Atualização": to_str(r.get("Data de Atualização")).strip(),
-            "Status": status_oficial,
-            "Situação do Tratamento": situacao_tratamento,
-            "historico": [],
+            "id":                i,
+            "n_doesboco":        r.get("n_doesboco", ""),
+            "prioridade":        r.get("prioridade", ""),
+            "data":              r.get("data", ""),
+            "solicitante":       r.get("solicitante", ""),
+            "email_solicitante": r.get("email_solicitante", ""),
+            "segmento":          r.get("segmento", ""),
+            "item_code":         r.get("item_code", ""),
+            "dscription":        r.get("dscription", ""),
+            "line_total":        float(r.get("line_total") or 0),
+            "observacoes":       r.get("observacoes", ""),
+            "status_sap":        r.get("status_sap", ""),
+            "data_atualizacao":  r.get("data_atualizacao", ""),
+            # campos gerenciados pelo painel
+            "status":            r.get("status_sap", "Pendente"),
+            "motivo":            "",
+            "historico":         [],
         })
-
     return records
+
+
 def main():
     print("Consultando Databricks...")
     payload = run_query()
     records = parse_results(payload)
-    print(f"{len(records)} registros encontrados.")
-
-    agora_brasil = datetime.utcnow() - timedelta(hours=3)
+    print(f"  {len(records)} registros encontrados.")
 
     output = {
-        "updated_at": agora_brasil.strftime("%d/%m/%Y %H:%M BRT"),
+        "updated_at": datetime.now().strftime("%d/%m/%Y %H:%M"),
         "records": records,
     }
 
     with open("data.json", "w", encoding="utf-8") as f:
         json.dump(output, f, ensure_ascii=False, indent=2)
 
-    print("data.json atualizado com sucesso.")
+    print("data.json salvo com sucesso.")
 
 
 if __name__ == "__main__":
