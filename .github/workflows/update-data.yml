@@ -2,7 +2,7 @@ name: Atualizar data.json via Databricks
 
 on:
   schedule:
-    - cron: '0 * * * *'    # toda hora"
+    - cron: '0 * * * *'
   workflow_dispatch:
 
 permissions:
@@ -11,7 +11,6 @@ permissions:
 jobs:
   update-data:
     runs-on: ubuntu-latest
-
     steps:
       - name: Baixar repositório
         uses: actions/checkout@v4
@@ -29,7 +28,7 @@ jobs:
           DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
           DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
           DATABRICKS_WAREHOUSE_ID: ${{ secrets.DATABRICKS_WAREHOUSE_ID }}
-        run: python fetch_data.py
+        run: python scripts/fetch_data.py
 
       - name: Commit e push do data.json
         run: |
