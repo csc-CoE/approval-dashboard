@@ -10,7 +10,7 @@ import os
 import json
 import time
 import requests
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 
 HOST = os.environ["DATABRICKS_HOST"].rstrip("/")
 TOKEN = os.environ["DATABRICKS_TOKEN"]
@@ -50,6 +50,9 @@ HEADERS = {
     "Authorization": f"Bearer {TOKEN}",
     "Content-Type": "application/json",
 }
+
+# Fuso horário de Brasília (UTC-3)
+BRT = timezone(timedelta(hours=-3))
 
 
 def run_query():
@@ -96,7 +99,6 @@ def parse_results(payload):
     records = []
     for row in rows:
         r = dict(zip(columns, row))
-        # Nomes dos campos devem coincidir exatamente com o que o index.html espera
         records.append({
             "Numero Esboço":       r.get("n_doesboco", ""),
             "Prioridade":          r.get("prioridade", ""),
@@ -120,15 +122,18 @@ def main():
     records = parse_results(payload)
     print(f"  {len(records)} registros encontrados.")
 
+    # Horário atual em Brasília (UTC-3)
+    agora_brt = datetime.now(tz=BRT).strftime("%d/%m/%Y %H:%M")
+
     output = {
-        "updated_at": datetime.now().strftime("%d/%m/%Y %H:%M"),
+        "updated_at": agora_brt,
         "records": records,
     }
 
     with open("data.json", "w", encoding="utf-8") as f:
         json.dump(output, f, ensure_ascii=False, indent=2)
 
-    print("data.json salvo com sucesso.")
+    print(f"data.json salvo. Horário BRT: {agora_brt}")
 
 
 if __name__ == "__main__":
