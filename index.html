@@ -15,8 +15,6 @@
     }
     *{box-sizing:border-box;margin:0;padding:0;}
     body{font-family:'Nunito','Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
-
-    /* HEADER */
     .header{position:sticky;top:0;z-index:20;background:rgba(10,10,10,0.95);backdrop-filter:blur(12px);
       border-bottom:1px solid rgba(255,107,0,0.18);display:flex;justify-content:space-between;
       align-items:center;gap:16px;padding:14px 28px;flex-wrap:wrap;}
@@ -32,15 +30,11 @@
     .toggle-btn.active{background:var(--accent-glow);border-color:rgba(255,107,0,0.5);color:var(--accent-light);}
     .btn{background:var(--accent);border:none;border-radius:10px;padding:9px 18px;font-size:13px;font-weight:800;color:#fff;cursor:pointer;transition:.2s;font-family:inherit;letter-spacing:.3px;}
     .btn:hover{background:var(--accent-light);transform:translateY(-1px);}
+    .btn:disabled{opacity:0.5;cursor:default;transform:none;}
     .btn-ghost{background:var(--surface);border:1px solid var(--border);color:var(--text);}
     .btn-ghost:hover{border-color:var(--accent);color:var(--accent-light);background:var(--surface);}
-
-    /* LAYOUT */
     .container{max-width:1520px;margin:0 auto;padding:28px;}
-    .banner{display:none;margin-bottom:20px;background:rgba(255,107,0,0.10);border:1px solid rgba(255,107,0,0.30);
-      color:#ffd4a8;border-radius:var(--radius);padding:12px 18px;font-size:14px;font-weight:600;}
-
-    /* CARDS */
+    .banner{display:none;margin-bottom:20px;background:rgba(255,107,0,0.10);border:1px solid rgba(255,107,0,0.30);color:#ffd4a8;border-radius:var(--radius);padding:12px 18px;font-size:14px;font-weight:600;}
     .cards{display:grid;grid-template-columns:repeat(6,1fr);gap:16px;margin-bottom:22px;}
     .card{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:22px;position:relative;overflow:hidden;transition:border-color .2s;}
     .card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent-light));}
@@ -57,19 +51,13 @@
     .card.card-finalizados .value{color:#4ade80;}
     .card.card-aguardando .value{color:#fbbf24;}
     .card .icon{position:absolute;right:20px;top:50%;transform:translateY(-50%);font-size:32px;opacity:.08;}
-
-    /* FILTERS */
-    .filters{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:16px 18px;
-      display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:20px;}
+    .filters{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:16px 18px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:20px;}
     .filters-label{color:var(--accent);font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:1px;}
-    input,select,textarea{background:var(--surface-2);color:var(--text);border:1px solid var(--border);border-radius:10px;
-      padding:10px 14px;font-size:13px;font-family:inherit;font-weight:600;outline:none;transition:border-color .2s;}
+    input,select,textarea{background:var(--surface-2);color:var(--text);border:1px solid var(--border);border-radius:10px;padding:10px 14px;font-size:13px;font-family:inherit;font-weight:600;outline:none;transition:border-color .2s;}
     input:focus,select:focus,textarea:focus{border-color:rgba(255,107,0,0.5);}
     input{min-width:240px;flex:1;}
     select{min-width:170px;}
     textarea{width:100%;resize:vertical;min-height:80px;line-height:1.5;}
-
-    /* TABLE BOX */
     .table-box{background:var(--surface);border:1px solid var(--border);border-radius:18px;overflow:hidden;}
     .table-head{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid var(--border);}
     .table-head-title{font-size:15px;font-weight:800;letter-spacing:-.2px;}
@@ -80,8 +68,6 @@
     td{padding:13px 16px;border-bottom:1px solid rgba(255,255,255,0.03);font-size:13px;font-weight:600;vertical-align:middle;}
     tr.group-row{cursor:pointer;}
     tr.group-row:hover td{background:rgba(255,107,0,0.04);}
-
-    /* STATUS BADGES */
     .status{padding:5px 10px;border-radius:999px;font-size:11px;font-weight:800;display:inline-block;white-space:nowrap;border:1px solid transparent;letter-spacing:.3px;}
     .status-pendente   {background:rgba(245,158,11,0.14);color:#fbbf24;border-color:rgba(245,158,11,0.25);}
     .status-fechado    {background:rgba(34,197,94,0.14); color:#4ade80;border-color:rgba(34,197,94,0.25);}
@@ -93,8 +79,6 @@
     .status-sla-vencehoje {background:rgba(245,158,11,0.14);color:#fbbf24;border-color:rgba(245,158,11,0.25);}
     .status-sla-vencido   {background:rgba(239,68,68,0.14); color:#f87171;border-color:rgba(239,68,68,0.25);}
     .empty{padding:36px 20px;color:var(--muted);font-size:14px;text-align:center;}
-
-    /* MODAL */
     .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.72);z-index:1000;align-items:center;justify-content:center;padding:24px;}
     .modal-overlay.open{display:flex;}
     .modal{width:min(1200px,96vw);max-height:90vh;overflow:auto;background:var(--surface);border:1px solid rgba(255,107,0,0.25);border-radius:20px;padding:24px;}
@@ -105,8 +89,6 @@
     .mini-card{background:var(--surface-2);border:1px solid var(--border);border-radius:12px;padding:14px;}
     .mini-card .label{color:var(--muted);font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;}
     .mini-card .value{font-size:16px;font-weight:800;}
-
-    /* EDITOR */
     .editor-box{background:var(--surface-2);border:1px solid rgba(255,107,0,0.2);border-radius:14px;padding:16px;margin-bottom:20px;}
     .editor-section-title{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--accent-light);margin-bottom:14px;}
     .editor-field{margin-bottom:14px;}
@@ -117,8 +99,8 @@
     .items-title{font-size:15px;font-weight:800;margin:4px 0 14px;color:var(--accent-light);}
     .small-btn{padding:10px 16px;border-radius:10px;border:1px solid var(--border);background:var(--surface);color:var(--text);cursor:pointer;font-family:inherit;font-weight:700;font-size:13px;transition:.2s;}
     .small-btn:hover{border-color:var(--accent);color:var(--accent-light);}
-
-    /* SUBLISTA */
+    /* aviso email */
+    .email-notice{background:rgba(56,189,248,0.08);border:1px solid rgba(56,189,248,0.2);border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:12px;font-weight:700;color:#7dd3fc;display:flex;align-items:center;gap:8px;}
     .sublista-box{display:none;background:rgba(255,107,0,0.06);border:1px solid rgba(255,107,0,0.2);border-radius:10px;padding:14px;margin-top:10px;}
     .sublista-box.visible{display:block;}
     .sublista-box label{display:block;font-size:11px;font-weight:800;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:.8px;}
@@ -126,31 +108,20 @@
     .pv-input-box.visible{display:block;}
     .pv-input-box label{display:block;font-size:11px;font-weight:800;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:.8px;}
     .required-mark{color:var(--danger);margin-left:2px;}
-
-    /* TOAST */
-    .toast{position:fixed;bottom:28px;right:28px;z-index:9999;background:#1e1e1e;border:1px solid var(--border);
-      border-radius:12px;padding:14px 20px;font-size:14px;font-weight:700;color:var(--text);
-      box-shadow:0 8px 32px rgba(0,0,0,0.5);opacity:0;transform:translateY(12px);transition:opacity .25s,transform .25s;pointer-events:none;}
+    .toast{position:fixed;bottom:28px;right:28px;z-index:9999;background:#1e1e1e;border:1px solid var(--border);border-radius:12px;padding:14px 20px;font-size:14px;font-weight:700;color:var(--text);box-shadow:0 8px 32px rgba(0,0,0,0.5);opacity:0;transform:translateY(12px);transition:opacity .25s,transform .25s;pointer-events:none;}
     .toast.show{opacity:1;transform:translateY(0);}
     .toast.success{border-color:rgba(34,197,94,0.4);color:#4ade80;}
     .toast.error  {border-color:rgba(239,68,68,0.4); color:#f87171;}
-
-    /* FOOTER */
     .footer-dev{margin-top:32px;padding:0 28px 28px;}
-    .footer-dev-inner{max-width:1520px;margin:0 auto;display:flex;justify-content:center;align-items:center;gap:10px;
-      color:var(--muted);font-size:12px;font-weight:700;border-top:1px solid var(--border);padding-top:20px;}
-    .footer-tag{padding:4px 10px;border-radius:999px;background:rgba(255,107,0,0.14);color:var(--accent-light);
-      border:1px solid rgba(255,107,0,0.25);font-size:10px;font-weight:900;letter-spacing:1px;}
-
-    /* RESPONSIVE */
+    .footer-dev-inner{max-width:1520px;margin:0 auto;display:flex;justify-content:center;align-items:center;gap:10px;color:var(--muted);font-size:12px;font-weight:700;border-top:1px solid var(--border);padding-top:20px;}
+    .footer-tag{padding:4px 10px;border-radius:999px;background:rgba(255,107,0,0.14);color:var(--accent-light);border:1px solid rgba(255,107,0,0.25);font-size:10px;font-weight:900;letter-spacing:1px;}
     @media(max-width:1200px){.cards{grid-template-columns:repeat(3,1fr);}.modal-grid{grid-template-columns:repeat(2,1fr);}}
-    @media(max-width:900px) {.cards{grid-template-columns:repeat(2,1fr);}}
-    @media(max-width:700px) {.cards,.modal-grid{grid-template-columns:1fr;}.container{padding:14px;}.header{padding:12px 16px;}}
+    @media(max-width:900px){.cards{grid-template-columns:repeat(2,1fr);}}
+    @media(max-width:700px){.cards,.modal-grid{grid-template-columns:1fr;}.container{padding:14px;}.header{padding:12px 16px;}}
   </style>
 </head>
 <body>
 
-<!-- HEADER -->
 <div class="header">
   <div class="title-wrap">
     <div class="logo-box">
@@ -180,45 +151,17 @@
   </div>
 </div>
 
-<!-- CONTENT -->
 <div class="container">
   <div class="banner" id="solicitanteBanner">📢 Você está visualizando na visão de solicitante.</div>
-
-  <!-- 6 CARDS -->
   <div class="cards">
-    <div class="card">
-      <div class="label">Total Esboços Criados</div>
-      <div class="value" id="statTotal">0</div>
-      <div class="icon">📋</div>
-    </div>
-    <div class="card">
-      <div class="label">Esboço Pendente</div>
-      <div class="value" id="statPendentes">0</div>
-      <div class="icon">⏳</div>
-    </div>
-    <div class="card card-tratativas">
-      <div class="label">Em Tratativas</div>
-      <div class="value" id="statTratativas">0</div>
-      <div class="icon">🔄</div>
-    </div>
-    <div class="card card-finalizados">
-      <div class="label">Finalizados</div>
-      <div class="value" id="statFinalizados">0</div>
-      <div class="icon">✅</div>
-    </div>
-    <div class="card card-aguardando">
-      <div class="label">Aguardando Cliente</div>
-      <div class="value" id="statAguardando">0</div>
-      <div class="icon">⏳</div>
-    </div>
-    <div class="card">
-      <div class="label">Valor Total</div>
-      <div class="value" id="statValor">R$ 0,00</div>
-      <div class="icon">💰</div>
-    </div>
+    <div class="card"><div class="label">Total Esboços Criados</div><div class="value" id="statTotal">0</div><div class="icon">📋</div></div>
+    <div class="card"><div class="label">Esboço Pendente</div><div class="value" id="statPendentes">0</div><div class="icon">⏳</div></div>
+    <div class="card card-tratativas"><div class="label">Em Tratativas</div><div class="value" id="statTratativas">0</div><div class="icon">🔄</div></div>
+    <div class="card card-finalizados"><div class="label">Finalizados</div><div class="value" id="statFinalizados">0</div><div class="icon">✅</div></div>
+    <div class="card card-aguardando"><div class="label">Aguardando Cliente</div><div class="value" id="statAguardando">0</div><div class="icon">⏳</div></div>
+    <div class="card"><div class="label">Valor Total</div><div class="value" id="statValor">R$ 0,00</div><div class="icon">💰</div></div>
   </div>
 
-  <!-- FILTERS -->
   <div class="filters">
     <span class="filters-label">Filtros</span>
     <input id="searchInput" type="text" placeholder="Buscar responsável, esboço, item, observação..." oninput="applyFilters()" />
@@ -234,7 +177,6 @@
     <button class="btn btn-ghost" onclick="clearFilters()">Limpar filtros</button>
   </div>
 
-  <!-- TABLE -->
   <div class="table-box">
     <div class="table-head">
       <div class="table-head-title">Fila de Esboços Agrupada</div>
@@ -244,18 +186,10 @@
       <table>
         <thead>
           <tr>
-            <th>Prioridade</th>
-            <th>Responsável Esboço</th>
-            <th>Nº Esboço</th>
-            <th>Segmento</th>
-            <th>Data do Esboço</th>
-            <th>Dias em Aberto</th>
-            <th>Status</th>
-            <th>Situação do Tratamento</th>
-            <th>Observação</th>
-            <th>Status SLA</th>
-            <th>Qtde Itens</th>
-            <th>Valor Total</th>
+            <th>Prioridade</th><th>Responsável Esboço</th><th>Nº Esboço</th><th>Segmento</th>
+            <th>Data do Esboço</th><th>Dias em Aberto</th><th>Status</th>
+            <th>Situação do Tratamento</th><th>Observação</th><th>Status SLA</th>
+            <th>Qtde Itens</th><th>Valor Total</th>
           </tr>
         </thead>
         <tbody id="tableBody"></tbody>
@@ -276,14 +210,11 @@
       <button class="small-btn" onclick="closeModal()">✕ Fechar</button>
     </div>
     <div class="modal-grid" id="modalCards"></div>
-
-    <!-- EDITOR -->
     <div class="editor-box" id="editorBox" style="display:none;">
       <div class="editor-section-title">✏️ Tratativa &amp; Observação</div>
-
+      <div class="email-notice">📧 Ao salvar, um email será enviado automaticamente ao responsável do esboço.</div>
       <div class="editor-row">
         <div>
-          <!-- SITUAÇÃO PRINCIPAL: 3 opções -->
           <label for="tratamentoSelect">Situação do Tratamento</label>
           <select id="tratamentoSelect" onchange="onTratamentoChange()">
             <option value="">— Selecione uma situação —</option>
@@ -291,8 +222,6 @@
             <option value="Em Tratativa DRP">🔄 Em Tratativa DRP</option>
             <option value="Aguardando Retorno do Cliente">⏳ Aguardando Retorno do Cliente</option>
           </select>
-
-          <!-- SUBLISTA: Finalizado -->
           <div class="sublista-box" id="sublistaFinalizado">
             <label>Tipo de Finalização <span class="required-mark">*</span></label>
             <select id="finalizadoSubSelect" onchange="onFinalizadoSubChange()">
@@ -300,14 +229,11 @@
               <option value="Gerado PV">Gerado PV</option>
               <option value="Gerado PTR">Gerado PTR</option>
             </select>
-            <!-- Campo PV obrigatório -->
             <div class="pv-input-box" id="pvInputBox">
               <label>Número do PV <span class="required-mark">*</span></label>
               <input type="text" id="pvNumeroInput" placeholder="Informe o número do PV..." />
             </div>
           </div>
-
-          <!-- SUBLISTA: Aguardando Retorno do Cliente -->
           <div class="sublista-box" id="sublistaCliente">
             <label>Motivo <span class="required-mark">*</span></label>
             <select id="clienteSubSelect">
@@ -324,27 +250,21 @@
           </div>
         </div>
       </div>
-
       <div class="editor-field">
         <label for="observacaoInput">Observação</label>
         <textarea id="observacaoInput" placeholder="Escreva uma observação sobre este esboço..."></textarea>
       </div>
-
       <div style="display:flex;justify-content:flex-end;">
-        <button class="btn" onclick="saveTratamento()">💾 Salvar tratativa</button>
+        <button class="btn" id="btnSalvar" onclick="saveTratamento()">💾 Salvar tratativa</button>
       </div>
     </div>
-
     <div class="items-title">Itens do Esboço</div>
     <div class="table-scroll">
       <table>
         <thead>
           <tr>
-            <th>Código do Item</th>
-            <th>Descrição do Item</th>
-            <th>Valor Total</th>
-            <th>Observações</th>
-            <th>Data de Atualização</th>
+            <th>Código do Item</th><th>Descrição do Item</th><th>Valor Total</th>
+            <th>Observações</th><th>Data de Atualização</th>
           </tr>
         </thead>
         <tbody id="itemsBody"></tbody>
@@ -353,10 +273,8 @@
   </div>
 </div>
 
-<!-- TOAST -->
 <div class="toast" id="toast"></div>
 
-<!-- FOOTER -->
 <footer class="footer-dev">
   <div class="footer-dev-inner">
     <span class="footer-tag">COE</span>
@@ -366,15 +284,18 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-  const LOGIN_PAGE        = "login.html";
-  const SUPABASE_URL      = "https://ojgtpdwjcmqcbiydaesx.supabase.co";
-  const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9qZ3RwZHdqY21xY2JpeWRhZXN4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUwMzA3NTQsImV4cCI6MjA5MDYwNjc1NH0.U87vGwcmaZW6UoOYrKSqIoArVqquCFAzvbqQaeUbhIE";
+  // ─── CONFIGURAÇÃO ─────────────────────────────────────────────────────────────
+  const POWER_AUTOMATE_WEBHOOK = "https://default7ebaa4673ace4a9cad914e84933a66.07.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/62104aa69720411cae057a4865912192/triggers/manual/paths/invoke?api-version=1";
+  const PAINEL_URL             = "https://csc-coe.github.io/approval-dashboard/";
+  const LOGIN_PAGE             = "login.html";
+  const SUPABASE_URL           = "https://ojgtpdwjcmqcbiydaesx.supabase.co";
+  const SUPABASE_ANON_KEY      = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9qZ3RwZHdqY21xY2JpeWRhZXN4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUwMzA3NTQsImV4cCI6MjA5MDYwNjc1NH0.U87vGwcmaZW6UoOYrKSqIoArVqquCFAzvbqQaeUbhIE";
   const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  // ─────────────────────────────────────────────────────────────────────────────
 
   let rawData = [], groupedData = [], filteredData = [];
   let currentUser = null, currentRole = null, currentViewMode = "time", activeGroup = null;
 
-  /* ── TOAST ── */
   function showToast(msg, type = "success") {
     const t = document.getElementById("toast");
     t.textContent = msg;
@@ -382,7 +303,6 @@
     setTimeout(() => { t.className = "toast"; }, 3500);
   }
 
-  /* ── AUTH ── */
   function checkAuth() {
     const usuario = localStorage.getItem("usuario");
     const perfil  = localStorage.getItem("perfil");
@@ -407,106 +327,72 @@
 
   function setViewMode(mode) {
     if (currentRole !== "dev") return;
-    currentViewMode = mode;
-    renderViewMode();
-    applyFilters();
+    currentViewMode = mode; renderViewMode(); applyFilters();
   }
 
   function logout() {
-    localStorage.removeItem("usuario");
-    localStorage.removeItem("perfil");
+    localStorage.removeItem("usuario"); localStorage.removeItem("perfil");
     window.location.href = LOGIN_PAGE;
   }
 
-  /* ── SUBLISTA LOGIC ── */
   function onTratamentoChange() {
     const val = document.getElementById("tratamentoSelect").value;
-
-    // Esconde todas as sublistas e reseta
     document.getElementById("sublistaFinalizado").classList.remove("visible");
     document.getElementById("sublistaCliente").classList.remove("visible");
     document.getElementById("pvInputBox").classList.remove("visible");
     document.getElementById("finalizadoSubSelect").value = "";
     document.getElementById("clienteSubSelect").value = "";
     document.getElementById("pvNumeroInput").value = "";
-
-    if (val === "Finalizado") {
-      document.getElementById("sublistaFinalizado").classList.add("visible");
-    } else if (val === "Aguardando Retorno do Cliente") {
-      document.getElementById("sublistaCliente").classList.add("visible");
-    }
-    // "Em Tratativa DRP" → nenhuma sublista
+    if (val === "Finalizado") document.getElementById("sublistaFinalizado").classList.add("visible");
+    else if (val === "Aguardando Retorno do Cliente") document.getElementById("sublistaCliente").classList.add("visible");
   }
 
   function onFinalizadoSubChange() {
     const val = document.getElementById("finalizadoSubSelect").value;
-    const pvBox = document.getElementById("pvInputBox");
-    if (val === "Gerado PV") {
-      pvBox.classList.add("visible");
-    } else {
-      pvBox.classList.remove("visible");
-      document.getElementById("pvNumeroInput").value = "";
-    }
+    document.getElementById("pvInputBox").classList.toggle("visible", val === "Gerado PV");
+    if (val !== "Gerado PV") document.getElementById("pvNumeroInput").value = "";
   }
 
-  /* Monta o valor final da situação para salvar no Supabase */
   function buildSituacaoFinal() {
     const principal = document.getElementById("tratamentoSelect").value;
-    if (!principal) return { situacao: "", obs_pv: null, valid: false, msg: "Selecione uma situação do tratamento." };
-
+    if (!principal) return { valid: false, msg: "Selecione uma situação do tratamento." };
     if (principal === "Finalizado") {
       const sub = document.getElementById("finalizadoSubSelect").value;
-      if (!sub) return { situacao: "", obs_pv: null, valid: false, msg: "Selecione o tipo de finalização." };
+      if (!sub) return { valid: false, msg: "Selecione o tipo de finalização." };
       if (sub === "Gerado PV") {
         const pvNum = document.getElementById("pvNumeroInput").value.trim();
-        if (!pvNum) return { situacao: "", obs_pv: null, valid: false, msg: "Informe o número do PV. Campo obrigatório." };
-        return { situacao: `Finalizado – Gerado PV`, obs_pv: pvNum, valid: true };
+        if (!pvNum) return { valid: false, msg: "Informe o número do PV. Campo obrigatório." };
+        return { situacao: "Finalizado – Gerado PV", obs_pv: pvNum, valid: true };
       }
-      return { situacao: `Finalizado – Gerado PTR`, obs_pv: null, valid: true };
+      return { situacao: "Finalizado – Gerado PTR", obs_pv: null, valid: true };
     }
-
     if (principal === "Aguardando Retorno do Cliente") {
       const sub = document.getElementById("clienteSubSelect").value;
-      if (!sub) return { situacao: "", obs_pv: null, valid: false, msg: "Selecione o motivo para aguardando retorno do cliente." };
+      if (!sub) return { valid: false, msg: "Selecione o motivo para aguardando retorno do cliente." };
       return { situacao: `Aguardando Retorno do Cliente – ${sub}`, obs_pv: null, valid: true };
     }
-
-    // Em Tratativa DRP — sem sublista
     return { situacao: principal, obs_pv: null, valid: true };
   }
 
-  /* Preenche os selects do modal ao abrir com valor já salvo */
   function populateEditorFromSaved(situacaoSalva, observacaoSalva) {
-    // Reseta tudo primeiro
     document.getElementById("tratamentoSelect").value = "";
-    document.getElementById("sublistaFinalizado").classList.remove("visible");
-    document.getElementById("sublistaCliente").classList.remove("visible");
-    document.getElementById("pvInputBox").classList.remove("visible");
-    document.getElementById("finalizadoSubSelect").value = "";
-    document.getElementById("clienteSubSelect").value = "";
-    document.getElementById("pvNumeroInput").value = "";
+    ["sublistaFinalizado","sublistaCliente","pvInputBox"].forEach(id => document.getElementById(id).classList.remove("visible"));
+    ["finalizadoSubSelect","clienteSubSelect","pvNumeroInput"].forEach(id => document.getElementById(id).value = "");
     document.getElementById("observacaoInput").value = observacaoSalva || "";
-
     if (!situacaoSalva) return;
-
     if (situacaoSalva === "Em Tratativa DRP") {
       document.getElementById("tratamentoSelect").value = "Em Tratativa DRP";
-
     } else if (situacaoSalva.startsWith("Finalizado")) {
       document.getElementById("tratamentoSelect").value = "Finalizado";
       document.getElementById("sublistaFinalizado").classList.add("visible");
-
       if (situacaoSalva.includes("Gerado PV")) {
         document.getElementById("finalizadoSubSelect").value = "Gerado PV";
         document.getElementById("pvInputBox").classList.add("visible");
-        // Tenta recuperar nº PV da observação se começar com "PV:"
-        if (observacaoSalva && observacaoSalva.startsWith("PV:")) {
-          document.getElementById("pvNumeroInput").value = observacaoSalva.replace("PV:", "").trim();
-        }
+        if (observacaoSalva && observacaoSalva.startsWith("PV:"))
+          document.getElementById("pvNumeroInput").value = observacaoSalva.replace("PV:","").trim();
       } else if (situacaoSalva.includes("Gerado PTR")) {
         document.getElementById("finalizadoSubSelect").value = "Gerado PTR";
       }
-
     } else if (situacaoSalva.startsWith("Aguardando Retorno do Cliente")) {
       document.getElementById("tratamentoSelect").value = "Aguardando Retorno do Cliente";
       document.getElementById("sublistaCliente").classList.add("visible");
@@ -515,88 +401,85 @@
     }
   }
 
-  /* ── SUPABASE ── */
+  // ─── DISPARO EMAIL POWER AUTOMATE ────────────────────────────────────────────
+  // Chamado após salvar com sucesso no Supabase.
+  // Fire-and-forget: não bloqueia a UI, erros são apenas logados.
+  // mode:'no-cors' é obrigatório para webhooks externos em páginas estáticas (GitHub Pages).
+  async function dispararEmailAlerta(grupo, situacao, observacao) {
+    if (!POWER_AUTOMATE_WEBHOOK) return;
+    const emailResponsavel = (grupo["Itens"]?.[0]?.["Email"]) || "";
+    const payload = {
+      numero_esboco:     String(grupo["Numero Esboço"] || ""),
+      responsavel:       grupo["Responsavel Esboço"] || "",
+      email_solicitante: emailResponsavel,
+      segmento:          grupo["Segmento"] || "",
+      prioridade:        grupo["Prioridade"] || "",
+      data_esboco:       grupo["Data do Esboço"] || "",
+      dias_aberto:       String(getDiasEmAberto(grupo["Data do Esboço"])),
+      valor_total:       formatCurrency(grupo["Valor Total"] || 0),
+      situacao_anterior: grupo["Situação do Tratamento"] || "Não iniciado",
+      nova_situacao:     situacao,
+      observacao:        observacao || "—",
+      alterado_por:      currentUser || "Time Interno",
+      alterado_em:       new Date().toLocaleString("pt-BR"),
+      link_painel:       PAINEL_URL,
+    };
+    try {
+      await fetch(POWER_AUTOMATE_WEBHOOK, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+    } catch (err) {
+      console.warn("Power Automate webhook:", err);
+    }
+  }
+  // ─────────────────────────────────────────────────────────────────────────────
 
-  // ✅ FIX: Valores que eram "padrão antigo" sem tratativa real iniciada
-  // São tratados como vazio — o esboço volta para "Pendente (não iniciado)"
-  const SITUACOES_LEGADAS_VAZIAS = new Set([
-    "Em análise pelo time",   // ← era o default antigo, equivale a "sem tratativa"
-    "Em análise de cliente",  // outros legados que não mapeiam para situação válida nova
-  ]);
-
-  // Mapeamento de situações legadas com significado real → novas situações válidas
+  const SITUACOES_LEGADAS_VAZIAS = new Set(["Em análise pelo time","Em análise de cliente"]);
   const MIGRACOES_SITUACAO = {
-    // ✅ REMOVIDO: "Em análise pelo time" → não é mais mapeado para "Em Tratativa DRP"
-    //    pois era apenas o valor padrão antigo (sem tratativa iniciada de verdade)
-    "Aguardando validação":             "Em Tratativa DRP",
-    "Aguardando ajuste de informações": "Em Tratativa DRP",
-    "Aguardando correção do pedido":    "Em Tratativa DRP",
-    "Sem saldo em estoque":             "Aguardando Retorno do Cliente – Sem Saldo em Estoque",
-    "Material indisponível":            "Em Tratativa DRP",
-    "Erro cadastral":                   "Aguardando Retorno do Cliente – Erro Cadastro",
-    "Erro no SAP":                      "Em Tratativa DRP",
-    "Divergência de dados":             "Em Tratativa DRP",
-    "Em tratativa com Estoque":         "Em Tratativa DRP",
-    "Em tratativa com Suprimentos":     "Em Tratativa DRP",
-    "Em tratativa com Planejamento":    "Em Tratativa DRP",
-    "Aguardando retorno da área":       "Em Tratativa DRP",
-    "Finalizado":                       "Finalizado – Gerado PTR"
+    "Aguardando validação":"Em Tratativa DRP","Aguardando ajuste de informações":"Em Tratativa DRP",
+    "Aguardando correção do pedido":"Em Tratativa DRP","Sem saldo em estoque":"Aguardando Retorno do Cliente – Sem Saldo em Estoque",
+    "Material indisponível":"Em Tratativa DRP","Erro cadastral":"Aguardando Retorno do Cliente – Erro Cadastro",
+    "Erro no SAP":"Em Tratativa DRP","Divergência de dados":"Em Tratativa DRP",
+    "Em tratativa com Estoque":"Em Tratativa DRP","Em tratativa com Suprimentos":"Em Tratativa DRP",
+    "Em tratativa com Planejamento":"Em Tratativa DRP","Aguardando retorno da área":"Em Tratativa DRP",
+    "Finalizado":"Finalizado – Gerado PTR"
   };
 
   function normalizarSituacao(sit) {
     if (!sit) return "";
-
-    // ✅ FIX: Situações legadas que significam "nenhuma tratativa iniciada"
-    // → retorna vazio para que o esboço conte como Pendente
     if (SITUACOES_LEGADAS_VAZIAS.has(sit)) return "";
-
-    // Situações legadas com significado real → migra para nova nomenclatura
     return MIGRACOES_SITUACAO[sit] || sit;
   }
 
   async function fetchTratativasSupabase() {
-    const { data, error } = await sb
-      .from("tratativas_esboco")
+    const { data, error } = await sb.from("tratativas_esboco")
       .select("numero_esboco,situacao_tratamento,observacao,updated_by,updated_at");
     if (error) { console.error("fetchTratativas:", error); return {}; }
     const map = {};
     (data || []).forEach(item => {
-      const situacaoNormalizada = normalizarSituacao(item.situacao_tratamento || "");
-      // ✅ FIX: Se após normalização a situação ficou vazia (era legado sem tratativa real),
-      // NÃO inclui no mapa — o esboço ficará sem situação (= Pendente não iniciado)
-      if (!situacaoNormalizada) return;
-      map[String(item.numero_esboco).trim()] = {
-        situacao_tratamento: situacaoNormalizada,
-        observacao:          item.observacao || "",
-        updated_by:          item.updated_by,
-        updated_at:          item.updated_at
-      };
+      const sn = normalizarSituacao(item.situacao_tratamento || "");
+      if (!sn) return;
+      map[String(item.numero_esboco).trim()] = { situacao_tratamento: sn, observacao: item.observacao || "" };
     });
     return map;
   }
 
-  /* ── LOAD ── */
   async function loadData() {
     try {
       const res  = await fetch("data.json?t=" + Date.now());
       const json = await res.json();
       rawData = Array.isArray(json.records) ? json.records : [];
       rawData = rawData.map(i => ({ ...i, "Status": i["Status Esboço"] || i["Status"] || "Esboço Pendente" }));
-
       const tMap = await fetchTratativasSupabase();
       rawData = rawData.map(i => {
         const num = String(i["Numero Esboço"] || "").trim();
         const t   = tMap[num];
-        // ✅ FIX: Se não tem entrada no mapa (sem tratativa ou legado vazio),
-        // o item fica com Situação do Tratamento e Observação vazios
         if (!t) return { ...i, "Situação do Tratamento": "", "Observação": "" };
-        return {
-          ...i,
-          "Situação do Tratamento": t.situacao_tratamento,
-          "Observação": t.observacao
-        };
+        return { ...i, "Situação do Tratamento": t.situacao_tratamento, "Observação": t.observacao };
       });
-
       groupedData = groupByEsboco(rawData);
       document.getElementById("updatedAt").textContent = "Atualizado: " + (json.updated_at || "-");
       populateFilters();
@@ -607,48 +490,32 @@
     }
   }
 
-  /* ── GROUP ── */
   function groupByEsboco(data) {
     const map = new Map();
     for (const item of data) {
-      const key        = String(item["Numero Esboço"] || "").trim();
+      const key = String(item["Numero Esboço"] || "").trim();
       if (!key) continue;
       const statusItem = String(item["Status Esboço"] || item["Status"] || "Esboço Pendente").trim();
-
       if (!map.has(key)) {
-        map.set(key, {
-          "Numero Esboço":          key,
-          "Prioridade":             item["Prioridade"] || "",
-          "Responsavel Esboço":     item["Responsavel Esboço"] || "",
-          "Segmento":               item["Segmento"] || "",
-          "Data do Esboço":         item["Data do Esboço"] || "",
-          "Status":                 statusItem,
-          "Situação do Tratamento": item["Situação do Tratamento"] || "",
-          "Observação":             item["Observação"] || "",
-          "Valor Total":            0,
-          "Qtde Itens":             0,
-          "Itens":                  []
-        });
+        map.set(key, { "Numero Esboço":key,"Prioridade":item["Prioridade"]||"","Responsavel Esboço":item["Responsavel Esboço"]||"",
+          "Segmento":item["Segmento"]||"","Data do Esboço":item["Data do Esboço"]||"","Status":statusItem,
+          "Situação do Tratamento":item["Situação do Tratamento"]||"","Observação":item["Observação"]||"",
+          "Valor Total":0,"Qtde Itens":0,"Itens":[] });
       }
-
       const g = map.get(key);
       g["Itens"].push(item);
       g["Qtde Itens"] += 1;
       g["Valor Total"] += Number(item["Valor Total"] || 0);
-      if (comparePrioridade(item["Prioridade"], g["Prioridade"]) < 0)
-        g["Prioridade"] = item["Prioridade"] || g["Prioridade"];
+      if (comparePrioridade(item["Prioridade"], g["Prioridade"]) < 0) g["Prioridade"] = item["Prioridade"] || g["Prioridade"];
       g["Status"] = resolveGroupStatus(g["Status"], statusItem);
-      if (!g["Situação do Tratamento"] && item["Situação do Tratamento"])
-        g["Situação do Tratamento"] = item["Situação do Tratamento"];
-      if (!g["Observação"] && item["Observação"])
-        g["Observação"] = item["Observação"];
+      if (!g["Situação do Tratamento"] && item["Situação do Tratamento"]) g["Situação do Tratamento"] = item["Situação do Tratamento"];
+      if (!g["Observação"] && item["Observação"]) g["Observação"] = item["Observação"];
     }
     return Array.from(map.values());
   }
 
   function resolveGroupStatus(a, b) {
-    a = String(a || "").trim();
-    b = String(b || "").trim();
+    a = String(a||"").trim(); b = String(b||"").trim();
     if (a === "Esboço Pendente" || b === "Esboço Pendente") return "Esboço Pendente";
     if (a === "Esboço Fechado"  || b === "Esboço Fechado")  return "Esboço Fechado";
     return a || b || "Esboço Pendente";
@@ -656,7 +523,6 @@
 
   function comparePrioridade(a, b) { return getPrioridadePeso(a) - getPrioridadePeso(b); }
 
-  /* ── FILTERS ── */
   function populateFilters() {
     const pF = document.getElementById("prioridadeFilter");
     const sF = document.getElementById("segmentoFilter");
@@ -670,88 +536,51 @@
   }
 
   function appendOption(sel, val) {
-    const o = document.createElement("option");
-    o.value = val;
-    o.textContent = val;
-    sel.appendChild(o);
+    const o = document.createElement("option"); o.value = val; o.textContent = val; sel.appendChild(o);
   }
 
   function applyFilters() {
-    const search     = document.getElementById("searchInput").value.trim().toLowerCase();
-    const status     = document.getElementById("statusFilter").value;
-    const prioridade = document.getElementById("prioridadeFilter").value;
-    const segmento   = document.getElementById("segmentoFilter").value;
-    const responsavel= document.getElementById("responsavelFilter").value;
-    const dataStr    = document.getElementById("dataFilter").value;
-    const dtFiltro   = dataStr ? new Date(dataStr + "T00:00:00") : null;
-
+    const search      = document.getElementById("searchInput").value.trim().toLowerCase();
+    const status      = document.getElementById("statusFilter").value;
+    const prioridade  = document.getElementById("prioridadeFilter").value;
+    const segmento    = document.getElementById("segmentoFilter").value;
+    const responsavel = document.getElementById("responsavelFilter").value;
+    const dataStr     = document.getElementById("dataFilter").value;
+    const dtFiltro    = dataStr ? new Date(dataStr + "T00:00:00") : null;
     filteredData = groupedData.filter(r => {
       const texto = `${r["Prioridade"]||""} ${r["Responsavel Esboço"]||""} ${r["Numero Esboço"]||""} ${r["Segmento"]||""} ${r["Situação do Tratamento"]||""} ${r["Status"]||""} ${r["Observação"]||""}`.toLowerCase();
-
-      if (search     && !texto.includes(search))                                      return false;
-      if (status     && String(r["Status"]||"").trim()              !== status)        return false;
-      if (prioridade && String(r["Prioridade"]||"").trim()          !== prioridade)    return false;
-      if (segmento   && String(r["Segmento"]||"").trim()            !== segmento)      return false;
-      if (responsavel&& String(r["Responsavel Esboço"]||"").trim()  !== responsavel)   return false;
-      if (dtFiltro) {
-        const dr = normalizeDate(r["Data do Esboço"]);
-        if (!dr || dr.toDateString() !== dtFiltro.toDateString()) return false;
-      }
+      if (search     && !texto.includes(search))                                     return false;
+      if (status     && String(r["Status"]||"").trim()             !== status)        return false;
+      if (prioridade && String(r["Prioridade"]||"").trim()         !== prioridade)    return false;
+      if (segmento   && String(r["Segmento"]||"").trim()           !== segmento)      return false;
+      if (responsavel&& String(r["Responsavel Esboço"]||"").trim() !== responsavel)   return false;
+      if (dtFiltro) { const dr = normalizeDate(r["Data do Esboço"]); if (!dr || dr.toDateString() !== dtFiltro.toDateString()) return false; }
       return true;
     });
-
     filteredData.sort((a, b) => {
       const pa = getPrioridadePeso(a["Prioridade"]), pb = getPrioridadePeso(b["Prioridade"]);
       if (pa !== pb) return pa - pb;
       return getDiasEmAberto(b["Data do Esboço"]) - getDiasEmAberto(a["Data do Esboço"]);
     });
-
-    updateStats();
-    renderTable();
+    updateStats(); renderTable();
   }
 
   function clearFilters() {
-    ["searchInput", "dataFilter"].forEach(id => document.getElementById(id).value = "");
-    ["statusFilter", "prioridadeFilter", "segmentoFilter", "responsavelFilter"].forEach(id => document.getElementById(id).value = "");
+    ["searchInput","dataFilter"].forEach(id => document.getElementById(id).value = "");
+    ["statusFilter","prioridadeFilter","segmentoFilter","responsavelFilter"].forEach(id => document.getElementById(id).value = "");
     applyFilters();
   }
 
-  /* ── STATS ── */
-function updateStats() {
-  const total = groupedData.length;
+  function updateStats() {
+    document.getElementById("statTotal").textContent       = groupedData.length;
+    document.getElementById("statPendentes").textContent   = filteredData.filter(r => String(r["Status"]||"").trim() === "Esboço Pendente").length;
+    document.getElementById("statTratativas").textContent  = filteredData.filter(r => String(r["Situação do Tratamento"]||"").trim() === "Em Tratativa DRP").length;
+    document.getElementById("statFinalizados").textContent = filteredData.filter(r => String(r["Situação do Tratamento"]||"").trim().startsWith("Finalizado")).length;
+    document.getElementById("statAguardando").textContent  = filteredData.filter(r => String(r["Situação do Tratamento"]||"").trim().startsWith("Aguardando Retorno do Cliente")).length;
+    document.getElementById("statValor").textContent       = formatCurrency(filteredData.reduce((acc,r) => acc + Number(r["Valor Total"]||0), 0));
+    document.getElementById("tableCount").textContent      = filteredData.length + " registros";
+  }
 
-  // Pendentes: usa filteredData e conta pelo Status real vindo do Databricks
-  const pendentes = filteredData.filter(r =>
-    String(r["Status"] || "").trim() === "Esboço Pendente"
-  ).length;
-
-  // Em Tratativas: apenas "Em Tratativa DRP"
-  const tratativas = filteredData.filter(r =>
-    String(r["Situação do Tratamento"] || "").trim() === "Em Tratativa DRP"
-  ).length;
-
-  // Finalizados: qualquer situação que comece com "Finalizado"
-  const finalizados = filteredData.filter(r =>
-    String(r["Situação do Tratamento"] || "").trim().startsWith("Finalizado")
-  ).length;
-
-  // Aguardando Retorno do Cliente
-  const aguardando = filteredData.filter(r =>
-    String(r["Situação do Tratamento"] || "").trim().startsWith("Aguardando Retorno do Cliente")
-  ).length;
-
-  const valor = filteredData.reduce((acc, r) => acc + Number(r["Valor Total"] || 0), 0);
-
-  document.getElementById("statTotal").textContent       = total;
-  document.getElementById("statPendentes").textContent   = pendentes;
-  document.getElementById("statTratativas").textContent  = tratativas;
-  document.getElementById("statFinalizados").textContent = finalizados;
-  document.getElementById("statAguardando").textContent  = aguardando;
-  document.getElementById("statValor").textContent       = formatCurrency(valor);
-  document.getElementById("tableCount").textContent      = filteredData.length + " registros";
-}
-
-  /* ── TABLE ── */
   function renderTable() {
     const tbody = document.getElementById("tableBody");
     const empty = document.getElementById("emptyState");
@@ -762,66 +591,53 @@ function updateStats() {
       const statusSla = getStatusSla(r["Prioridade"], r["Data do Esboço"], status);
       const situacao  = r["Situação do Tratamento"] || "";
       const obs       = r["Observação"] || "-";
-
-      // ✅ FIX: Badge para esboço sem tratativa iniciada
       let situacaoBadge;
       if (!situacao) {
         situacaoBadge = `<span class="status status-nao-iniciado">Não iniciado</span>`;
       } else {
         let cls = "status-tratamento";
-        if (situacao.startsWith("Finalizado"))                    cls = "status-finalizado";
-        else if (situacao.startsWith("Aguardando"))               cls = "status-aguardando";
+        if (situacao.startsWith("Finalizado")) cls = "status-finalizado";
+        else if (situacao.startsWith("Aguardando")) cls = "status-aguardando";
         situacaoBadge = `<span class="status ${cls}">${escapeHtml(situacao)}</span>`;
       }
-
       return `<tr class="group-row" onclick="openModal(${idx})">
-        <td>${escapeHtml(r["Prioridade"] || "-")}</td>
-        <td>${escapeHtml(r["Responsavel Esboço"] || "-")}</td>
-        <td>${escapeHtml(r["Numero Esboço"] || "-")}</td>
-        <td>${escapeHtml(r["Segmento"] || "-")}</td>
-        <td>${formatDate(r["Data do Esboço"])}</td>
-        <td>${getDiasEmAberto(r["Data do Esboço"])}</td>
+        <td>${escapeHtml(r["Prioridade"]||"-")}</td><td>${escapeHtml(r["Responsavel Esboço"]||"-")}</td>
+        <td>${escapeHtml(r["Numero Esboço"]||"-")}</td><td>${escapeHtml(r["Segmento"]||"-")}</td>
+        <td>${formatDate(r["Data do Esboço"])}</td><td>${getDiasEmAberto(r["Data do Esboço"])}</td>
         <td><span class="status ${getStatusClass(status)}">${escapeHtml(status)}</span></td>
         <td>${situacaoBadge}</td>
         <td style="max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="${escapeHtml(obs)}">${escapeHtml(obs)}</td>
         <td><span class="status ${getSlaClass(statusSla)}">${escapeHtml(statusSla)}</span></td>
-        <td>${r["Qtde Itens"] || 0}</td>
-        <td>${formatCurrency(r["Valor Total"] || 0)}</td>
+        <td>${r["Qtde Itens"]||0}</td><td>${formatCurrency(r["Valor Total"]||0)}</td>
       </tr>`;
     }).join("");
   }
 
-  /* ── MODAL ── */
   function openModal(index) {
     activeGroup = filteredData[index];
     if (!activeGroup) return;
-    document.getElementById("modalTitle").textContent = `Esboço ${activeGroup["Numero Esboço"] || "-"}`;
-    document.getElementById("modalSub").textContent   = `${activeGroup["Responsavel Esboço"] || "-"} • ${activeGroup["Segmento"] || "-"}`;
+    document.getElementById("modalTitle").textContent = `Esboço ${activeGroup["Numero Esboço"]||"-"}`;
+    document.getElementById("modalSub").textContent   = `${activeGroup["Responsavel Esboço"]||"-"} • ${activeGroup["Segmento"]||"-"}`;
     const statusSla = getStatusSla(activeGroup["Prioridade"], activeGroup["Data do Esboço"], activeGroup["Status"]);
     document.getElementById("modalCards").innerHTML = `
-      <div class="mini-card"><div class="label">Prioridade</div><div class="value">${escapeHtml(activeGroup["Prioridade"] || "-")}</div></div>
+      <div class="mini-card"><div class="label">Prioridade</div><div class="value">${escapeHtml(activeGroup["Prioridade"]||"-")}</div></div>
       <div class="mini-card"><div class="label">Dias em Aberto</div><div class="value">${getDiasEmAberto(activeGroup["Data do Esboço"])}</div></div>
-      <div class="mini-card"><div class="label">Status</div><div class="value">${escapeHtml(activeGroup["Status"] || "-")}</div></div>
+      <div class="mini-card"><div class="label">Status</div><div class="value">${escapeHtml(activeGroup["Status"]||"-")}</div></div>
       <div class="mini-card"><div class="label">Status SLA</div><div class="value">${escapeHtml(statusSla)}</div></div>`;
-
-    const editorBox  = document.getElementById("editorBox");
     const podeEditar = (currentViewMode === "time" || currentRole === "dev") && activeGroup["Status"] === "Esboço Pendente";
+    const editorBox  = document.getElementById("editorBox");
     if (podeEditar) {
       editorBox.style.display = "block";
-      populateEditorFromSaved(activeGroup["Situação do Tratamento"] || "", activeGroup["Observação"] || "");
+      populateEditorFromSaved(activeGroup["Situação do Tratamento"]||"", activeGroup["Observação"]||"");
     } else {
       editorBox.style.display = "none";
     }
-
     document.getElementById("itemsBody").innerHTML = activeGroup["Itens"].map(item => `
       <tr>
-        <td>${escapeHtml(item["Código do Item"] || "-")}</td>
-        <td>${escapeHtml(item["Descrição do Item"] || "-")}</td>
-        <td>${formatCurrency(item["Valor Total"] || 0)}</td>
-        <td>${escapeHtml(item["Observações"] || "-")}</td>
-        <td>${escapeHtml(item["Data de Atualização"] || "-")}</td>
+        <td>${escapeHtml(item["Código do Item"]||"-")}</td><td>${escapeHtml(item["Descrição do Item"]||"-")}</td>
+        <td>${formatCurrency(item["Valor Total"]||0)}</td><td>${escapeHtml(item["Observações"]||"-")}</td>
+        <td>${escapeHtml(item["Data de Atualização"]||"-")}</td>
       </tr>`).join("");
-
     document.getElementById("detailModal").classList.add("open");
   }
 
@@ -830,134 +646,102 @@ function updateStats() {
     activeGroup = null;
   }
 
-  /* ── SAVE ── */
+  // ─── SAVE TRATATIVA + EMAIL ───────────────────────────────────────────────────
   async function saveTratamento() {
     if (!activeGroup || activeGroup["Status"] !== "Esboço Pendente") return;
-    const num = String(activeGroup["Numero Esboço"] || "").trim();
+    const num = String(activeGroup["Numero Esboço"]||"").trim();
     if (!num) { showToast("Número do esboço inválido.", "error"); return; }
 
-    // Valida e monta situação final
     const { situacao, obs_pv, valid, msg } = buildSituacaoFinal();
     if (!valid) { showToast("⚠️ " + msg, "error"); return; }
 
-    // Monta observação: se PV, prefixo "PV: XXXX"; senão mantém observação digitada
     const obsDigitada = document.getElementById("observacaoInput").value.trim();
-    let observacaoFinal = obsDigitada;
-    if (obs_pv) {
-      observacaoFinal = `PV: ${obs_pv}` + (obsDigitada ? `\n${obsDigitada}` : "");
-    }
+    const observacaoFinal = obs_pv
+      ? `PV: ${obs_pv}` + (obsDigitada ? `\n${obsDigitada}` : "")
+      : obsDigitada;
+
+    const btn = document.getElementById("btnSalvar");
+    btn.disabled = true;
+    btn.textContent = "⏳ Salvando...";
 
     try {
       const { error } = await sb.from("tratativas_esboco").upsert(
-        {
-          numero_esboco:       num,
-          situacao_tratamento: situacao,
-          observacao:          observacaoFinal,
-          updated_by:          currentUser || "",
-          updated_at:          new Date().toISOString()
-        },
+        { numero_esboco: num, situacao_tratamento: situacao, observacao: observacaoFinal, updated_by: currentUser || "", updated_at: new Date().toISOString() },
         { onConflict: "numero_esboco" }
       );
       if (error) throw error;
 
+      // dispara email em background — não bloqueia a UI
+      dispararEmailAlerta(activeGroup, situacao, observacaoFinal);
+
+      // atualiza estado local
       activeGroup["Situação do Tratamento"] = situacao;
       activeGroup["Observação"]             = observacaoFinal;
-      groupedData = groupedData.map(g =>
-        String(g["Numero Esboço"]).trim() === num
-          ? { ...g, "Situação do Tratamento": situacao, "Observação": observacaoFinal }
-          : g
-      );
-      rawData = rawData.map(i =>
-        String(i["Numero Esboço"]).trim() === num
-          ? { ...i, "Situação do Tratamento": situacao, "Observação": observacaoFinal }
-          : i
-      );
+      groupedData = groupedData.map(g => String(g["Numero Esboço"]).trim() === num ? { ...g, "Situação do Tratamento": situacao, "Observação": observacaoFinal } : g);
+      rawData     = rawData.map(i     => String(i["Numero Esboço"]).trim() === num ? { ...i, "Situação do Tratamento": situacao, "Observação": observacaoFinal } : i);
 
       applyFilters();
       const newIdx = filteredData.findIndex(x => String(x["Numero Esboço"]).trim() === num);
       if (newIdx >= 0) openModal(newIdx);
-      showToast("✅ Tratativa salva com sucesso!", "success");
+      showToast("✅ Tratativa salva · Email enviado ao responsável!", "success");
     } catch (err) {
       console.error("Erro ao salvar tratativa:", err);
       showToast("❌ Erro ao salvar: " + (err.message || "verifique o console."), "error");
+    } finally {
+      btn.disabled = false;
+      btn.textContent = "💾 Salvar tratativa";
     }
   }
 
-  /* ── HELPERS ── */
+  // ─── HELPERS ─────────────────────────────────────────────────────────────────
   function parseAnyDate(value) {
     if (!value) return null;
     const iso = new Date(value);
     if (!isNaN(iso.getTime())) return iso;
     const br = String(value).match(/^(\d{2})\/(\d{2})\/(\d{4})(?:\s+(\d{2}):(\d{2}))?/);
-    if (br) {
-      const dt = new Date(`${br[3]}-${br[2]}-${br[1]}T${br[4]||"00"}:${br[5]||"00"}:00`);
-      if (!isNaN(dt.getTime())) return dt;
-    }
+    if (br) { const dt = new Date(`${br[3]}-${br[2]}-${br[1]}T${br[4]||"00"}:${br[5]||"00"}:00`); if (!isNaN(dt.getTime())) return dt; }
     return null;
   }
 
-  function normalizeDate(value) {
-    const d = parseAnyDate(value);
-    if (!d) return null;
-    d.setHours(0, 0, 0, 0);
-    return d;
-  }
+  function normalizeDate(value) { const d = parseAnyDate(value); if (!d) return null; d.setHours(0,0,0,0); return d; }
 
   function getDiasEmAberto(dataTexto) {
-    const data = normalizeDate(dataTexto);
-    if (!data) return 0;
-    const hoje = new Date();
-    hoje.setHours(0, 0, 0, 0);
+    const data = normalizeDate(dataTexto); if (!data) return 0;
+    const hoje = new Date(); hoje.setHours(0,0,0,0);
     return Math.max(0, Math.floor((hoje - data) / 86400000));
   }
 
   function getPrioridadePeso(p) {
-    p = String(p || "").trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-    if (p === "alto")  return 1;
-    if (p === "medio") return 2;
-    if (p === "baixo") return 3;
-    return 99;
+    p = String(p||"").trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
+    if (p === "alto") return 1; if (p === "medio") return 2; if (p === "baixo") return 3; return 99;
   }
 
   function getStatusSla(prioridade, dataEsboco, status) {
-    if (String(status || "").trim() === "Esboço Fechado") return "Fechado";
-    const dias  = getDiasEmAberto(dataEsboco);
-    const peso  = getPrioridadePeso(prioridade);
+    if (String(status||"").trim() === "Esboço Fechado") return "Fechado";
+    const dias = getDiasEmAberto(dataEsboco);
+    const peso = getPrioridadePeso(prioridade);
     const limite = peso === 1 ? 5 : peso === 2 ? 10 : peso === 3 ? 15 : 0;
-    if (!limite)        return "Sem regra";
-    if (dias > limite)  return "Vencido";
+    if (!limite) return "Sem regra";
+    if (dias > limite) return "Vencido";
     if (dias === limite) return "Vence hoje";
     return "No prazo";
   }
 
-  function getStatusClass(status) {
-    return String(status || "").trim() === "Esboço Fechado" ? "status-fechado" : "status-pendente";
-  }
+  function getStatusClass(status) { return String(status||"").trim() === "Esboço Fechado" ? "status-fechado" : "status-pendente"; }
 
   function getSlaClass(s) {
-    s = String(s || "").toLowerCase();
-    if (s === "vencido")     return "status-sla-vencido";
-    if (s === "vence hoje")  return "status-sla-vencehoje";
-    return "status-sla-noprazo";
+    s = String(s||"").toLowerCase();
+    if (s === "vencido") return "status-sla-vencido"; if (s === "vence hoje") return "status-sla-vencehoje"; return "status-sla-noprazo";
   }
 
-  function formatCurrency(value) {
-    return Number(value || 0).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
-  }
+  function formatCurrency(value) { return Number(value||0).toLocaleString("pt-BR",{style:"currency",currency:"BRL"}); }
 
   function formatDate(value) {
-    if (!value) return "-";
-    const d = parseAnyDate(value);
-    return d ? d.toLocaleDateString("pt-BR") : escapeHtml(String(value));
+    if (!value) return "-"; const d = parseAnyDate(value); return d ? d.toLocaleDateString("pt-BR") : escapeHtml(String(value));
   }
 
   function escapeHtml(text) {
-    return String(text)
-      .replaceAll("&", "&amp;")
-      .replaceAll("<", "&lt;")
-      .replaceAll(">", "&gt;")
-      .replaceAll('"', "&quot;")
-      .replaceAll("'", "&#039;");
+    return String(text).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;");
   }
 
   if (checkAuth()) loadData();
