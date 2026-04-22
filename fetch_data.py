@@ -94,26 +94,22 @@ def parse_results(payload):
     rows = payload.get("result", {}).get("data_array", [])
 
     records = []
-    for i, row in enumerate(rows):
+    for row in rows:
         r = dict(zip(columns, row))
+        # Nomes dos campos devem coincidir exatamente com o que o index.html espera
         records.append({
-            "id":                i,
-            "n_doesboco":        r.get("n_doesboco", ""),
-            "prioridade":        r.get("prioridade", ""),
-            "data":              r.get("data", ""),
-            "solicitante":       r.get("solicitante", ""),
-            "email_solicitante": r.get("email_solicitante", ""),
-            "segmento":          r.get("segmento", ""),
-            "item_code":         r.get("item_code", ""),
-            "dscription":        r.get("dscription", ""),
-            "line_total":        float(r.get("line_total") or 0),
-            "observacoes":       r.get("observacoes", ""),
-            "status_sap":        r.get("status_sap", ""),
-            "data_atualizacao":  r.get("data_atualizacao", ""),
-            # campos gerenciados pelo painel
-            "status":            r.get("status_sap", "Pendente"),
-            "motivo":            "",
-            "historico":         [],
+            "Numero Esboço":       r.get("n_doesboco", ""),
+            "Prioridade":          r.get("prioridade", ""),
+            "Data do Esboço":      r.get("data", ""),
+            "Responsavel Esboço":  r.get("solicitante", ""),
+            "Email":               r.get("email_solicitante", ""),
+            "Segmento":            r.get("segmento", ""),
+            "Código do Item":      r.get("item_code", ""),
+            "Descrição do Item":   r.get("dscription", ""),
+            "Valor Total":         float(r.get("line_total") or 0),
+            "Observações":         r.get("observacoes", ""),
+            "Status Esboço":       r.get("status_sap", "Esboço Pendente"),
+            "Data de Atualização": r.get("data_atualizacao", ""),
         })
     return records
 
