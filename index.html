@@ -666,7 +666,7 @@
 
     try {
       const { error } = await sb.from("tratativas_esboco").upsert(
-        { numero_esboco: num, situacao_tratamento: situacao, observacao: observacaoFinal, updated_by: currentUser || "", updated_at: new Date().toISOString() },
+        { numero_esboco: num, situacao_tratamento: situacao, observacao: observacaoFinal, updated_by: currentUser || "", updated_at: new Date().toISOString(), email_responsavel: (activeGroup?.["Itens"]?.[0]?.["Email"] || ""), email_enviado: false },
         { onConflict: "numero_esboco" }
       );
       if (error) throw error;
