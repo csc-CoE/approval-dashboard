@@ -41,21 +41,20 @@
     .card{
       background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:22px;
       position:relative;overflow:hidden;transition:border-color .2s, transform .15s, box-shadow .15s;
-      cursor:pointer; /* cards são clicáveis */
+      cursor:pointer;
       user-select:none;
     }
     .card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent-light));}
     .card.card-tratativas::before{background:linear-gradient(90deg,#38bdf8,#7dd3fc);}
     .card.card-finalizados::before{background:linear-gradient(90deg,#22c55e,#4ade80);}
     .card.card-aguardando::before{background:linear-gradient(90deg,#f59e0b,#fbbf24);}
-    .card.card-valor{cursor:default;} /* card de valor não filtra */
+    .card.card-valor{cursor:default;}
 
     .card:not(.card-valor):hover{border-color:rgba(255,107,0,0.45);transform:translateY(-2px);box-shadow:0 8px 24px rgba(255,107,0,0.12);}
     .card.card-tratativas:not(.card-valor):hover{border-color:rgba(56,189,248,0.45);box-shadow:0 8px 24px rgba(56,189,248,0.12);}
     .card.card-finalizados:not(.card-valor):hover{border-color:rgba(34,197,94,0.45);box-shadow:0 8px 24px rgba(34,197,94,0.12);}
     .card.card-aguardando:not(.card-valor):hover{border-color:rgba(245,158,11,0.45);box-shadow:0 8px 24px rgba(245,158,11,0.12);}
 
-    /* card ativo (filtro aplicado) */
     .card.card-active{border-color:rgba(255,107,0,0.6) !important;box-shadow:0 0 0 2px rgba(255,107,0,0.3) !important;}
     .card.card-tratativas.card-active{border-color:rgba(56,189,248,0.6) !important;box-shadow:0 0 0 2px rgba(56,189,248,0.3) !important;}
     .card.card-finalizados.card-active{border-color:rgba(34,197,94,0.6) !important;box-shadow:0 0 0 2px rgba(34,197,94,0.3) !important;}
@@ -80,7 +79,6 @@
     select{min-width:170px;}
     textarea{width:100%;resize:vertical;min-height:80px;line-height:1.5;}
 
-    /* pill de filtro de card ativo */
     .active-card-pill{display:none;align-items:center;gap:6px;background:rgba(255,107,0,0.12);border:1px solid rgba(255,107,0,0.3);border-radius:999px;padding:5px 12px;font-size:12px;font-weight:700;color:var(--accent-light);}
     .active-card-pill.visible{display:flex;}
     .active-card-pill button{background:none;border:none;color:var(--accent-light);cursor:pointer;font-size:14px;line-height:1;padding:0 0 0 4px;}
@@ -130,10 +128,7 @@
     .small-btn{padding:10px 16px;border-radius:10px;border:1px solid var(--border);background:var(--surface);color:var(--text);cursor:pointer;font-family:inherit;font-weight:700;font-size:13px;transition:.2s;}
     .small-btn:hover{border-color:var(--accent);color:var(--accent-light);}
     .email-notice{background:rgba(56,189,248,0.08);border:1px solid rgba(56,189,248,0.2);border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:12px;font-weight:700;color:#7dd3fc;display:flex;align-items:center;gap:8px;}
-
-    /* aviso de tratativa zerada (esboço fechado) */
     .reset-notice{background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.25);border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:12px;font-weight:700;color:#f87171;display:flex;align-items:center;gap:8px;}
-
     .sublista-box{display:none;background:rgba(255,107,0,0.06);border:1px solid rgba(255,107,0,0.2);border-radius:10px;padding:14px;margin-top:10px;}
     .sublista-box.visible{display:block;}
     .sublista-box label{display:block;font-size:11px;font-weight:800;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:.8px;}
@@ -191,7 +186,6 @@
 <div class="container">
   <div class="banner" id="solicitanteBanner">📢 Você está visualizando na visão de solicitante.</div>
 
-  <!-- ── CARDS (clicáveis para filtrar) ──────────────────────────── -->
   <div class="cards">
     <div class="card" id="cardTotal" onclick="filterByCard('total')" title="Clique para ver todos">
       <div class="label">Total Esboços Criados</div>
@@ -230,7 +224,6 @@
     </div>
   </div>
 
-  <!-- ── FILTROS ──────────────────────────────────────────────────── -->
   <div class="filters">
     <span class="filters-label">Filtros</span>
     <input id="searchInput" type="text" placeholder="Buscar responsável, esboço, item, observação..." oninput="applyFilters()" />
@@ -243,7 +236,6 @@
     <select id="segmentoFilter"   onchange="applyFilters()"><option value="">Todos os segmentos</option></select>
     <select id="responsavelFilter" onchange="applyFilters()"><option value="">Todos os responsáveis</option></select>
     <input id="dataFilter" type="date" onchange="applyFilters()" title="Filtrar por data do esboço" />
-    <!-- pill de filtro de card -->
     <div class="active-card-pill" id="activeCardPill">
       <span id="activeCardPillLabel">—</span>
       <button onclick="clearCardFilter()" title="Remover filtro">✕</button>
@@ -286,36 +278,17 @@
     <div class="modal-grid" id="modalCards"></div>
     <div class="editor-box" id="editorBox" style="display:none;">
       <div class="editor-section-title">✏️ Tratativa &amp; Observação</div>
-      <!-- aviso se esboço foi fechado e tratativas foram zeradas -->
       <div class="reset-notice" id="resetNotice" style="display:none;">
         🔄 Este esboço foi <strong>fechado</strong> no Databricks. As tratativas anteriores foram zeradas automaticamente.
       </div>
       <div class="email-notice">📧 Ao salvar, um email será enviado automaticamente ao responsável do esboço.</div>
 
       <div class="editor-row">
-        <!-- Analista DRP responsável pela tratativa -->
+        <!-- FIX 1: Lista gerada dinamicamente a partir de usuarios.time + usuarios.dev -->
         <div>
           <label for="analistaDrpSelect">Analista DRP Responsável <span class="required-mark">*</span></label>
           <select id="analistaDrpSelect">
             <option value="">— Selecione o analista —</option>
-            <!-- Lista do time interno DRP -->
-            <option value="Ana Paula">Ana Paula</option>
-            <option value="Bruno Carvalho">Bruno Carvalho</option>
-            <option value="Carlos Eduardo">Carlos Eduardo</option>
-            <option value="Daniela Souza">Daniela Souza</option>
-            <option value="Eduardo Lima">Eduardo Lima</option>
-            <option value="Fernanda Costa">Fernanda Costa</option>
-            <option value="Gabriel Martins">Gabriel Martins</option>
-            <option value="Isabela Ferreira">Isabela Ferreira</option>
-            <option value="João Victor">João Victor</option>
-            <option value="Juliana Andrade">Juliana Andrade</option>
-            <option value="Lucas Pereira">Lucas Pereira</option>
-            <option value="Mariana Rocha">Mariana Rocha</option>
-            <option value="Pedro Henrique">Pedro Henrique</option>
-            <option value="Rafael Oliveira">Rafael Oliveira</option>
-            <option value="Renata Campos">Renata Campos</option>
-            <option value="Thiago Santos">Thiago Santos</option>
-            <option value="Wender">Wender</option>
           </select>
         </div>
         <div>
@@ -395,12 +368,47 @@
   const SUPABASE_URL           = "https://ojgtpdwjcmqcbiydaesx.supabase.co";
   const SUPABASE_ANON_KEY      = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9qZ3RwZHdqY21xY2JpeWRhZXN4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUwMzA3NTQsImV4cCI6MjA5MDYwNjc1NH0.U87vGwcmaZW6UoOYrKSqIoArVqquCFAzvbqQaeUbhIE";
   const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  // ─── FIX 1: Fonte única de usuários — espelhada do login.html ─────────────
+  // IMPORTANTE: mantenha esta lista sincronizada com login.html → usuarios.time / usuarios.dev
+  const USUARIOS_LOGIN = {
+    dev: [
+      "wender.souza@alloha.com"
+    ],
+    time: [
+      "luiza.carvalho@alloha.com",
+      "john.santana@alloha.com",
+      "eudes.filho@alloha.com",
+      "alisson.lima@alloha.com",
+      "brunno.leon@alloha.com"
+    ],
+    solicitante: [
+      "talita.nascimento@alloha.com"
+    ]
+  };
+
+  // Extrai o nome amigável a partir do e-mail (parte antes do @, capitalizado)
+  function emailParaNome(email) {
+    const local = email.split("@")[0] || email;
+    return local.split(".").map(p => p.charAt(0).toUpperCase() + p.slice(1)).join(" ");
+  }
+
+  // Popula o <select> de analistas com time + dev (fonte: USUARIOS_LOGIN)
+  function popularListaAnalistas() {
+    const sel = document.getElementById("analistaDrpSelect");
+    sel.innerHTML = '<option value="">— Selecione o analista —</option>';
+    const membros = [...USUARIOS_LOGIN.time, ...USUARIOS_LOGIN.dev];
+    membros.forEach(email => {
+      const opt = document.createElement("option");
+      opt.value = emailParaNome(email);   // armazena o nome, igual ao campo analista_drp no Supabase
+      opt.textContent = emailParaNome(email);
+      sel.appendChild(opt);
+    });
+  }
   // ──────────────────────────────────────────────────────────────────────────
 
   let rawData = [], groupedData = [], filteredData = [];
   let currentUser = null, currentRole = null, currentViewMode = "time", activeGroup = null;
-
-  // Filtro ativo via card (null = nenhum)
   let activeCardFilter = null;
 
   // ─── AUTH ──────────────────────────────────────────────────────────────────
@@ -422,6 +430,7 @@
     document.getElementById("roleChip").textContent = "Perfil: " + (perfil === "dev" ? "Desenvolvedor" : perfil === "time" ? "Time Interno" : "Solicitante");
     if (perfil === "dev") document.getElementById("viewToggle").style.display = "flex";
     renderViewMode();
+    popularListaAnalistas(); // FIX 1: popula a lista após auth
     return true;
   }
 
@@ -457,23 +466,14 @@
   };
 
   function filterByCard(type) {
-    // toggle: clicar no mesmo card ativo remove o filtro
-    if (activeCardFilter === type) {
-      clearCardFilter();
-      return;
-    }
+    if (activeCardFilter === type) { clearCardFilter(); return; }
     activeCardFilter = type;
-
-    // highlight no card ativo
     Object.keys(CARD_IDS).forEach(k => {
       document.getElementById(CARD_IDS[k])?.classList.toggle("card-active", k === type);
     });
-
-    // atualiza pill
     const pill = document.getElementById("activeCardPill");
     document.getElementById("activeCardPillLabel").textContent = CARD_LABELS[type] || type;
     pill.classList.add("visible");
-
     applyFilters();
   }
 
@@ -530,8 +530,6 @@
     ["sublistaFinalizado","sublistaCliente","pvInputBox"].forEach(id => document.getElementById(id).classList.remove("visible"));
     ["finalizadoSubSelect","clienteSubSelect","pvNumeroInput"].forEach(id => document.getElementById(id).value = "");
     document.getElementById("observacaoInput").value = observacaoSalva || "";
-
-    // mostrar aviso de reset se foi zerado
     document.getElementById("resetNotice").style.display = foiZerado ? "flex" : "none";
 
     if (!situacaoSalva) return;
@@ -613,16 +611,68 @@
     if (error) { console.error("fetchTratativas:", error); return {}; }
     const map = {};
     (data || []).forEach(item => {
-      const sn = normalizarSituacao(item.situacao_tratamento || "");
-      if (!sn) return;
+      // Guarda o valor raw (antes de normalizar) para detectar esboços que têm tratativa no Supabase
       map[String(item.numero_esboco).trim()] = {
-        situacao_tratamento: sn,
-        observacao: item.observacao || "",
-        analista_drp: item.analista_drp || "",
+        situacao_tratamento: normalizarSituacao(item.situacao_tratamento || ""),
+        situacao_raw:        item.situacao_tratamento || "",
+        observacao:          item.observacao || "",
+        analista_drp:        item.analista_drp || "",
       };
     });
     return map;
   }
+
+  // ─── FIX 2 & 3: Zeragem ATIVA no Supabase para esboços fechados ───────────
+  // Detecta esboços que:
+  //   a) chegaram como "Esboço Fechado" no data.json (Databricks)
+  //   b) ainda possuem uma tratativa preenchida no Supabase
+  // E então faz um upsert zerando-os de forma ativa, marcando `_foi_zerado = true`
+  async function zerarTratativasFechadasAtivo(rawItems, tMap) {
+    // Coleta números únicos de esboços fechados no Databricks
+    const fechadosNoBanco = new Set();
+    for (const item of rawItems) {
+      const status = String(item["Status Esboço"] || item["Status"] || "").trim();
+      const num    = String(item["Numero Esboço"] || "").trim();
+      if (status === "Esboço Fechado" && num) fechadosNoBanco.add(num);
+    }
+
+    // Filtra quais desses fechados ainda têm registro com situação preenchida no Supabase
+    const paraZerar = [];
+    for (const num of fechadosNoBanco) {
+      const t = tMap[num];
+      if (t && t.situacao_raw) {
+        // Tem tratativa no Supabase → precisa zerar ativamente
+        paraZerar.push(num);
+      }
+    }
+
+    if (!paraZerar.length) return new Set(); // nenhum para zerar
+
+    console.log(`[Zeragem ativa] Zerando ${paraZerar.length} esboço(s) fechado(s):`, paraZerar);
+
+    // Upsert em lote zerando situacao_tratamento, observacao e analista_drp
+    const agora = new Date().toISOString();
+    const registros = paraZerar.map(num => ({
+      numero_esboco:       num,
+      situacao_tratamento: "",
+      observacao:          "",
+      analista_drp:        "",
+      updated_by:          "sistema_auto_fechamento",
+      updated_at:          agora,
+      email_responsavel:   "",
+      email_enviado:       false,
+    }));
+
+    const { error } = await sb.from("tratativas_esboco").upsert(registros, { onConflict: "numero_esboco" });
+    if (error) {
+      console.error("[Zeragem ativa] Erro ao zerar tratativas:", error);
+      return new Set(); // falha silenciosa — não marca como zerado
+    }
+
+    // Retorna o Set dos números que foram zerados com sucesso
+    return new Set(paraZerar);
+  }
+  // ──────────────────────────────────────────────────────────────────────────
 
   // ─── LOAD DATA ─────────────────────────────────────────────────────────────
   async function loadData() {
@@ -634,18 +684,27 @@
 
       const tMap = await fetchTratativasSupabase();
 
+      // FIX 2 & 3: zeragem ATIVA — detecta e persiste no Supabase antes de montar a tela
+      const numerosZerados = await zerarTratativasFechadasAtivo(rawData, tMap);
+
+      // Monta rawData mesclando Supabase, sem nenhuma zeragem passiva
       rawData = rawData.map(i => {
         const num    = String(i["Numero Esboço"] || "").trim();
-        const status = String(i["Status Esboço"] || i["Status"] || "").trim();
         const t      = tMap[num];
+        const foiZerado = numerosZerados.has(num); // só marca se o sistema zerou AGORA
 
-        // ── REGRA: esboço chegou FECHADO do Databricks → zera tratativa ──
-        // Marca `_foi_zerado = true` para avisar o usuário no modal
-        if (status === "Esboço Fechado" && t) {
-          return { ...i, "Situação do Tratamento": "", "Observação": "", "Analista DRP": "", "_foi_zerado": true };
+        if (!t || !t.situacao_tratamento) {
+          // Sem tratativa no Supabase (ou já zerado antes)
+          return { ...i, "Situação do Tratamento": "", "Observação": "", "Analista DRP": "", "_foi_zerado": foiZerado };
         }
-        if (!t) return { ...i, "Situação do Tratamento": "", "Observação": "", "Analista DRP": "" };
-        return { ...i, "Situação do Tratamento": t.situacao_tratamento, "Observação": t.observacao, "Analista DRP": t.analista_drp || "" };
+
+        return {
+          ...i,
+          "Situação do Tratamento": t.situacao_tratamento,
+          "Observação":             t.observacao,
+          "Analista DRP":           t.analista_drp || "",
+          "_foi_zerado":            foiZerado,
+        };
       });
 
       groupedData = groupByEsboco(rawData);
@@ -732,7 +791,6 @@
       if (responsavel&& String(r["Responsavel Esboço"]||"").trim() !== responsavel)     return false;
       if (dtFiltro)  { const dr = normalizeDate(r["Data do Esboço"]); if (!dr || dr.toDateString() !== dtFiltro.toDateString()) return false; }
 
-      // ── FILTRO DE CARD ──────────────────────────────────────────
       if (activeCardFilter) {
         const sit = String(r["Situação do Tratamento"]||"").trim();
         const st  = String(r["Status"]||"").trim();
@@ -861,7 +919,6 @@
     const num = String(activeGroup["Numero Esboço"]||"").trim();
     if (!num) { showToast("Número do esboço inválido.", "error"); return; }
 
-    // Validar analista DRP
     const analista = document.getElementById("analistaDrpSelect").value;
     if (!analista) { showToast("⚠️ Selecione o Analista DRP responsável.", "error"); return; }
 
@@ -894,7 +951,6 @@
 
       dispararEmailAlerta(activeGroup, situacao, observacaoFinal, analista);
 
-      // atualiza estado local
       activeGroup["Situação do Tratamento"] = situacao;
       activeGroup["Observação"]             = observacaoFinal;
       activeGroup["Analista DRP"]           = analista;
