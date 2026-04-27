@@ -687,21 +687,25 @@
       // FIX 2 & 3: zeragem ATIVA — detecta e persiste no Supabase antes de montar a tela
       const numerosZerados = await zerarTratativasFechadasAtivo(rawData, tMap);
 
-      // Monta rawData mesclando Supabase, sem nenhuma zeragem passiva
+      // Monta rawData mesclando dados do Supabase.
+      // Regra simples: se existe registro no Supabase para o número, usa os campos de lá.
+      // A zeragem (quando necessária) já foi feita ativamente acima via upsert —
+      // então tMap já reflete o estado correto do Supabase neste momento.
       rawData = rawData.map(i => {
-        const num    = String(i["Numero Esboço"] || "").trim();
-        const t      = tMap[num];
-        const foiZerado = numerosZerados.has(num); // só marca se o sistema zerou AGORA
+        const num       = String(i["Numero Esboço"] || "").trim();
+        const t         = tMap[num];
+        const foiZerado = numerosZerados.has(num); // true só se o sistema zerou AGORA nesta execução
 
-        if (!t || !t.situacao_tratamento) {
-          // Sem tratativa no Supabase (ou já zerado antes)
-          return { ...i, "Situação do Tratamento": "", "Observação": "", "Analista DRP": "", "_foi_zerado": foiZerado };
+        if (!t) {
+          // Nenhum registro no Supabase para este esboço
+          return { ...i, "Situação do Tratamento": "", "Observação": "", "Analista DRP": "", "_foi_zerado": false };
         }
 
+        // Tem registro no Supabase — usa exatamente o que está lá (incluindo strings vazias pós-zeragem)
         return {
           ...i,
-          "Situação do Tratamento": t.situacao_tratamento,
-          "Observação":             t.observacao,
+          "Situação do Tratamento": t.situacao_tratamento || "",
+          "Observação":             t.observacao || "",
           "Analista DRP":           t.analista_drp || "",
           "_foi_zerado":            foiZerado,
         };
