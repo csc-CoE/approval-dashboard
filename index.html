@@ -974,16 +974,19 @@
     btn.disabled = true; btn.textContent = "⏳ Salvando...";
 
     try {
+      const emailAnalista = getEmailAnalista(analista);
       const { error } = await sb.from("tratativas_esboco").upsert(
         {
-          numero_esboco:    num,
+          numero_esboco:       num,
           situacao_tratamento: situacao,
-          observacao:       observacaoFinal,
-          analista_drp:     analista,
-          updated_by:       currentUser || "",
-          updated_at:       new Date().toISOString(),
-          email_responsavel:(activeGroup?.["Itens"]?.[0]?.["Email"] || ""),
-          email_enviado:    false,
+          observacao:          observacaoFinal,
+          analista_drp:        analista,
+          email_analista_drp:  emailAnalista,
+          cc_drp:              "drp@alloha.com",
+          updated_by:          currentUser || "",
+          updated_at:          new Date().toISOString(),
+          email_responsavel:   (activeGroup?.["Itens"]?.[0]?.["Email"] || ""),
+          email_enviado:       false,
         },
         { onConflict: "numero_esboco" }
       );
