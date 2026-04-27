@@ -555,25 +555,36 @@
   }
 
   // ─── EMAIL POWER AUTOMATE ──────────────────────────────────────────────────
+
+  // Mapa nome-amigável → email corporativo (gerado a partir de USUARIOS_LOGIN)
+  function getEmailAnalista(nomeAnalista) {
+    const todos = [...USUARIOS_LOGIN.time, ...USUARIOS_LOGIN.dev];
+    const match = todos.find(email => emailParaNome(email) === nomeAnalista);
+    return match || "";
+  }
+
   async function dispararEmailAlerta(grupo, situacao, observacao, analista) {
     if (!POWER_AUTOMATE_WEBHOOK) return;
-    const emailResponsavel = (grupo["Itens"]?.[0]?.["Email"]) || "";
+    const emailResponsavel  = (grupo["Itens"]?.[0]?.["Email"]) || "";
+    const emailAnalista     = getEmailAnalista(analista);
     const payload = {
-      numero_esboco:     String(grupo["Numero Esboço"] || ""),
-      responsavel:       grupo["Responsavel Esboço"] || "",
-      email_solicitante: emailResponsavel,
-      segmento:          grupo["Segmento"] || "",
-      prioridade:        grupo["Prioridade"] || "",
-      data_esboco:       grupo["Data do Esboço"] || "",
-      dias_aberto:       String(getDiasEmAberto(grupo["Data do Esboço"])),
-      valor_total:       formatCurrency(grupo["Valor Total"] || 0),
-      situacao_anterior: grupo["Situação do Tratamento"] || "Não iniciado",
-      nova_situacao:     situacao,
-      observacao:        observacao || "—",
-      analista_drp:      analista || "—",
-      alterado_por:      currentUser || "Time Interno",
-      alterado_em:       new Date().toLocaleString("pt-BR"),
-      link_painel:       PAINEL_URL,
+      numero_esboco:      String(grupo["Numero Esboço"] || ""),
+      responsavel:        grupo["Responsavel Esboço"] || "",
+      email_solicitante:  emailResponsavel,
+      email_analista_drp: emailAnalista,
+      cc_drp:             "drp@alloha.com",
+      segmento:           grupo["Segmento"] || "",
+      prioridade:         grupo["Prioridade"] || "",
+      data_esboco:        grupo["Data do Esboço"] || "",
+      dias_aberto:        String(getDiasEmAberto(grupo["Data do Esboço"])),
+      valor_total:        formatCurrency(grupo["Valor Total"] || 0),
+      situacao_anterior:  grupo["Situação do Tratamento"] || "Não iniciado",
+      nova_situacao:      situacao,
+      observacao:         observacao || "—",
+      analista_drp:       analista || "—",
+      alterado_por:       currentUser || "Time Interno",
+      alterado_em:        new Date().toLocaleString("pt-BR"),
+      link_painel:        PAINEL_URL,
     };
     try {
       await fetch(POWER_AUTOMATE_WEBHOOK, {
