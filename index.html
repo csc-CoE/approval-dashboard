@@ -606,15 +606,22 @@
 
   // ─── SUPABASE ──────────────────────────────────────────────────────────────
   async function fetchTratativasSupabase() {
-    const { data, error } = await sb.from("tratativas_esboco")
-      .select("numero_esboco,situacao_tratamento,observacao,updated_by,updated_at,analista_drp");
-    if (error) { console.error("fetchTratativas:", error); return {}; }
+    // Tenta com analista_drp; se der 400 (coluna inexistente), tenta sem ela
+    let data, error;
+    ({ data, error } = await sb.from("tratativas_esboco")
+      .select("numero_esboco,situacao_tratamento,observacao,analista_drp"));
+    if (error) {
+      console.warn("fetchTratativas (com analista_drp) falhou:", error.message, "— tentando sem analista_drp");
+      ({ data, error } = await sb.from("tratativas_esboco")
+        .select("numero_esboco,situacao_tratamento,observacao"));
+    }
+    if (error) { console.error("fetchTratativas erro definitivo:", error); return {}; }
     const map = {};
     (data || []).forEach(item => {
-      // Guarda o valor raw (antes de normalizar) para detectar esboços que têm tratativa no Supabase
+      const raw = item.situacao_tratamento || "";
       map[String(item.numero_esboco).trim()] = {
-        situacao_tratamento: normalizarSituacao(item.situacao_tratamento || ""),
-        situacao_raw:        item.situacao_tratamento || "",
+        situacao_tratamento: normalizarSituacao(raw),
+        situacao_raw:        raw,
         observacao:          item.observacao || "",
         analista_drp:        item.analista_drp || "",
       };
