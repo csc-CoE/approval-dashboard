@@ -35,22 +35,43 @@
     .btn-ghost:hover{border-color:var(--accent);color:var(--accent-light);background:var(--surface);}
     .container{max-width:1520px;margin:0 auto;padding:28px;}
     .banner{display:none;margin-bottom:20px;background:rgba(255,107,0,0.10);border:1px solid rgba(255,107,0,0.30);color:#ffd4a8;border-radius:var(--radius);padding:12px 18px;font-size:14px;font-weight:600;}
+
+    /* ── CARDS ──────────────────────────────────────────────────────── */
     .cards{display:grid;grid-template-columns:repeat(6,1fr);gap:16px;margin-bottom:22px;}
-    .card{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:22px;position:relative;overflow:hidden;transition:border-color .2s;}
+    .card{
+      background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:22px;
+      position:relative;overflow:hidden;transition:border-color .2s, transform .15s, box-shadow .15s;
+      cursor:pointer; /* cards são clicáveis */
+      user-select:none;
+    }
     .card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent-light));}
     .card.card-tratativas::before{background:linear-gradient(90deg,#38bdf8,#7dd3fc);}
     .card.card-finalizados::before{background:linear-gradient(90deg,#22c55e,#4ade80);}
     .card.card-aguardando::before{background:linear-gradient(90deg,#f59e0b,#fbbf24);}
-    .card:hover{border-color:rgba(255,107,0,0.3);}
-    .card.card-tratativas:hover{border-color:rgba(56,189,248,0.3);}
-    .card.card-finalizados:hover{border-color:rgba(34,197,94,0.3);}
-    .card.card-aguardando:hover{border-color:rgba(245,158,11,0.3);}
+    .card.card-valor{cursor:default;} /* card de valor não filtra */
+
+    .card:not(.card-valor):hover{border-color:rgba(255,107,0,0.45);transform:translateY(-2px);box-shadow:0 8px 24px rgba(255,107,0,0.12);}
+    .card.card-tratativas:not(.card-valor):hover{border-color:rgba(56,189,248,0.45);box-shadow:0 8px 24px rgba(56,189,248,0.12);}
+    .card.card-finalizados:not(.card-valor):hover{border-color:rgba(34,197,94,0.45);box-shadow:0 8px 24px rgba(34,197,94,0.12);}
+    .card.card-aguardando:not(.card-valor):hover{border-color:rgba(245,158,11,0.45);box-shadow:0 8px 24px rgba(245,158,11,0.12);}
+
+    /* card ativo (filtro aplicado) */
+    .card.card-active{border-color:rgba(255,107,0,0.6) !important;box-shadow:0 0 0 2px rgba(255,107,0,0.3) !important;}
+    .card.card-tratativas.card-active{border-color:rgba(56,189,248,0.6) !important;box-shadow:0 0 0 2px rgba(56,189,248,0.3) !important;}
+    .card.card-finalizados.card-active{border-color:rgba(34,197,94,0.6) !important;box-shadow:0 0 0 2px rgba(34,197,94,0.3) !important;}
+    .card.card-aguardando.card-active{border-color:rgba(245,158,11,0.6) !important;box-shadow:0 0 0 2px rgba(245,158,11,0.3) !important;}
+
     .card .label{color:var(--muted);font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;}
     .card .value{font-size:30px;font-weight:900;letter-spacing:-1px;color:var(--text);}
     .card.card-tratativas .value{color:#7dd3fc;}
     .card.card-finalizados .value{color:#4ade80;}
     .card.card-aguardando .value{color:#fbbf24;}
     .card .icon{position:absolute;right:20px;top:50%;transform:translateY(-50%);font-size:32px;opacity:.08;}
+    .card .card-filter-hint{position:absolute;bottom:10px;right:14px;font-size:10px;font-weight:700;color:var(--muted);opacity:0;transition:opacity .2s;letter-spacing:.5px;}
+    .card:not(.card-valor):hover .card-filter-hint{opacity:1;}
+    .card.card-active .card-filter-hint{opacity:1;color:var(--accent-light);}
+
+    /* ── FILTROS ─────────────────────────────────────────────────────── */
     .filters{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:16px 18px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:20px;}
     .filters-label{color:var(--accent);font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:1px;}
     input,select,textarea{background:var(--surface-2);color:var(--text);border:1px solid var(--border);border-radius:10px;padding:10px 14px;font-size:13px;font-family:inherit;font-weight:600;outline:none;transition:border-color .2s;}
@@ -58,6 +79,13 @@
     input{min-width:240px;flex:1;}
     select{min-width:170px;}
     textarea{width:100%;resize:vertical;min-height:80px;line-height:1.5;}
+
+    /* pill de filtro de card ativo */
+    .active-card-pill{display:none;align-items:center;gap:6px;background:rgba(255,107,0,0.12);border:1px solid rgba(255,107,0,0.3);border-radius:999px;padding:5px 12px;font-size:12px;font-weight:700;color:var(--accent-light);}
+    .active-card-pill.visible{display:flex;}
+    .active-card-pill button{background:none;border:none;color:var(--accent-light);cursor:pointer;font-size:14px;line-height:1;padding:0 0 0 4px;}
+
+    /* ── TABELA ──────────────────────────────────────────────────────── */
     .table-box{background:var(--surface);border:1px solid var(--border);border-radius:18px;overflow:hidden;}
     .table-head{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid var(--border);}
     .table-head-title{font-size:15px;font-weight:800;letter-spacing:-.2px;}
@@ -79,6 +107,8 @@
     .status-sla-vencehoje {background:rgba(245,158,11,0.14);color:#fbbf24;border-color:rgba(245,158,11,0.25);}
     .status-sla-vencido   {background:rgba(239,68,68,0.14); color:#f87171;border-color:rgba(239,68,68,0.25);}
     .empty{padding:36px 20px;color:var(--muted);font-size:14px;text-align:center;}
+
+    /* ── MODAL ───────────────────────────────────────────────────────── */
     .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.72);z-index:1000;align-items:center;justify-content:center;padding:24px;}
     .modal-overlay.open{display:flex;}
     .modal{width:min(1200px,96vw);max-height:90vh;overflow:auto;background:var(--surface);border:1px solid rgba(255,107,0,0.25);border-radius:20px;padding:24px;}
@@ -99,8 +129,11 @@
     .items-title{font-size:15px;font-weight:800;margin:4px 0 14px;color:var(--accent-light);}
     .small-btn{padding:10px 16px;border-radius:10px;border:1px solid var(--border);background:var(--surface);color:var(--text);cursor:pointer;font-family:inherit;font-weight:700;font-size:13px;transition:.2s;}
     .small-btn:hover{border-color:var(--accent);color:var(--accent-light);}
-    /* aviso email */
     .email-notice{background:rgba(56,189,248,0.08);border:1px solid rgba(56,189,248,0.2);border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:12px;font-weight:700;color:#7dd3fc;display:flex;align-items:center;gap:8px;}
+
+    /* aviso de tratativa zerada (esboço fechado) */
+    .reset-notice{background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.25);border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:12px;font-weight:700;color:#f87171;display:flex;align-items:center;gap:8px;}
+
     .sublista-box{display:none;background:rgba(255,107,0,0.06);border:1px solid rgba(255,107,0,0.2);border-radius:10px;padding:14px;margin-top:10px;}
     .sublista-box.visible{display:block;}
     .sublista-box label{display:block;font-size:11px;font-weight:800;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:.8px;}
@@ -108,13 +141,17 @@
     .pv-input-box.visible{display:block;}
     .pv-input-box label{display:block;font-size:11px;font-weight:800;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:.8px;}
     .required-mark{color:var(--danger);margin-left:2px;}
+
+    /* ── TOAST ───────────────────────────────────────────────────────── */
     .toast{position:fixed;bottom:28px;right:28px;z-index:9999;background:#1e1e1e;border:1px solid var(--border);border-radius:12px;padding:14px 20px;font-size:14px;font-weight:700;color:var(--text);box-shadow:0 8px 32px rgba(0,0,0,0.5);opacity:0;transform:translateY(12px);transition:opacity .25s,transform .25s;pointer-events:none;}
     .toast.show{opacity:1;transform:translateY(0);}
     .toast.success{border-color:rgba(34,197,94,0.4);color:#4ade80;}
     .toast.error  {border-color:rgba(239,68,68,0.4); color:#f87171;}
+
     .footer-dev{margin-top:32px;padding:0 28px 28px;}
     .footer-dev-inner{max-width:1520px;margin:0 auto;display:flex;justify-content:center;align-items:center;gap:10px;color:var(--muted);font-size:12px;font-weight:700;border-top:1px solid var(--border);padding-top:20px;}
     .footer-tag{padding:4px 10px;border-radius:999px;background:rgba(255,107,0,0.14);color:var(--accent-light);border:1px solid rgba(255,107,0,0.25);font-size:10px;font-weight:900;letter-spacing:1px;}
+
     @media(max-width:1200px){.cards{grid-template-columns:repeat(3,1fr);}.modal-grid{grid-template-columns:repeat(2,1fr);}}
     @media(max-width:900px){.cards{grid-template-columns:repeat(2,1fr);}}
     @media(max-width:700px){.cards,.modal-grid{grid-template-columns:1fr;}.container{padding:14px;}.header{padding:12px 16px;}}
@@ -153,15 +190,47 @@
 
 <div class="container">
   <div class="banner" id="solicitanteBanner">📢 Você está visualizando na visão de solicitante.</div>
+
+  <!-- ── CARDS (clicáveis para filtrar) ──────────────────────────── -->
   <div class="cards">
-    <div class="card"><div class="label">Total Esboços Criados</div><div class="value" id="statTotal">0</div><div class="icon">📋</div></div>
-    <div class="card"><div class="label">Esboço Pendente</div><div class="value" id="statPendentes">0</div><div class="icon">⏳</div></div>
-    <div class="card card-tratativas"><div class="label">Em Tratativas</div><div class="value" id="statTratativas">0</div><div class="icon">🔄</div></div>
-    <div class="card card-finalizados"><div class="label">Finalizados</div><div class="value" id="statFinalizados">0</div><div class="icon">✅</div></div>
-    <div class="card card-aguardando"><div class="label">Aguardando Cliente</div><div class="value" id="statAguardando">0</div><div class="icon">⏳</div></div>
-    <div class="card"><div class="label">Valor Total</div><div class="value" id="statValor">R$ 0,00</div><div class="icon">💰</div></div>
+    <div class="card" id="cardTotal" onclick="filterByCard('total')" title="Clique para ver todos">
+      <div class="label">Total Esboços Criados</div>
+      <div class="value" id="statTotal">0</div>
+      <div class="icon">📋</div>
+      <div class="card-filter-hint">clique para filtrar</div>
+    </div>
+    <div class="card" id="cardPendentes" onclick="filterByCard('pendentes')" title="Clique para filtrar pendentes">
+      <div class="label">Esboço Pendente</div>
+      <div class="value" id="statPendentes">0</div>
+      <div class="icon">⏳</div>
+      <div class="card-filter-hint">clique para filtrar</div>
+    </div>
+    <div class="card card-tratativas" id="cardTratativas" onclick="filterByCard('tratativas')" title="Clique para filtrar em tratativas">
+      <div class="label">Em Tratativas</div>
+      <div class="value" id="statTratativas">0</div>
+      <div class="icon">🔄</div>
+      <div class="card-filter-hint">clique para filtrar</div>
+    </div>
+    <div class="card card-finalizados" id="cardFinalizados" onclick="filterByCard('finalizados')" title="Clique para filtrar finalizados">
+      <div class="label">Finalizados</div>
+      <div class="value" id="statFinalizados">0</div>
+      <div class="icon">✅</div>
+      <div class="card-filter-hint">clique para filtrar</div>
+    </div>
+    <div class="card card-aguardando" id="cardAguardando" onclick="filterByCard('aguardando')" title="Clique para filtrar aguardando cliente">
+      <div class="label">Aguardando Cliente</div>
+      <div class="value" id="statAguardando">0</div>
+      <div class="icon">⏳</div>
+      <div class="card-filter-hint">clique para filtrar</div>
+    </div>
+    <div class="card card-valor" title="Valor total (sem filtro por clique)">
+      <div class="label">Valor Total</div>
+      <div class="value" id="statValor">R$ 0,00</div>
+      <div class="icon">💰</div>
+    </div>
   </div>
 
+  <!-- ── FILTROS ──────────────────────────────────────────────────── -->
   <div class="filters">
     <span class="filters-label">Filtros</span>
     <input id="searchInput" type="text" placeholder="Buscar responsável, esboço, item, observação..." oninput="applyFilters()" />
@@ -174,6 +243,11 @@
     <select id="segmentoFilter"   onchange="applyFilters()"><option value="">Todos os segmentos</option></select>
     <select id="responsavelFilter" onchange="applyFilters()"><option value="">Todos os responsáveis</option></select>
     <input id="dataFilter" type="date" onchange="applyFilters()" title="Filtrar por data do esboço" />
+    <!-- pill de filtro de card -->
+    <div class="active-card-pill" id="activeCardPill">
+      <span id="activeCardPillLabel">—</span>
+      <button onclick="clearCardFilter()" title="Remover filtro">✕</button>
+    </div>
     <button class="btn btn-ghost" onclick="clearFilters()">Limpar filtros</button>
   </div>
 
@@ -186,7 +260,7 @@
       <table>
         <thead>
           <tr>
-            <th>Prioridade</th><th>Responsável Esboço</th><th>Nº Esboço</th><th>Segmento</th>
+            <th>Prioridade</th><th>Responsável Esboço</th><th>Analista DRP</th><th>Nº Esboço</th><th>Segmento</th>
             <th>Data do Esboço</th><th>Dias em Aberto</th><th>Status</th>
             <th>Situação do Tratamento</th><th>Observação</th><th>Status SLA</th>
             <th>Qtde Itens</th><th>Valor Total</th>
@@ -199,7 +273,7 @@
   </div>
 </div>
 
-<!-- MODAL -->
+<!-- ── MODAL ──────────────────────────────────────────────────────── -->
 <div class="modal-overlay" id="detailModal">
   <div class="modal">
     <div class="modal-header">
@@ -212,10 +286,40 @@
     <div class="modal-grid" id="modalCards"></div>
     <div class="editor-box" id="editorBox" style="display:none;">
       <div class="editor-section-title">✏️ Tratativa &amp; Observação</div>
+      <!-- aviso se esboço foi fechado e tratativas foram zeradas -->
+      <div class="reset-notice" id="resetNotice" style="display:none;">
+        🔄 Este esboço foi <strong>fechado</strong> no Databricks. As tratativas anteriores foram zeradas automaticamente.
+      </div>
       <div class="email-notice">📧 Ao salvar, um email será enviado automaticamente ao responsável do esboço.</div>
+
       <div class="editor-row">
+        <!-- Analista DRP responsável pela tratativa -->
         <div>
-          <label for="tratamentoSelect">Situação do Tratamento</label>
+          <label for="analistaDrpSelect">Analista DRP Responsável <span class="required-mark">*</span></label>
+          <select id="analistaDrpSelect">
+            <option value="">— Selecione o analista —</option>
+            <!-- Lista do time interno DRP -->
+            <option value="Ana Paula">Ana Paula</option>
+            <option value="Bruno Carvalho">Bruno Carvalho</option>
+            <option value="Carlos Eduardo">Carlos Eduardo</option>
+            <option value="Daniela Souza">Daniela Souza</option>
+            <option value="Eduardo Lima">Eduardo Lima</option>
+            <option value="Fernanda Costa">Fernanda Costa</option>
+            <option value="Gabriel Martins">Gabriel Martins</option>
+            <option value="Isabela Ferreira">Isabela Ferreira</option>
+            <option value="João Victor">João Victor</option>
+            <option value="Juliana Andrade">Juliana Andrade</option>
+            <option value="Lucas Pereira">Lucas Pereira</option>
+            <option value="Mariana Rocha">Mariana Rocha</option>
+            <option value="Pedro Henrique">Pedro Henrique</option>
+            <option value="Rafael Oliveira">Rafael Oliveira</option>
+            <option value="Renata Campos">Renata Campos</option>
+            <option value="Thiago Santos">Thiago Santos</option>
+            <option value="Wender">Wender</option>
+          </select>
+        </div>
+        <div>
+          <label for="tratamentoSelect">Situação do Tratamento <span class="required-mark">*</span></label>
           <select id="tratamentoSelect" onchange="onTratamentoChange()">
             <option value="">— Selecione uma situação —</option>
             <option value="Finalizado">✅ Finalizado</option>
@@ -284,18 +388,22 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-  // ─── CONFIGURAÇÃO ─────────────────────────────────────────────────────────────
+  // ─── CONFIGURAÇÃO ──────────────────────────────────────────────────────────
   const POWER_AUTOMATE_WEBHOOK = "https://default7ebaa4673ace4a9cad914e84933a66.07.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/62104aa69720411cae057a4865912192/triggers/manual/paths/invoke?api-version=1";
   const PAINEL_URL             = "https://csc-coe.github.io/approval-dashboard/";
   const LOGIN_PAGE             = "login.html";
   const SUPABASE_URL           = "https://ojgtpdwjcmqcbiydaesx.supabase.co";
   const SUPABASE_ANON_KEY      = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9qZ3RwZHdqY21xY2JpeWRhZXN4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUwMzA3NTQsImV4cCI6MjA5MDYwNjc1NH0.U87vGwcmaZW6UoOYrKSqIoArVqquCFAzvbqQaeUbhIE";
   const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-  // ─────────────────────────────────────────────────────────────────────────────
+  // ──────────────────────────────────────────────────────────────────────────
 
   let rawData = [], groupedData = [], filteredData = [];
   let currentUser = null, currentRole = null, currentViewMode = "time", activeGroup = null;
 
+  // Filtro ativo via card (null = nenhum)
+  let activeCardFilter = null;
+
+  // ─── AUTH ──────────────────────────────────────────────────────────────────
   function showToast(msg, type = "success") {
     const t = document.getElementById("toast");
     t.textContent = msg;
@@ -335,6 +443,48 @@
     window.location.href = LOGIN_PAGE;
   }
 
+  // ─── FILTRO POR CARD ───────────────────────────────────────────────────────
+  const CARD_LABELS = {
+    total:      '📋 Todos os esboços',
+    pendentes:  '⏳ Esboço Pendente',
+    tratativas: '🔄 Em Tratativas',
+    finalizados:'✅ Finalizados',
+    aguardando: '⏳ Aguardando Cliente',
+  };
+  const CARD_IDS = {
+    total:'cardTotal', pendentes:'cardPendentes', tratativas:'cardTratativas',
+    finalizados:'cardFinalizados', aguardando:'cardAguardando'
+  };
+
+  function filterByCard(type) {
+    // toggle: clicar no mesmo card ativo remove o filtro
+    if (activeCardFilter === type) {
+      clearCardFilter();
+      return;
+    }
+    activeCardFilter = type;
+
+    // highlight no card ativo
+    Object.keys(CARD_IDS).forEach(k => {
+      document.getElementById(CARD_IDS[k])?.classList.toggle("card-active", k === type);
+    });
+
+    // atualiza pill
+    const pill = document.getElementById("activeCardPill");
+    document.getElementById("activeCardPillLabel").textContent = CARD_LABELS[type] || type;
+    pill.classList.add("visible");
+
+    applyFilters();
+  }
+
+  function clearCardFilter() {
+    activeCardFilter = null;
+    Object.values(CARD_IDS).forEach(id => document.getElementById(id)?.classList.remove("card-active"));
+    document.getElementById("activeCardPill").classList.remove("visible");
+    applyFilters();
+  }
+
+  // ─── EDITOR ───────────────────────────────────────────────────────────────
   function onTratamentoChange() {
     const val = document.getElementById("tratamentoSelect").value;
     document.getElementById("sublistaFinalizado").classList.remove("visible");
@@ -374,11 +524,16 @@
     return { situacao: principal, obs_pv: null, valid: true };
   }
 
-  function populateEditorFromSaved(situacaoSalva, observacaoSalva) {
+  function populateEditorFromSaved(situacaoSalva, observacaoSalva, analistaSalvo, foiZerado) {
     document.getElementById("tratamentoSelect").value = "";
+    document.getElementById("analistaDrpSelect").value = analistaSalvo || "";
     ["sublistaFinalizado","sublistaCliente","pvInputBox"].forEach(id => document.getElementById(id).classList.remove("visible"));
     ["finalizadoSubSelect","clienteSubSelect","pvNumeroInput"].forEach(id => document.getElementById(id).value = "");
     document.getElementById("observacaoInput").value = observacaoSalva || "";
+
+    // mostrar aviso de reset se foi zerado
+    document.getElementById("resetNotice").style.display = foiZerado ? "flex" : "none";
+
     if (!situacaoSalva) return;
     if (situacaoSalva === "Em Tratativa DRP") {
       document.getElementById("tratamentoSelect").value = "Em Tratativa DRP";
@@ -401,11 +556,8 @@
     }
   }
 
-  // ─── DISPARO EMAIL POWER AUTOMATE ────────────────────────────────────────────
-  // Chamado após salvar com sucesso no Supabase.
-  // Fire-and-forget: não bloqueia a UI, erros são apenas logados.
-  // mode:'no-cors' é obrigatório para webhooks externos em páginas estáticas (GitHub Pages).
-  async function dispararEmailAlerta(grupo, situacao, observacao) {
+  // ─── EMAIL POWER AUTOMATE ──────────────────────────────────────────────────
+  async function dispararEmailAlerta(grupo, situacao, observacao, analista) {
     if (!POWER_AUTOMATE_WEBHOOK) return;
     const emailResponsavel = (grupo["Itens"]?.[0]?.["Email"]) || "";
     const payload = {
@@ -420,14 +572,14 @@
       situacao_anterior: grupo["Situação do Tratamento"] || "Não iniciado",
       nova_situacao:     situacao,
       observacao:        observacao || "—",
+      analista_drp:      analista || "—",
       alterado_por:      currentUser || "Time Interno",
       alterado_em:       new Date().toLocaleString("pt-BR"),
       link_painel:       PAINEL_URL,
     };
     try {
       await fetch(POWER_AUTOMATE_WEBHOOK, {
-        method: "POST",
-        mode: "no-cors",
+        method: "POST", mode: "no-cors",
         headers: { "Content-Type": "text/plain" },
         body: JSON.stringify(payload),
       });
@@ -435,8 +587,8 @@
       console.warn("Power Automate webhook:", err);
     }
   }
-  // ─────────────────────────────────────────────────────────────────────────────
 
+  // ─── NORMALIZAÇÃO / MIGRAÇÃO ───────────────────────────────────────────────
   const SITUACOES_LEGADAS_VAZIAS = new Set(["Em análise pelo time","Em análise de cliente"]);
   const MIGRACOES_SITUACAO = {
     "Aguardando validação":"Em Tratativa DRP","Aguardando ajuste de informações":"Em Tratativa DRP",
@@ -454,32 +606,48 @@
     return MIGRACOES_SITUACAO[sit] || sit;
   }
 
+  // ─── SUPABASE ──────────────────────────────────────────────────────────────
   async function fetchTratativasSupabase() {
     const { data, error } = await sb.from("tratativas_esboco")
-      .select("numero_esboco,situacao_tratamento,observacao,updated_by,updated_at");
+      .select("numero_esboco,situacao_tratamento,observacao,updated_by,updated_at,analista_drp");
     if (error) { console.error("fetchTratativas:", error); return {}; }
     const map = {};
     (data || []).forEach(item => {
       const sn = normalizarSituacao(item.situacao_tratamento || "");
       if (!sn) return;
-      map[String(item.numero_esboco).trim()] = { situacao_tratamento: sn, observacao: item.observacao || "" };
+      map[String(item.numero_esboco).trim()] = {
+        situacao_tratamento: sn,
+        observacao: item.observacao || "",
+        analista_drp: item.analista_drp || "",
+      };
     });
     return map;
   }
 
+  // ─── LOAD DATA ─────────────────────────────────────────────────────────────
   async function loadData() {
     try {
       const res  = await fetch("data.json?t=" + Date.now());
       const json = await res.json();
       rawData = Array.isArray(json.records) ? json.records : [];
       rawData = rawData.map(i => ({ ...i, "Status": i["Status Esboço"] || i["Status"] || "Esboço Pendente" }));
+
       const tMap = await fetchTratativasSupabase();
+
       rawData = rawData.map(i => {
-        const num = String(i["Numero Esboço"] || "").trim();
-        const t   = tMap[num];
-        if (!t) return { ...i, "Situação do Tratamento": "", "Observação": "" };
-        return { ...i, "Situação do Tratamento": t.situacao_tratamento, "Observação": t.observacao };
+        const num    = String(i["Numero Esboço"] || "").trim();
+        const status = String(i["Status Esboço"] || i["Status"] || "").trim();
+        const t      = tMap[num];
+
+        // ── REGRA: esboço chegou FECHADO do Databricks → zera tratativa ──
+        // Marca `_foi_zerado = true` para avisar o usuário no modal
+        if (status === "Esboço Fechado" && t) {
+          return { ...i, "Situação do Tratamento": "", "Observação": "", "Analista DRP": "", "_foi_zerado": true };
+        }
+        if (!t) return { ...i, "Situação do Tratamento": "", "Observação": "", "Analista DRP": "" };
+        return { ...i, "Situação do Tratamento": t.situacao_tratamento, "Observação": t.observacao, "Analista DRP": t.analista_drp || "" };
       });
+
       groupedData = groupByEsboco(rawData);
       document.getElementById("updatedAt").textContent = "Atualizado: " + (json.updated_at || "-");
       populateFilters();
@@ -490,6 +658,7 @@
     }
   }
 
+  // ─── AGRUPAMENTO ──────────────────────────────────────────────────────────
   function groupByEsboco(data) {
     const map = new Map();
     for (const item of data) {
@@ -497,10 +666,13 @@
       if (!key) continue;
       const statusItem = String(item["Status Esboço"] || item["Status"] || "Esboço Pendente").trim();
       if (!map.has(key)) {
-        map.set(key, { "Numero Esboço":key,"Prioridade":item["Prioridade"]||"","Responsavel Esboço":item["Responsavel Esboço"]||"",
+        map.set(key, {
+          "Numero Esboço":key,"Prioridade":item["Prioridade"]||"","Responsavel Esboço":item["Responsavel Esboço"]||"",
           "Segmento":item["Segmento"]||"","Data do Esboço":item["Data do Esboço"]||"","Status":statusItem,
           "Situação do Tratamento":item["Situação do Tratamento"]||"","Observação":item["Observação"]||"",
-          "Valor Total":0,"Qtde Itens":0,"Itens":[] });
+          "Analista DRP":item["Analista DRP"]||"","_foi_zerado":item["_foi_zerado"]||false,
+          "Valor Total":0,"Qtde Itens":0,"Itens":[]
+        });
       }
       const g = map.get(key);
       g["Itens"].push(item);
@@ -510,6 +682,8 @@
       g["Status"] = resolveGroupStatus(g["Status"], statusItem);
       if (!g["Situação do Tratamento"] && item["Situação do Tratamento"]) g["Situação do Tratamento"] = item["Situação do Tratamento"];
       if (!g["Observação"] && item["Observação"]) g["Observação"] = item["Observação"];
+      if (!g["Analista DRP"] && item["Analista DRP"]) g["Analista DRP"] = item["Analista DRP"];
+      if (item["_foi_zerado"]) g["_foi_zerado"] = true;
     }
     return Array.from(map.values());
   }
@@ -523,6 +697,7 @@
 
   function comparePrioridade(a, b) { return getPrioridadePeso(a) - getPrioridadePeso(b); }
 
+  // ─── FILTROS ───────────────────────────────────────────────────────────────
   function populateFilters() {
     const pF = document.getElementById("prioridadeFilter");
     const sF = document.getElementById("segmentoFilter");
@@ -547,30 +722,47 @@
     const responsavel = document.getElementById("responsavelFilter").value;
     const dataStr     = document.getElementById("dataFilter").value;
     const dtFiltro    = dataStr ? new Date(dataStr + "T00:00:00") : null;
+
     filteredData = groupedData.filter(r => {
-      const texto = `${r["Prioridade"]||""} ${r["Responsavel Esboço"]||""} ${r["Numero Esboço"]||""} ${r["Segmento"]||""} ${r["Situação do Tratamento"]||""} ${r["Status"]||""} ${r["Observação"]||""}`.toLowerCase();
-      if (search     && !texto.includes(search))                                     return false;
-      if (status     && String(r["Status"]||"").trim()             !== status)        return false;
-      if (prioridade && String(r["Prioridade"]||"").trim()         !== prioridade)    return false;
-      if (segmento   && String(r["Segmento"]||"").trim()           !== segmento)      return false;
-      if (responsavel&& String(r["Responsavel Esboço"]||"").trim() !== responsavel)   return false;
-      if (dtFiltro) { const dr = normalizeDate(r["Data do Esboço"]); if (!dr || dr.toDateString() !== dtFiltro.toDateString()) return false; }
+      const texto = `${r["Prioridade"]||""} ${r["Responsavel Esboço"]||""} ${r["Numero Esboço"]||""} ${r["Segmento"]||""} ${r["Situação do Tratamento"]||""} ${r["Status"]||""} ${r["Observação"]||""} ${r["Analista DRP"]||""}`.toLowerCase();
+      if (search     && !texto.includes(search))                                       return false;
+      if (status     && String(r["Status"]||"").trim()             !== status)          return false;
+      if (prioridade && String(r["Prioridade"]||"").trim()         !== prioridade)      return false;
+      if (segmento   && String(r["Segmento"]||"").trim()           !== segmento)        return false;
+      if (responsavel&& String(r["Responsavel Esboço"]||"").trim() !== responsavel)     return false;
+      if (dtFiltro)  { const dr = normalizeDate(r["Data do Esboço"]); if (!dr || dr.toDateString() !== dtFiltro.toDateString()) return false; }
+
+      // ── FILTRO DE CARD ──────────────────────────────────────────
+      if (activeCardFilter) {
+        const sit = String(r["Situação do Tratamento"]||"").trim();
+        const st  = String(r["Status"]||"").trim();
+        if (activeCardFilter === "total")      return true;
+        if (activeCardFilter === "pendentes")  return st === "Esboço Pendente";
+        if (activeCardFilter === "tratativas") return sit === "Em Tratativa DRP";
+        if (activeCardFilter === "finalizados")return sit.startsWith("Finalizado");
+        if (activeCardFilter === "aguardando") return sit.startsWith("Aguardando Retorno do Cliente");
+      }
+
       return true;
     });
+
     filteredData.sort((a, b) => {
       const pa = getPrioridadePeso(a["Prioridade"]), pb = getPrioridadePeso(b["Prioridade"]);
       if (pa !== pb) return pa - pb;
       return getDiasEmAberto(b["Data do Esboço"]) - getDiasEmAberto(a["Data do Esboço"]);
     });
-    updateStats(); renderTable();
+
+    updateStats();
+    renderTable();
   }
 
   function clearFilters() {
     ["searchInput","dataFilter"].forEach(id => document.getElementById(id).value = "");
     ["statusFilter","prioridadeFilter","segmentoFilter","responsavelFilter"].forEach(id => document.getElementById(id).value = "");
-    applyFilters();
+    clearCardFilter();
   }
 
+  // ─── STATS ─────────────────────────────────────────────────────────────────
   function updateStats() {
     document.getElementById("statTotal").textContent       = groupedData.length;
     document.getElementById("statPendentes").textContent   = filteredData.filter(r => String(r["Status"]||"").trim() === "Esboço Pendente").length;
@@ -581,6 +773,7 @@
     document.getElementById("tableCount").textContent      = filteredData.length + " registros";
   }
 
+  // ─── TABELA ────────────────────────────────────────────────────────────────
   function renderTable() {
     const tbody = document.getElementById("tableBody");
     const empty = document.getElementById("emptyState");
@@ -591,6 +784,7 @@
       const statusSla = getStatusSla(r["Prioridade"], r["Data do Esboço"], status);
       const situacao  = r["Situação do Tratamento"] || "";
       const obs       = r["Observação"] || "-";
+      const analista  = r["Analista DRP"] || "-";
       let situacaoBadge;
       if (!situacao) {
         situacaoBadge = `<span class="status status-nao-iniciado">Não iniciado</span>`;
@@ -601,18 +795,24 @@
         situacaoBadge = `<span class="status ${cls}">${escapeHtml(situacao)}</span>`;
       }
       return `<tr class="group-row" onclick="openModal(${idx})">
-        <td>${escapeHtml(r["Prioridade"]||"-")}</td><td>${escapeHtml(r["Responsavel Esboço"]||"-")}</td>
-        <td>${escapeHtml(r["Numero Esboço"]||"-")}</td><td>${escapeHtml(r["Segmento"]||"-")}</td>
-        <td>${formatDate(r["Data do Esboço"])}</td><td>${getDiasEmAberto(r["Data do Esboço"])}</td>
+        <td>${escapeHtml(r["Prioridade"]||"-")}</td>
+        <td>${escapeHtml(r["Responsavel Esboço"]||"-")}</td>
+        <td>${escapeHtml(analista)}</td>
+        <td>${escapeHtml(r["Numero Esboço"]||"-")}</td>
+        <td>${escapeHtml(r["Segmento"]||"-")}</td>
+        <td>${formatDate(r["Data do Esboço"])}</td>
+        <td>${getDiasEmAberto(r["Data do Esboço"])}</td>
         <td><span class="status ${getStatusClass(status)}">${escapeHtml(status)}</span></td>
         <td>${situacaoBadge}</td>
         <td style="max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="${escapeHtml(obs)}">${escapeHtml(obs)}</td>
         <td><span class="status ${getSlaClass(statusSla)}">${escapeHtml(statusSla)}</span></td>
-        <td>${r["Qtde Itens"]||0}</td><td>${formatCurrency(r["Valor Total"]||0)}</td>
+        <td>${r["Qtde Itens"]||0}</td>
+        <td>${formatCurrency(r["Valor Total"]||0)}</td>
       </tr>`;
     }).join("");
   }
 
+  // ─── MODAL ─────────────────────────────────────────────────────────────────
   function openModal(index) {
     activeGroup = filteredData[index];
     if (!activeGroup) return;
@@ -624,18 +824,27 @@
       <div class="mini-card"><div class="label">Dias em Aberto</div><div class="value">${getDiasEmAberto(activeGroup["Data do Esboço"])}</div></div>
       <div class="mini-card"><div class="label">Status</div><div class="value">${escapeHtml(activeGroup["Status"]||"-")}</div></div>
       <div class="mini-card"><div class="label">Status SLA</div><div class="value">${escapeHtml(statusSla)}</div></div>`;
+
     const podeEditar = (currentViewMode === "time" || currentRole === "dev") && activeGroup["Status"] === "Esboço Pendente";
     const editorBox  = document.getElementById("editorBox");
     if (podeEditar) {
       editorBox.style.display = "block";
-      populateEditorFromSaved(activeGroup["Situação do Tratamento"]||"", activeGroup["Observação"]||"");
+      populateEditorFromSaved(
+        activeGroup["Situação do Tratamento"]||"",
+        activeGroup["Observação"]||"",
+        activeGroup["Analista DRP"]||"",
+        activeGroup["_foi_zerado"]||false
+      );
     } else {
       editorBox.style.display = "none";
     }
+
     document.getElementById("itemsBody").innerHTML = activeGroup["Itens"].map(item => `
       <tr>
-        <td>${escapeHtml(item["Código do Item"]||"-")}</td><td>${escapeHtml(item["Descrição do Item"]||"-")}</td>
-        <td>${formatCurrency(item["Valor Total"]||0)}</td><td>${escapeHtml(item["Observações"]||"-")}</td>
+        <td>${escapeHtml(item["Código do Item"]||"-")}</td>
+        <td>${escapeHtml(item["Descrição do Item"]||"-")}</td>
+        <td>${formatCurrency(item["Valor Total"]||0)}</td>
+        <td>${escapeHtml(item["Observações"]||"-")}</td>
         <td>${escapeHtml(item["Data de Atualização"]||"-")}</td>
       </tr>`).join("");
     document.getElementById("detailModal").classList.add("open");
@@ -646,39 +855,56 @@
     activeGroup = null;
   }
 
-  // ─── SAVE TRATATIVA + EMAIL ───────────────────────────────────────────────────
+  // ─── SAVE TRATATIVA ────────────────────────────────────────────────────────
   async function saveTratamento() {
     if (!activeGroup || activeGroup["Status"] !== "Esboço Pendente") return;
     const num = String(activeGroup["Numero Esboço"]||"").trim();
     if (!num) { showToast("Número do esboço inválido.", "error"); return; }
 
+    // Validar analista DRP
+    const analista = document.getElementById("analistaDrpSelect").value;
+    if (!analista) { showToast("⚠️ Selecione o Analista DRP responsável.", "error"); return; }
+
     const { situacao, obs_pv, valid, msg } = buildSituacaoFinal();
     if (!valid) { showToast("⚠️ " + msg, "error"); return; }
 
-    const obsDigitada = document.getElementById("observacaoInput").value.trim();
+    const obsDigitada     = document.getElementById("observacaoInput").value.trim();
     const observacaoFinal = obs_pv
       ? `PV: ${obs_pv}` + (obsDigitada ? `\n${obsDigitada}` : "")
       : obsDigitada;
 
     const btn = document.getElementById("btnSalvar");
-    btn.disabled = true;
-    btn.textContent = "⏳ Salvando...";
+    btn.disabled = true; btn.textContent = "⏳ Salvando...";
 
     try {
       const { error } = await sb.from("tratativas_esboco").upsert(
-        { numero_esboco: num, situacao_tratamento: situacao, observacao: observacaoFinal, updated_by: currentUser || "", updated_at: new Date().toISOString(), email_responsavel: (activeGroup?.["Itens"]?.[0]?.["Email"] || ""), email_enviado: false },
+        {
+          numero_esboco:    num,
+          situacao_tratamento: situacao,
+          observacao:       observacaoFinal,
+          analista_drp:     analista,
+          updated_by:       currentUser || "",
+          updated_at:       new Date().toISOString(),
+          email_responsavel:(activeGroup?.["Itens"]?.[0]?.["Email"] || ""),
+          email_enviado:    false,
+        },
         { onConflict: "numero_esboco" }
       );
       if (error) throw error;
 
-      // dispara email em background — não bloqueia a UI
-      dispararEmailAlerta(activeGroup, situacao, observacaoFinal);
+      dispararEmailAlerta(activeGroup, situacao, observacaoFinal, analista);
 
       // atualiza estado local
       activeGroup["Situação do Tratamento"] = situacao;
       activeGroup["Observação"]             = observacaoFinal;
-      groupedData = groupedData.map(g => String(g["Numero Esboço"]).trim() === num ? { ...g, "Situação do Tratamento": situacao, "Observação": observacaoFinal } : g);
-      rawData     = rawData.map(i     => String(i["Numero Esboço"]).trim() === num ? { ...i, "Situação do Tratamento": situacao, "Observação": observacaoFinal } : i);
+      activeGroup["Analista DRP"]           = analista;
+      activeGroup["_foi_zerado"]            = false;
+      groupedData = groupedData.map(g => String(g["Numero Esboço"]).trim() === num
+        ? { ...g, "Situação do Tratamento": situacao, "Observação": observacaoFinal, "Analista DRP": analista, "_foi_zerado": false }
+        : g);
+      rawData = rawData.map(i => String(i["Numero Esboço"]).trim() === num
+        ? { ...i, "Situação do Tratamento": situacao, "Observação": observacaoFinal, "Analista DRP": analista, "_foi_zerado": false }
+        : i);
 
       applyFilters();
       const newIdx = filteredData.findIndex(x => String(x["Numero Esboço"]).trim() === num);
@@ -688,12 +914,11 @@
       console.error("Erro ao salvar tratativa:", err);
       showToast("❌ Erro ao salvar: " + (err.message || "verifique o console."), "error");
     } finally {
-      btn.disabled = false;
-      btn.textContent = "💾 Salvar tratativa";
+      btn.disabled = false; btn.textContent = "💾 Salvar tratativa";
     }
   }
 
-  // ─── HELPERS ─────────────────────────────────────────────────────────────────
+  // ─── HELPERS ───────────────────────────────────────────────────────────────
   function parseAnyDate(value) {
     if (!value) return null;
     const iso = new Date(value);
@@ -731,7 +956,9 @@
 
   function getSlaClass(s) {
     s = String(s||"").toLowerCase();
-    if (s === "vencido") return "status-sla-vencido"; if (s === "vence hoje") return "status-sla-vencehoje"; return "status-sla-noprazo";
+    if (s === "vencido") return "status-sla-vencido";
+    if (s === "vence hoje") return "status-sla-vencehoje";
+    return "status-sla-noprazo";
   }
 
   function formatCurrency(value) { return Number(value||0).toLocaleString("pt-BR",{style:"currency",currency:"BRL"}); }
