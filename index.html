@@ -628,21 +628,39 @@
   //   b) ainda possuem uma tratativa preenchida no Supabase
   // E então faz um upsert zerando-os de forma ativa, marcando `_foi_zerado = true`
   async function zerarTratativasFechadasAtivo(rawItems, tMap) {
-    // Coleta números únicos de esboços fechados no Databricks
-    const fechadosNoBanco = new Set();
+    // Diagnóstico: loga os status únicos encontrados no data.json para confirmar os valores reais
+    const statusUnicos = [...new Set(rawItems.map(i => String(i["Status Esboço"] || i["Status"] || "(vazio)").trim()))];
+    console.log("[Zeragem] Status únicos encontrados no data.json:", statusUnicos);
+
+    // Monta um mapa: numero_esboco → Set de todos os status das suas linhas
+    // Um esboço só é considerado "fechado" se TODAS as suas linhas tiverem Status === "Esboço Fechado"
+    // Isso evita zerar um esboço que ainda tem linhas pendentes
+    const statusPorEsboco = new Map();
     for (const item of rawItems) {
-      const status = String(item["Status Esboço"] || item["Status"] || "").trim();
       const num    = String(item["Numero Esboço"] || "").trim();
-      if (status === "Esboço Fechado" && num) fechadosNoBanco.add(num);
+      const status = String(item["Status Esboço"] || item["Status"] || "").trim();
+      if (!num) continue;
+      if (!statusPorEsboco.has(num)) statusPorEsboco.set(num, new Set());
+      statusPorEsboco.get(num).add(status);
     }
 
-    // Filtra quais desses fechados ainda têm registro com situação preenchida no Supabase
+    // Esboço fechado = todas as linhas são "Esboço Fechado" (nenhuma linha pendente)
+    const fechadosNoBanco = new Set();
+    for (const [num, statusSet] of statusPorEsboco) {
+      const todosFechados = [...statusSet].every(s => s === "Esboço Fechado");
+      if (todosFechados) fechadosNoBanco.add(num);
+    }
+
+    console.log("[Zeragem] Esboços totalmente fechados no Databricks:", [...fechadosNoBanco].length);
+
+    // Filtra quais desses fechados ainda têm situacao_tratamento preenchida no Supabase
     const paraZerar = [];
     for (const num of fechadosNoBanco) {
       const t = tMap[num];
-      if (t && t.situacao_raw) {
-        // Tem tratativa no Supabase → precisa zerar ativamente
+      if (t && t.situacao_raw && t.situacao_raw.trim()) {
+        // Tem tratativa não-vazia no Supabase → precisa zerar ativamente
         paraZerar.push(num);
+        console.log(`[Zeragem] Vai zerar esboço ${num} (situação atual: "${t.situacao_raw}")`);
       }
     }
 
