@@ -594,7 +594,7 @@
       observacao:         observacao || "—",
       analista_drp:       (analista && analista.includes("@")) ? emailParaNome(analista) : (analista || "—"),
       alterado_por:       currentUser || "Time Interno",
-      alterado_em:        new Date().toLocaleString("pt-BR"),
+      alterado_em:        new Date().toLocaleString("pt-BR", {timeZone:"America/Sao_Paulo"}),
       link_painel:        PAINEL_URL,
     };
     try {
@@ -698,7 +698,7 @@
     console.log(`[Zeragem ativa] Zerando ${paraZerar.length} esboço(s) fechado(s):`, paraZerar);
 
     // Upsert em lote zerando situacao_tratamento, observacao e analista_drp
-    const agora = new Date().toISOString();
+    const agora = new Date().toLocaleString("pt-BR", {timeZone:"America/Sao_Paulo"});
     const registros = paraZerar.map(num => ({
       numero_esboco:       num,
       situacao_tratamento: "",
@@ -996,7 +996,7 @@
           email_analista_drp:  emailAnalista,      // email para envio no Automate
           cc_drp:              "drp@alloha.com",
           updated_by:          currentUser || "",
-          updated_at:          new Date().toISOString(),
+          updated_at:          new Date().toLocaleString("pt-BR", {timeZone:"America/Sao_Paulo"}),
           email_responsavel:   (activeGroup?.["Itens"]?.[0]?.["Email"] || ""),
           email_enviado:       false,
         },
