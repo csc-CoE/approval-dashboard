@@ -400,8 +400,8 @@
     const membros = [...USUARIOS_LOGIN.time, ...USUARIOS_LOGIN.dev];
     membros.forEach(email => {
       const opt = document.createElement("option");
-      opt.value = emailParaNome(email);   // armazena o nome, igual ao campo analista_drp no Supabase
-      opt.textContent = emailParaNome(email);
+      opt.value = email;                  // value = email corporativo (usado para gravar no Supabase)
+      opt.textContent = emailParaNome(email); // label = nome amigável (exibido ao usuário)
       sel.appendChild(opt);
     });
   }
@@ -526,7 +526,16 @@
 
   function populateEditorFromSaved(situacaoSalva, observacaoSalva, analistaSalvo, foiZerado) {
     document.getElementById("tratamentoSelect").value = "";
-    document.getElementById("analistaDrpSelect").value = analistaSalvo || "";
+    // analistaSalvo pode ser nome (registros antigos) ou email (registros novos)
+    // O select agora usa email como value, então convertemos nome → email se necessário
+    let analistaValue = analistaSalvo || "";
+    if (analistaValue && !analistaValue.includes("@")) {
+      // É um nome — converte para email
+      const todos = [...USUARIOS_LOGIN.time, ...USUARIOS_LOGIN.dev];
+      const match = todos.find(e => emailParaNome(e) === analistaValue);
+      analistaValue = match || "";
+    }
+    document.getElementById("analistaDrpSelect").value = analistaValue;
     ["sublistaFinalizado","sublistaCliente","pvInputBox"].forEach(id => document.getElementById(id).classList.remove("visible"));
     ["finalizadoSubSelect","clienteSubSelect","pvNumeroInput"].forEach(id => document.getElementById(id).value = "");
     document.getElementById("observacaoInput").value = observacaoSalva || "";
@@ -557,10 +566,12 @@
   // ─── EMAIL POWER AUTOMATE ──────────────────────────────────────────────────
 
   // Mapa nome-amigável → email corporativo (gerado a partir de USUARIOS_LOGIN)
-  function getEmailAnalista(nomeAnalista) {
+  function getEmailAnalista(emailOuNome) {
+    // O value do select agora é o email direto — apenas retorna
+    if (emailOuNome && emailOuNome.includes("@")) return emailOuNome;
+    // Fallback: se por algum motivo vier o nome, resolve via lista
     const todos = [...USUARIOS_LOGIN.time, ...USUARIOS_LOGIN.dev];
-    const match = todos.find(email => emailParaNome(email) === nomeAnalista);
-    return match || "";
+    return todos.find(e => emailParaNome(e) === emailOuNome) || "";
   }
 
   async function dispararEmailAlerta(grupo, situacao, observacao, analista) {
@@ -581,7 +592,7 @@
       situacao_anterior:  grupo["Situação do Tratamento"] || "Não iniciado",
       nova_situacao:      situacao,
       observacao:         observacao || "—",
-      analista_drp:       analista || "—",
+      analista_drp:       (analista && analista.includes("@")) ? emailParaNome(analista) : (analista || "—"),
       alterado_por:       currentUser || "Time Interno",
       alterado_em:        new Date().toLocaleString("pt-BR"),
       link_painel:        PAINEL_URL,
@@ -974,14 +985,15 @@
     btn.disabled = true; btn.textContent = "⏳ Salvando...";
 
     try {
-      const emailAnalista = getEmailAnalista(analista);
+      const emailAnalista = analista; // value do select já é o email
+      const nomeAnalista  = emailParaNome(analista); // nome amigável para exibição
       const { error } = await sb.from("tratativas_esboco").upsert(
         {
           numero_esboco:       num,
           situacao_tratamento: situacao,
           observacao:          observacaoFinal,
-          analista_drp:        analista,
-          email_analista_drp:  emailAnalista,
+          analista_drp:        nomeAnalista,       // nome para exibição no painel
+          email_analista_drp:  emailAnalista,      // email para envio no Automate
           cc_drp:              "drp@alloha.com",
           updated_by:          currentUser || "",
           updated_at:          new Date().toISOString(),
