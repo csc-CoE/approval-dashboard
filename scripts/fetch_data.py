@@ -23,7 +23,7 @@ SELECT
     r.email_corporativo                                 AS email_solicitante,
     f.ptr_esboco                                        AS n_doesboco,
     f.ptr_segmento                                      AS segmento,
-    DATE_FORMAT(f.ptr_data_esboco, 'dd/MM/yyyy')        AS data,
+    DATE_FORMAT(f.ptr_data_esboco, 'yyyy-MM-dd')        AS data,
     f.ptr_valor_total                                   AS line_total,
     f.ptr_observacoes                                   AS observacoes,
     f.ptr_item_codigo                                   AS item_code,
@@ -102,7 +102,7 @@ def parse_results(payload):
         records.append({
             "Numero Esboço":       r.get("n_doesboco", ""),
             "Prioridade":          r.get("prioridade", ""),
-            "Data do Esboço":      r.get("data", ""),
+            "Data do Esboço":      r.get("data", ""),        # ISO: yyyy-MM-dd
             "Responsavel Esboço":  r.get("solicitante", ""),
             "Email":               r.get("email_solicitante", ""),
             "Segmento":            r.get("segmento", ""),
