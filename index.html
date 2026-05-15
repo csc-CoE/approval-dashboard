@@ -36,7 +36,6 @@
     .container{max-width:1520px;margin:0 auto;padding:28px;}
     .banner{display:none;margin-bottom:20px;background:rgba(255,107,0,0.10);border:1px solid rgba(255,107,0,0.30);color:#ffd4a8;border-radius:var(--radius);padding:12px 18px;font-size:14px;font-weight:600;}
 
-    /* ── CARDS ──────────────────────────────────────────────────────── */
     .cards{display:grid;grid-template-columns:repeat(6,1fr);gap:16px;margin-bottom:22px;}
     .card{
       background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:22px;
@@ -70,7 +69,6 @@
     .card:not(.card-valor):hover .card-filter-hint{opacity:1;}
     .card.card-active .card-filter-hint{opacity:1;color:var(--accent-light);}
 
-    /* ── FILTROS ─────────────────────────────────────────────────────── */
     .filters{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:16px 18px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:20px;}
     .filters-label{color:var(--accent);font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:1px;}
     input,select,textarea{background:var(--surface-2);color:var(--text);border:1px solid var(--border);border-radius:10px;padding:10px 14px;font-size:13px;font-family:inherit;font-weight:600;outline:none;transition:border-color .2s;}
@@ -83,7 +81,6 @@
     .active-card-pill.visible{display:flex;}
     .active-card-pill button{background:none;border:none;color:var(--accent-light);cursor:pointer;font-size:14px;line-height:1;padding:0 0 0 4px;}
 
-    /* ── TABELA ──────────────────────────────────────────────────────── */
     .table-box{background:var(--surface);border:1px solid var(--border);border-radius:18px;overflow:hidden;}
     .table-head{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid var(--border);}
     .table-head-title{font-size:15px;font-weight:800;letter-spacing:-.2px;}
@@ -106,7 +103,6 @@
     .status-sla-vencido   {background:rgba(239,68,68,0.14); color:#f87171;border-color:rgba(239,68,68,0.25);}
     .empty{padding:36px 20px;color:var(--muted);font-size:14px;text-align:center;}
 
-    /* ── MODAL ───────────────────────────────────────────────────────── */
     .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.72);z-index:1000;align-items:center;justify-content:center;padding:24px;}
     .modal-overlay.open{display:flex;}
     .modal{width:min(1200px,96vw);max-height:90vh;overflow:auto;background:var(--surface);border:1px solid rgba(255,107,0,0.25);border-radius:20px;padding:24px;}
@@ -137,7 +133,6 @@
     .pv-input-box label{display:block;font-size:11px;font-weight:800;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:.8px;}
     .required-mark{color:var(--danger);margin-left:2px;}
 
-    /* ── TOAST ───────────────────────────────────────────────────────── */
     .toast{position:fixed;bottom:28px;right:28px;z-index:9999;background:#1e1e1e;border:1px solid var(--border);border-radius:12px;padding:14px 20px;font-size:14px;font-weight:700;color:var(--text);box-shadow:0 8px 32px rgba(0,0,0,0.5);opacity:0;transform:translateY(12px);transition:opacity .25s,transform .25s;pointer-events:none;}
     .toast.show{opacity:1;transform:translateY(0);}
     .toast.success{border-color:rgba(34,197,94,0.4);color:#4ade80;}
@@ -284,7 +279,6 @@
       <div class="email-notice">📧 Ao salvar, um email será enviado automaticamente ao responsável do esboço.</div>
 
       <div class="editor-row">
-        <!-- FIX 1: Lista gerada dinamicamente a partir de usuarios.time + usuarios.dev -->
         <div>
           <label for="analistaDrpSelect">Analista DRP Responsável <span class="required-mark">*</span></label>
           <select id="analistaDrpSelect">
@@ -361,7 +355,6 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-  // ─── CONFIGURAÇÃO ──────────────────────────────────────────────────────────
   const POWER_AUTOMATE_WEBHOOK = "https://default7ebaa4673ace4a9cad914e84933a66.07.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/62104aa69720411cae057a4865912192/triggers/manual/paths/invoke?api-version=1";
   const PAINEL_URL             = "https://csc-coe.github.io/approval-dashboard/";
   const LOGIN_PAGE             = "login.html";
@@ -369,8 +362,6 @@
   const SUPABASE_ANON_KEY      = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9qZ3RwZHdqY21xY2JpeWRhZXN4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUwMzA3NTQsImV4cCI6MjA5MDYwNjc1NH0.U87vGwcmaZW6UoOYrKSqIoArVqquCFAzvbqQaeUbhIE";
   const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-  // ─── FIX 1: Fonte única de usuários — espelhada do login.html ─────────────
-  // IMPORTANTE: mantenha esta lista sincronizada com login.html → usuarios.time / usuarios.dev
   const USUARIOS_LOGIN = {
     dev: [
       "wender.souza@alloha.com"
@@ -387,31 +378,27 @@
     ]
   };
 
-  // Extrai o nome amigável a partir do e-mail (parte antes do @, capitalizado)
   function emailParaNome(email) {
     const local = email.split("@")[0] || email;
     return local.split(".").map(p => p.charAt(0).toUpperCase() + p.slice(1)).join(" ");
   }
 
-  // Popula o <select> de analistas com time + dev (fonte: USUARIOS_LOGIN)
   function popularListaAnalistas() {
     const sel = document.getElementById("analistaDrpSelect");
     sel.innerHTML = '<option value="">— Selecione o analista —</option>';
     const membros = [...USUARIOS_LOGIN.time, ...USUARIOS_LOGIN.dev];
     membros.forEach(email => {
       const opt = document.createElement("option");
-      opt.value = email;                  // value = email corporativo (usado para gravar no Supabase)
-      opt.textContent = emailParaNome(email); // label = nome amigável (exibido ao usuário)
+      opt.value = email;
+      opt.textContent = emailParaNome(email);
       sel.appendChild(opt);
     });
   }
-  // ──────────────────────────────────────────────────────────────────────────
 
   let rawData = [], groupedData = [], filteredData = [];
   let currentUser = null, currentRole = null, currentViewMode = "time", activeGroup = null;
   let activeCardFilter = null;
 
-  // ─── AUTH ──────────────────────────────────────────────────────────────────
   function showToast(msg, type = "success") {
     const t = document.getElementById("toast");
     t.textContent = msg;
@@ -430,7 +417,7 @@
     document.getElementById("roleChip").textContent = "Perfil: " + (perfil === "dev" ? "Desenvolvedor" : perfil === "time" ? "Time Interno" : "Solicitante");
     if (perfil === "dev") document.getElementById("viewToggle").style.display = "flex";
     renderViewMode();
-    popularListaAnalistas(); // FIX 1: popula a lista após auth
+    popularListaAnalistas();
     return true;
   }
 
@@ -452,7 +439,6 @@
     window.location.href = LOGIN_PAGE;
   }
 
-  // ─── FILTRO POR CARD ───────────────────────────────────────────────────────
   const CARD_LABELS = {
     total:      '📋 Todos os esboços',
     pendentes:  '⏳ Esboço Pendente',
@@ -484,7 +470,6 @@
     applyFilters();
   }
 
-  // ─── EDITOR ───────────────────────────────────────────────────────────────
   function onTratamentoChange() {
     const val = document.getElementById("tratamentoSelect").value;
     document.getElementById("sublistaFinalizado").classList.remove("visible");
@@ -526,11 +511,8 @@
 
   function populateEditorFromSaved(situacaoSalva, observacaoSalva, analistaSalvo, foiZerado) {
     document.getElementById("tratamentoSelect").value = "";
-    // analistaSalvo pode ser nome (registros antigos) ou email (registros novos)
-    // O select agora usa email como value, então convertemos nome → email se necessário
     let analistaValue = analistaSalvo || "";
     if (analistaValue && !analistaValue.includes("@")) {
-      // É um nome — converte para email
       const todos = [...USUARIOS_LOGIN.time, ...USUARIOS_LOGIN.dev];
       const match = todos.find(e => emailParaNome(e) === analistaValue);
       analistaValue = match || "";
@@ -563,15 +545,20 @@
     }
   }
 
-  // ─── EMAIL POWER AUTOMATE ──────────────────────────────────────────────────
-
-  // Mapa nome-amigável → email corporativo (gerado a partir de USUARIOS_LOGIN)
   function getEmailAnalista(emailOuNome) {
-    // O value do select agora é o email direto — apenas retorna
     if (emailOuNome && emailOuNome.includes("@")) return emailOuNome;
-    // Fallback: se por algum motivo vier o nome, resolve via lista
     const todos = [...USUARIOS_LOGIN.time, ...USUARIOS_LOGIN.dev];
     return todos.find(e => emailParaNome(e) === emailOuNome) || "";
+  }
+
+  // ── FIX 2: alterado_em com formato limpo e timezone correto ─────────────
+  function getDataHoraBRT() {
+    return new Date().toLocaleString("pt-BR", {
+      timeZone: "America/Sao_Paulo",
+      day: "2-digit", month: "2-digit", year: "numeric",
+      hour: "2-digit", minute: "2-digit",
+      hour12: false
+    }).replace(",", "");
   }
 
   async function dispararEmailAlerta(grupo, situacao, observacao, analista) {
@@ -594,7 +581,7 @@
       observacao:         observacao || "—",
       analista_drp:       (analista && analista.includes("@")) ? emailParaNome(analista) : (analista || "—"),
       alterado_por:       currentUser || "Time Interno",
-      alterado_em:        new Date().toLocaleString("pt-BR", {timeZone:"America/Sao_Paulo"}),
+      alterado_em:        getDataHoraBRT(), // ✅ FIX 2: formato limpo sem vírgula
       link_painel:        PAINEL_URL,
     };
     try {
@@ -608,7 +595,6 @@
     }
   }
 
-  // ─── NORMALIZAÇÃO / MIGRAÇÃO ───────────────────────────────────────────────
   const SITUACOES_LEGADAS_VAZIAS = new Set(["Em análise pelo time","Em análise de cliente"]);
   const MIGRACOES_SITUACAO = {
     "Aguardando validação":"Em Tratativa DRP","Aguardando ajuste de informações":"Em Tratativa DRP",
@@ -626,9 +612,7 @@
     return MIGRACOES_SITUACAO[sit] || sit;
   }
 
-  // ─── SUPABASE ──────────────────────────────────────────────────────────────
   async function fetchTratativasSupabase() {
-    // Tenta com analista_drp; se der 400 (coluna inexistente), tenta sem ela
     let data, error;
     ({ data, error } = await sb.from("tratativas_esboco")
       .select("numero_esboco,situacao_tratamento,observacao,analista_drp"));
@@ -651,19 +635,10 @@
     return map;
   }
 
-  // ─── FIX 2 & 3: Zeragem ATIVA no Supabase para esboços fechados ───────────
-  // Detecta esboços que:
-  //   a) chegaram como "Esboço Fechado" no data.json (Databricks)
-  //   b) ainda possuem uma tratativa preenchida no Supabase
-  // E então faz um upsert zerando-os de forma ativa, marcando `_foi_zerado = true`
   async function zerarTratativasFechadasAtivo(rawItems, tMap) {
-    // Diagnóstico: loga os status únicos encontrados no data.json para confirmar os valores reais
     const statusUnicos = [...new Set(rawItems.map(i => String(i["Status Esboço"] || i["Status"] || "(vazio)").trim()))];
     console.log("[Zeragem] Status únicos encontrados no data.json:", statusUnicos);
 
-    // Monta um mapa: numero_esboco → Set de todos os status das suas linhas
-    // Um esboço só é considerado "fechado" se TODAS as suas linhas tiverem Status === "Esboço Fechado"
-    // Isso evita zerar um esboço que ainda tem linhas pendentes
     const statusPorEsboco = new Map();
     for (const item of rawItems) {
       const num    = String(item["Numero Esboço"] || "").trim();
@@ -673,7 +648,6 @@
       statusPorEsboco.get(num).add(status);
     }
 
-    // Esboço fechado = todas as linhas são "Esboço Fechado" (nenhuma linha pendente)
     const fechadosNoBanco = new Set();
     for (const [num, statusSet] of statusPorEsboco) {
       const todosFechados = [...statusSet].every(s => s === "Esboço Fechado");
@@ -682,23 +656,22 @@
 
     console.log("[Zeragem] Esboços totalmente fechados no Databricks:", [...fechadosNoBanco].length);
 
-    // Filtra quais desses fechados ainda têm situacao_tratamento preenchida no Supabase
     const paraZerar = [];
     for (const num of fechadosNoBanco) {
       const t = tMap[num];
       if (t && t.situacao_raw && t.situacao_raw.trim()) {
-        // Tem tratativa não-vazia no Supabase → precisa zerar ativamente
         paraZerar.push(num);
         console.log(`[Zeragem] Vai zerar esboço ${num} (situação atual: "${t.situacao_raw}")`);
       }
     }
 
-    if (!paraZerar.length) return new Set(); // nenhum para zerar
+    if (!paraZerar.length) return new Set();
 
     console.log(`[Zeragem ativa] Zerando ${paraZerar.length} esboço(s) fechado(s):`, paraZerar);
 
-    // Upsert em lote zerando situacao_tratamento, observacao e analista_drp
-    const agora = new Date(new Date().toLocaleString("en-US", {timeZone:"America/Sao_Paulo"})).toISOString().replace("Z", "-03:00");
+    // ✅ FIX 1: updated_at em UTC puro — sem anti-pattern de toLocaleString
+    const agora = new Date().toISOString();
+
     const registros = paraZerar.map(num => ({
       numero_esboco:       num,
       situacao_tratamento: "",
@@ -713,15 +686,12 @@
     const { error } = await sb.from("tratativas_esboco").upsert(registros, { onConflict: "numero_esboco" });
     if (error) {
       console.error("[Zeragem ativa] Erro ao zerar tratativas:", error);
-      return new Set(); // falha silenciosa — não marca como zerado
+      return new Set();
     }
 
-    // Retorna o Set dos números que foram zerados com sucesso
     return new Set(paraZerar);
   }
-  // ──────────────────────────────────────────────────────────────────────────
 
-  // ─── LOAD DATA ─────────────────────────────────────────────────────────────
   async function loadData() {
     try {
       const res  = await fetch("data.json?t=" + Date.now());
@@ -730,25 +700,17 @@
       rawData = rawData.map(i => ({ ...i, "Status": i["Status Esboço"] || i["Status"] || "Esboço Pendente" }));
 
       const tMap = await fetchTratativasSupabase();
-
-      // FIX 2 & 3: zeragem ATIVA — detecta e persiste no Supabase antes de montar a tela
       const numerosZerados = await zerarTratativasFechadasAtivo(rawData, tMap);
 
-      // Monta rawData mesclando dados do Supabase.
-      // Regra simples: se existe registro no Supabase para o número, usa os campos de lá.
-      // A zeragem (quando necessária) já foi feita ativamente acima via upsert —
-      // então tMap já reflete o estado correto do Supabase neste momento.
       rawData = rawData.map(i => {
         const num       = String(i["Numero Esboço"] || "").trim();
         const t         = tMap[num];
-        const foiZerado = numerosZerados.has(num); // true só se o sistema zerou AGORA nesta execução
+        const foiZerado = numerosZerados.has(num);
 
         if (!t) {
-          // Nenhum registro no Supabase para este esboço
           return { ...i, "Situação do Tratamento": "", "Observação": "", "Analista DRP": "", "_foi_zerado": false };
         }
 
-        // Tem registro no Supabase — usa exatamente o que está lá (incluindo strings vazias pós-zeragem)
         return {
           ...i,
           "Situação do Tratamento": t.situacao_tratamento || "",
@@ -768,7 +730,6 @@
     }
   }
 
-  // ─── AGRUPAMENTO ──────────────────────────────────────────────────────────
   function groupByEsboco(data) {
     const map = new Map();
     for (const item of data) {
@@ -807,7 +768,6 @@
 
   function comparePrioridade(a, b) { return getPrioridadePeso(a) - getPrioridadePeso(b); }
 
-  // ─── FILTROS ───────────────────────────────────────────────────────────────
   function populateFilters() {
     const pF = document.getElementById("prioridadeFilter");
     const sF = document.getElementById("segmentoFilter");
@@ -831,7 +791,7 @@
     const segmento    = document.getElementById("segmentoFilter").value;
     const responsavel = document.getElementById("responsavelFilter").value;
     const dataStr     = document.getElementById("dataFilter").value;
-    const dtFiltro    = dataStr ? new Date(dataStr + "T00:00:00") : null;
+    const dtFiltro    = dataStr ? new Date(dataStr + "T12:00:00") : null; // ✅ FIX 3: T12:00 evita shift de dia
 
     filteredData = groupedData.filter(r => {
       const texto = `${r["Prioridade"]||""} ${r["Responsavel Esboço"]||""} ${r["Numero Esboço"]||""} ${r["Segmento"]||""} ${r["Situação do Tratamento"]||""} ${r["Status"]||""} ${r["Observação"]||""} ${r["Analista DRP"]||""}`.toLowerCase();
@@ -871,7 +831,6 @@
     clearCardFilter();
   }
 
-  // ─── STATS ─────────────────────────────────────────────────────────────────
   function updateStats() {
     document.getElementById("statTotal").textContent       = groupedData.length;
     document.getElementById("statPendentes").textContent   = filteredData.filter(r => String(r["Status"]||"").trim() === "Esboço Pendente").length;
@@ -882,7 +841,6 @@
     document.getElementById("tableCount").textContent      = filteredData.length + " registros";
   }
 
-  // ─── TABELA ────────────────────────────────────────────────────────────────
   function renderTable() {
     const tbody = document.getElementById("tableBody");
     const empty = document.getElementById("emptyState");
@@ -921,7 +879,6 @@
     }).join("");
   }
 
-  // ─── MODAL ─────────────────────────────────────────────────────────────────
   function openModal(index) {
     activeGroup = filteredData[index];
     if (!activeGroup) return;
@@ -964,7 +921,6 @@
     activeGroup = null;
   }
 
-  // ─── SAVE TRATATIVA ────────────────────────────────────────────────────────
   async function saveTratamento() {
     if (!activeGroup || activeGroup["Status"] !== "Esboço Pendente") return;
     const num = String(activeGroup["Numero Esboço"]||"").trim();
@@ -985,18 +941,20 @@
     btn.disabled = true; btn.textContent = "⏳ Salvando...";
 
     try {
-      const emailAnalista = analista; // value do select já é o email
-      const nomeAnalista  = emailParaNome(analista); // nome amigável para exibição
+      const emailAnalista = analista;
+      const nomeAnalista  = emailParaNome(analista);
+
+      // ✅ FIX 1: updated_at em UTC puro — sem anti-pattern de toLocaleString
       const { error } = await sb.from("tratativas_esboco").upsert(
         {
           numero_esboco:       num,
           situacao_tratamento: situacao,
           observacao:          observacaoFinal,
-          analista_drp:        nomeAnalista,       // nome para exibição no painel
-          email_analista_drp:  emailAnalista,      // email para envio no Automate
+          analista_drp:        nomeAnalista,
+          email_analista_drp:  emailAnalista,
           cc_drp:              "drp@alloha.com",
           updated_by:          currentUser || "",
-          updated_at:          new Date(new Date().toLocaleString("en-US", {timeZone:"America/Sao_Paulo"})).toISOString().replace("Z", "-03:00"),
+          updated_at:          new Date().toISOString(),
           email_responsavel:   (activeGroup?.["Itens"]?.[0]?.["Email"] || ""),
           email_enviado:       false,
         },
@@ -1029,13 +987,22 @@
     }
   }
 
-  // ─── HELPERS ───────────────────────────────────────────────────────────────
+  // ✅ FIX 3: parseAnyDate trata ISO yyyy-mm-dd com T12:00 para evitar shift de timezone
   function parseAnyDate(value) {
     if (!value) return null;
+    const str = String(value);
+    // ISO puro yyyy-mm-dd → adiciona T12:00 para evitar shift de fuso
+    if (/^\d{4}-\d{2}-\d{2}$/.test(str)) {
+      const d = new Date(str + "T12:00:00");
+      if (!isNaN(d.getTime())) return d;
+    }
     const iso = new Date(value);
     if (!isNaN(iso.getTime())) return iso;
-    const br = String(value).match(/^(\d{2})\/(\d{2})\/(\d{4})(?:\s+(\d{2}):(\d{2}))?/);
-    if (br) { const dt = new Date(`${br[3]}-${br[2]}-${br[1]}T${br[4]||"00"}:${br[5]||"00"}:00`); if (!isNaN(dt.getTime())) return dt; }
+    const br = str.match(/^(\d{2})\/(\d{2})\/(\d{4})(?:\s+(\d{2}):(\d{2}))?/);
+    if (br) {
+      const dt = new Date(`${br[3]}-${br[2]}-${br[1]}T${br[4]||"12"}:${br[5]||"00"}:00`);
+      if (!isNaN(dt.getTime())) return dt;
+    }
     return null;
   }
 
