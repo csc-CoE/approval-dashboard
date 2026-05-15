@@ -987,22 +987,30 @@
     }
   }
 
-  // ✅ FIX 3: parseAnyDate trata ISO yyyy-mm-dd com T12:00 para evitar shift de timezone
+  // ✅ FIX 3: parseAnyDate — regex dd/MM/yyyy PRIMEIRO para evitar que
+  // new Date("04/05/2026") seja lido como abril (formato americano MM/dd/yyyy)
+  // Databricks retorna dd/MM/yyyy (ex: "04/05/2026" = 4 de maio), não MM/dd.
   function parseAnyDate(value) {
     if (!value) return null;
     const str = String(value);
-    // ISO puro yyyy-mm-dd → adiciona T12:00 para evitar shift de fuso
-    if (/^\d{4}-\d{2}-\d{2}$/.test(str)) {
-      const d = new Date(str + "T12:00:00");
-      if (!isNaN(d.getTime())) return d;
-    }
-    const iso = new Date(value);
-    if (!isNaN(iso.getTime())) return iso;
+
+    // 1) Formato brasileiro dd/MM/yyyy — SEMPRE verificar antes de new Date()
     const br = str.match(/^(\d{2})\/(\d{2})\/(\d{4})(?:\s+(\d{2}):(\d{2}))?/);
     if (br) {
       const dt = new Date(`${br[3]}-${br[2]}-${br[1]}T${br[4]||"12"}:${br[5]||"00"}:00`);
       if (!isNaN(dt.getTime())) return dt;
     }
+
+    // 2) ISO puro yyyy-mm-dd → T12:00 evita shift de fuso
+    if (/^\d{4}-\d{2}-\d{2}$/.test(str)) {
+      const d = new Date(str + "T12:00:00");
+      if (!isNaN(d.getTime())) return d;
+    }
+
+    // 3) ISO com hora (yyyy-mm-ddTHH:mm...) ou outros formatos não ambíguos
+    const iso = new Date(value);
+    if (!isNaN(iso.getTime())) return iso;
+
     return null;
   }
 
